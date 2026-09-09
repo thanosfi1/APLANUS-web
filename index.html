@@ -1744,8 +1744,9 @@
           return;
         }
 
-        const reg = await navigator.serviceWorker.ready;
-        const serverKeyBuffer = urlBase64ToUint8Array(PUBLIC_VAPID_KEY);
+       const reg = await navigator.serviceWorker.register('sw.js');
+await navigator.serviceWorker.ready;
+const serverKeyBuffer = urlBase64ToUint8Array(PUBLIC_VAPID_KEY);
 
         let subscription = await reg.pushManager.getSubscription();
         if (!subscription) {
