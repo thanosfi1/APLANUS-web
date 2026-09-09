@@ -1701,24 +1701,25 @@
     // ==========================================
     // ΡΥΘΜΙΣΗ WEB PUSH NOTIFICATIONS ΜΕΣΩ BACKEND
     // ==========================================
-    const PUBLIC_VAPID_KEY = "BOkXLuOX7VtIp15_A-zS69gQNqSXdQIJw95omJLxN9zsUmPwzgf9SSvgvqSkJGszK7Sxv_b7pgIy0Vegu0VY8_Y";
-const SERVER_URL = "https://aplanus-server.onrender.com";
+   function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
 
-function urlBase64ToUint8Array(base64String) {
-  const cleanString = base64String.trim();
-  const padding = '='.repeat((4 - (cleanString.length % 4)) % 4);
-  const base64 = (cleanString + padding).replace(/-/g, '+').replace(/_/g, '/');
   const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
+  const buffer = new ArrayBuffer(rawData.length);
+  const outputArray = new Uint8Array(buffer);
+
   for (let i = 0; i < rawData.length; ++i) {
     outputArray[i] = rawData.charCodeAt(i);
   }
-  return outputArray;
+  return buffer;
 }
 
 async function setupNotifications() {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-    alert("Απαιτείται άνοιγμα από την Αρχική Οθόνη (Safari > Προσθήκη στην οθόνη αφετηρίας).");
+    alert("Απαιτείται άνοιγμα από την Αρχική Οθόνη.");
     return;
   }
 
@@ -1732,14 +1733,15 @@ async function setupNotifications() {
     const reg = await navigator.serviceWorker.register('sw.js');
     await navigator.serviceWorker.ready;
 
-    const keyArray = urlBase64ToUint8Array(PUBLIC_VAPID_KEY);
+    const rawKey = "BOkXLuOX7VtIp15_A-zS69gQNqSXdQIJw95omJLxN9zsUmPwzgf9SSvgvqSkJGszK7Sxv_b7pgIy0Vegu0VY8_Y";
+    const serverKeyBuffer = urlBase64ToUint8Array(rawKey);
 
     const subscription = await reg.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: keyArray
+      applicationServerKey: serverKeyBuffer
     });
 
-    const response = await fetch(`${SERVER_URL}/api/subscribe`, {
+    const response = await fetch("https://aplanus-server.onrender.com/api/subscribe", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(subscription)
