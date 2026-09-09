@@ -1,9 +1,14 @@
-self.addEventListener('push', function(event) {
-  if (!event.data) return;
-  const data = event.data.json();
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+});
 
-self.addEventListener('push', event => {
-  let data = { title: 'APLANUS', body: 'Νέα ειδοποίηση!' };
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
+});
+
+self.addEventListener('push', (event) => {
+  let data = { title: 'APLANUS', body: 'Νέα αστρονομική ειδοποίηση!' };
+
   if (event.data) {
     try {
       data = event.data.json();
@@ -23,7 +28,7 @@ self.addEventListener('push', event => {
   );
 });
 
-self.addEventListener('notificationclick', event => {
+self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
     clients.openWindow('/')
