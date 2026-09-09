@@ -1749,7 +1749,7 @@
         }
       } catch (err) {
         console.error("Web Push Error:", err);
-        alert("Σφάλμα σύνδεσης με τις ειδοποιήσεις.");
+        alert("Σφάλμα: "+ (err.message || err)) );
       }
     }
 
