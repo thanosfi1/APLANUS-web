@@ -14,7 +14,7 @@
 
   <link id="dynamicAppleIcon" rel="apple-touch-icon" href="">
   <link id="dynamicFavicon" rel="icon" type="image/png" href="">
-  <link id="dynamicManifest" rel="manifest" href="">
+  <link rel="manifest" href="manifest.json">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1728,34 +1728,56 @@
     }
 
     async function setupNotifications() {
-      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-        alert("Απαιτείται άνοιγμα από την αρχική οθόνη του iPhone (Safari > Κοινοποίηση > Προσθήκη στην οθόνη αφετηρίας).");
-        return;
-      }
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    alert("Απαιτείται άνοιγμα από την αρχική οθόνη του iPhone (Safari > Κοινοποίηση > Προσθήκη στην οθόνη αφετηρίας).");
+    return;
+  }
 
-      btnNotify.disabled = true;
-      btnNotify.textContent = "⏳ Σύνδεση...";
+  btnNotify.disabled = true;
+  btnNotify.textContent = "⏳ Σύνδεση...";
 
-      try {
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-          alert("Δεν επιτράπηκαν οι ειδοποιήσεις. Ελέγξτε τις Ρυθμίσεις του iPhone.");
-          updateNotificationButtonUI(false);
-          return;
-        }
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      alert("Δεν επιτράπηκαν οι ειδοποιήσεις. Ελέγξτε τις Ρυθμίσεις του iPhone.");
+      updateNotificationButtonUI(false);
+      return;
+    }
 
-       const reg = await navigator.serviceWorker.register('sw.js');
-await navigator.serviceWorker.ready;
-const serverKeyBuffer = urlBase64ToUint8Array(PUBLIC_VAPID_KEY);
+    const reg = await navigator.serviceWorker.register('sw.js');
+    await navigator.serviceWorker.ready;
+    const serverKeyBuffer = urlBase64ToUint8Array(PUBLIC_VAPID_KEY);
 
-        let subscription = await reg.pushManager.getSubscription();
-        if (!subscription) {
-          subscription = await reg.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: serverKeyBuffer
-          });
-        }
+    let subscription = await reg.pushManager.getSubscription();
+    if (!subscription) {
+      subscription = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: serverKeyBuffer
+      });
+    }
 
+    // --- ΔΙΑΓΝΩΣΤΙΚΗ ΑΠΟΣΤΟΛΗ ΣΤΟΝ SERVER ---
+    const res = await fetch("https://aplanus-server.onrender.com/api/subscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(subscription)
+    });
+
+    const textResponse = await res.text();
+    alert("HTTP Status: " + res.status + " | Απάντηση: " + textResponse);
+
+    if (res.ok) {
+      updateNotificationButtonUI(true);
+    } else {
+      updateNotificationButtonUI(false);
+    }
+  } catch (err) {
+    alert("Σφάλμα JS/Δικτύου: " + (err.message || err));
+    updateNotificationButtonUI(false);
+  } finally {
+    btnNotify.disabled = false;
+  }
+}
         const res = await fetch(`${SERVER_URL}/api/subscribe`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
