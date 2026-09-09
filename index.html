@@ -1182,19 +1182,6 @@
         const favicon = document.getElementById('dynamicFavicon');
         if (appleIcon) appleIcon.href = dataUrl;
         if (favicon) favicon.href = dataUrl;
-
-        const manifestObj = {
-          name: "APLANUS",
-          short_name: "APLANUS",
-          start_url: window.location.href,
-          display: "standalone",
-          background_color: "#070913",
-          theme_color: "#070913",
-          icons: [{ src: dataUrl, sizes: "512x512", type: "image/png" }]
-        };
-        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
-        const manifestLink = document.getElementById('dynamicManifest');
-        if (manifestLink) manifestLink.href = URL.createObjectURL(manifestBlob);
       } catch (err) {
         console.warn("Icon generator notice:", err);
       }
@@ -1727,95 +1714,51 @@
       return outputArray;
     }
 
-   async function setupNotifications() {
-  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-    alert("Απαιτείται άνοιγμα από την αρχική οθόνη του iPhone (Safari > Κοινοποίηση > Προσθήκη στην οθόνη αφετηρίας).");
-    return;
-  }
+    async function setupNotifications() {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        alert("Απαιτείται άνοιγμα από την αρχική οθόνη του iPhone (Safari > Κοινοποίηση > Προσθήκη στην οθόνη αφετηρίας).");
+        return;
+      }
 
-  btnNotify.disabled = true;
-  btnNotify.textContent = "⏳ Σύνδεση...";
+      btnNotify.disabled = true;
+      btnNotify.textContent = "⏳ Σύνδεση...";
 
-  try {
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-      alert("Δεν επιτράπηκαν οι ειδοποιήσεις. Ελέγξτε τις Ρυθμίσεις του iPhone.");
-      updateNotificationButtonUI(false);
-      return;
-    }
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+          alert("Δεν επιτράπηκαν οι ειδοποιήσεις. Ελέγξτε τις Ρυθμίσεις του iPhone.");
+          updateNotificationButtonUI(false);
+          return;
+        }
 
-    const reg = await navigator.serviceWorker.register('sw.js');
-    await navigator.serviceWorker.ready;
-    const serverKeyBuffer = urlBase64ToUint8Array(PUBLIC_VAPID_KEY);
+        const reg = await navigator.serviceWorker.register('sw.js');
+        await navigator.serviceWorker.ready;
+        const serverKeyBuffer = urlBase64ToUint8Array(PUBLIC_VAPID_KEY);
 
-    let subscription = await reg.pushManager.getSubscription();
-    if (!subscription) {
-      subscription = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: serverKeyBuffer
-      });
-    }
+        let subscription = await reg.pushManager.getSubscription();
+        if (!subscription) {
+          subscription = await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: serverKeyBuffer
+          });
+        }
 
-    // Αποστολή στον Server & διάγνωση
-    const res = await fetch("https://aplanus-server.onrender.com/api/subscribe", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(subscription)
-    });
-
-    const textResponse = await res.text();
-    alert("HTTP Status: " + res.status + " | Απάντηση: " + textResponse);
-
-    if (res.ok) {
-      updateNotificationButtonUI(true);
-    } else {
-      updateNotificationButtonUI(false);
-    }
-  } catch (err) {
-    alert("Σφάλμα JS/Δικτύου: " + (err.message || err));
-    updateNotificationButtonUI(false);
-  } finally {
-    btnNotify.disabled = false;
-  }
-}
-
-    // --- ΔΙΑΓΝΩΣΤΙΚΗ ΑΠΟΣΤΟΛΗ ΣΤΟΝ SERVER ---
-    const res = await fetch("https://aplanus-server.onrender.com/api/subscribe", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(subscription)
-    });
-
-    const textResponse = await res.text();
-    alert("HTTP Status: " + res.status + " | Απάντηση: " + textResponse);
-
-    if (res.ok) {
-      updateNotificationButtonUI(true);
-    } else {
-      updateNotificationButtonUI(false);
-    }
-  } catch (err) {
-    alert("Σφάλμα JS/Δικτύου: " + (err.message || err));
-    updateNotificationButtonUI(false);
-  } finally {
-    btnNotify.disabled = false;
-  }
-}
         const res = await fetch(`${SERVER_URL}/api/subscribe`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(subscription)
         });
 
-        const result = await res.json();
-        if (res.ok && result.success) {
+        const textResponse = await res.text();
+        alert("HTTP Status: " + res.status + " | Απάντηση: " + textResponse);
+
+        if (res.ok) {
           updateNotificationButtonUI(true);
-          alert("Επιτυχία! Η συσκευή καταχωρήθηκε στον server.");
         } else {
-          throw new Error("Ο server απάντησε: " + JSON.stringify(result));
+          updateNotificationButtonUI(false);
         }
       } catch (err) {
-        alert("Σφάλμα: " + (err.message || err));
+        alert("Σφάλμα JS/Δικτύου: " + (err.message || err));
         updateNotificationButtonUI(false);
       } finally {
         btnNotify.disabled = false;
