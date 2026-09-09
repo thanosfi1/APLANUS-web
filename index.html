@@ -1727,7 +1727,7 @@
       return outputArray;
     }
 
-    async function setupNotifications() {
+   async function setupNotifications() {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
     alert("Απαιτείται άνοιγμα από την αρχική οθόνη του iPhone (Safari > Κοινοποίηση > Προσθήκη στην οθόνη αφετηρίας).");
     return;
@@ -1755,6 +1755,29 @@
         applicationServerKey: serverKeyBuffer
       });
     }
+
+    // Αποστολή στον Server & διάγνωση
+    const res = await fetch("https://aplanus-server.onrender.com/api/subscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(subscription)
+    });
+
+    const textResponse = await res.text();
+    alert("HTTP Status: " + res.status + " | Απάντηση: " + textResponse);
+
+    if (res.ok) {
+      updateNotificationButtonUI(true);
+    } else {
+      updateNotificationButtonUI(false);
+    }
+  } catch (err) {
+    alert("Σφάλμα JS/Δικτύου: " + (err.message || err));
+    updateNotificationButtonUI(false);
+  } finally {
+    btnNotify.disabled = false;
+  }
+}
 
     // --- ΔΙΑΓΝΩΣΤΙΚΗ ΑΠΟΣΤΟΛΗ ΣΤΟΝ SERVER ---
     const res = await fetch("https://aplanus-server.onrender.com/api/subscribe", {
