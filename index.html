@@ -1719,45 +1719,45 @@
 
 async function setupNotifications() {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-    alert("Απαιτείται άνοιγμα από την Αρχική Οθόνη.");
+    alert("Απαιτείται άνοιγμα από την αρχική οθόνη του iPhone.");
     return;
   }
 
   const permission = await Notification.requestPermission();
   if (permission !== 'granted') {
-    alert("Δεν δόθηκε άδεια για ειδοποιήσεις.");
+    alert("Δεν δόθηκε άδεια για ειδοποιήσεις στις ρυθμίσεις.");
     return;
   }
 
   try {
-    const reg = await navigator.serviceWorker.register('sw.js');
-    await navigator.serviceWorker.ready;
-
+    const reg = await navigator.serviceWorker.ready;
     const rawKey = "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U";
     const serverKeyBuffer = urlBase64ToUint8Array(rawKey);
 
-    const subscription = await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: serverKeyBuffer
-    });
+    let subscription = await reg.pushManager.getSubscription();
+    if (!subscription) {
+      subscription = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: serverKeyBuffer
+      });
+    }
 
-    const response = await fetch("https://aplanus-server.onrender.com/api/subscribe", {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("https://aplanus-server.onrender.com/api/subscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(subscription)
     });
 
-    if (response.ok) {
-      updateNotificationButtonUI();
-      alert("Οι ειδοποιήσεις ενεργοποιήθηκαν επιτυχώς!");
+    const result = await res.json();
+    if (res.ok && result.success) {
+      alert("Επιτυχία! Η συσκευή καταχωρήθηκε στον server.");
     } else {
-      throw new Error("Αποτυχία εγγραφής στον server.");
+      alert("Ο server απάντησε με σφάλμα: " + JSON.stringify(result));
     }
   } catch (err) {
-    alert("Σφάλμα: " + (err.message || err));
+    alert("Σφάλμα σύνδεσης: " + (err.message || err));
   }
 }
-
 
     btnNotify.addEventListener('click', setupNotifications);
 
