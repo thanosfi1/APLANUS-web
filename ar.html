@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>APLANUS | AR True Sky</title>
+  <title>APLANUS | Ραντάρ Στόχευσης</title>
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -23,50 +23,29 @@
       user-select: none;
       -webkit-user-select: none;
     }
-    body, html {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #000;
+    body {
+      background-color: #070913;
+      color: #f1f5f9;
       font-family: 'Inter', sans-serif;
-      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 18px 16px;
+      overflow-x: hidden;
     }
 
-    #cameraVideo {
-      position: fixed;
-      top: 0;
-      left: 0;
+    .top-bar {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 1;
-    }
-
-    #arCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    .ar-ui-top {
-      position: fixed;
-      top: 20px;
-      left: 0;
-      width: 100%;
-      z-index: 10;
+      max-width: 440px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 16px;
+      margin-bottom: 20px;
     }
 
-    .btn-ui {
+    .btn-back {
       background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #38bdf8;
       padding: 8px 14px;
@@ -74,414 +53,370 @@
       font-family: 'Orbitron', monospace;
       font-size: 0.8rem;
       text-decoration: none;
-      cursor: pointer;
     }
 
     .planet-selector {
-      background: rgba(15, 23, 42, 0.9);
-      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.95);
       border: 1px solid #38bdf8;
       color: #fff;
       padding: 8px 12px;
       border-radius: 12px;
       font-family: 'Orbitron', monospace;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       outline: none;
     }
 
-    .ar-info-panel {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90%;
-      max-width: 420px;
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      border-radius: 16px;
-      padding: 12px 16px;
-      z-index: 10;
-      text-align: center;
+    .radar-wrapper {
+      position: relative;
+      width: min(85vw, 320px);
+      aspect-ratio: 1 / 1;
+      margin: 10px auto 20px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #radarCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .target-card {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(16, 23, 42, 0.75);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 20px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .target-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .target-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1rem;
-      color: #38bdf8;
-      margin-bottom: 2px;
-    }
-    .guide-text {
-      font-size: 0.88rem;
-      color: #f1f5f9;
-      font-weight: 600;
-    }
-
-    /* Calibration Overlay Modal */
-    #calibModal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(7, 9, 19, 0.95);
-      backdrop-filter: blur(20px);
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .calib-ring-container {
-      position: relative;
-      width: 160px;
-      height: 160px;
-      margin: 24px 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .calib-ring-svg {
-      width: 100%;
-      height: 100%;
-      transform: rotate(-90deg);
-    }
-
-    .calib-ring-bg {
-      fill: none;
-      stroke: rgba(255, 255, 255, 0.1);
-      stroke-width: 8;
-    }
-
-    .calib-ring-progress {
-      fill: none;
-      stroke: #38bdf8;
-      stroke-width: 8;
-      stroke-dasharray: 440;
-      stroke-dashoffset: 440;
-      stroke-linecap: round;
-      transition: stroke-dashoffset 0.2s ease;
-    }
-
-    .calib-percent-text {
-      position: absolute;
-      font-family: 'Orbitron', monospace;
-      font-size: 1.6rem;
+      font-size: 1.15rem;
       font-weight: 700;
       color: #fff;
     }
 
-    .infinity-hint {
-      font-size: 2.5rem;
-      color: #facc15;
-      animation: floatInf 2s ease-in-out infinite;
+    .vis-pill {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
-    @keyframes floatInf {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-6px) rotate(5deg); }
+    .vis-up {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.35);
+    }
+    .vis-down {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-box {
+      background: rgba(10, 15, 30, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .stat-val {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+
+    .guide-box {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px dashed rgba(56, 189, 248, 0.4);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+    .guide-box strong {
+      color: #fde047;
+    }
+
+    .btn-compass-perm {
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      border: none;
+      color: #fff;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 4px;
     }
   </style>
 </head>
 <body>
 
-  <video id="cameraVideo" playsinline autoplay muted></video>
-  <canvas id="arCanvas"></canvas>
-
-  <div class="ar-ui-top">
-    <a href="index.html" class="btn-ui">⬅ Πίσω</a>
+  <div class="top-bar">
+    <a href="index.html" class="btn-back">⬅ Αρχική</a>
     <select id="planetSelect" class="planet-selector">
       <option value="Moon">Σελήνη</option>
+      <option value="Venus">Αφροδίτη</option>
       <option value="Jupiter" selected>Δίας</option>
       <option value="Saturn">Κρόνος</option>
       <option value="Mars">Άρης</option>
-      <option value="Venus">Αφροδίτη</option>
       <option value="Mercury">Ερμής</option>
+      <option value="Uranus">Ουρανός</option>
+      <option value="Neptune">Ποσειδώνας</option>
+      <option value="Pluto">Πλούτωνας</option>
       <option value="Sun">Ήλιος</option>
     </select>
-    <button type="button" class="btn-ui" id="btnRestartCalib">🔄 Βαθμονόμηση</button>
   </div>
 
-  <div class="ar-info-panel">
-    <div class="target-title" id="targetName">Στόχος: Δίας</div>
-    <div class="guide-text" id="guideText">Ευθυγραμμίστε τη συσκευή...</div>
+  <div class="radar-wrapper">
+    <canvas id="radarCanvas" width="640" height="640"></canvas>
   </div>
 
-  <!-- Οθόνη Βαθμονόμησης 8-Infinity -->
-  <div id="calibModal">
-    <div class="infinity-hint">∞</div>
-    <h2 style="font-family: 'Orbitron'; font-size: 1.4rem; color: #38bdf8; margin: 12px 0 6px 0;">Βαθμονόμηση Πυξίδας</h2>
-    <p style="color: #cbd5e1; font-size: 0.85rem; max-width: 300px; line-height: 1.5;" id="calibInstruction">
-      Κινήστε το κινητό στον αέρα σχηματίζοντας αργά το σχήμα του <strong>«8»</strong> και σαρώστε ολόγυρα.
-    </p>
-
-    <div class="calib-ring-container">
-      <svg class="calib-ring-svg" viewBox="0 0 160 160">
-        <circle class="calib-ring-bg" cx="80" cy="80" r="70" />
-        <circle class="calib-ring-progress" id="calibProgressRing" cx="80" cy="80" r="70" />
-      </svg>
-      <span class="calib-percent-text" id="calibPercent">0%</span>
+  <div class="target-card">
+    <div class="target-header">
+      <span class="target-title" id="cardTitle">Δίας</span>
+      <span class="vis-pill" id="cardVis">Υπολογισμός...</span>
     </div>
 
-    <button type="button" class="btn-ui" id="btnStartSensors" style="padding: 12px 24px; font-size: 0.9rem; border-color: #38bdf8;">Έναρξη Σάρωσης</button>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <span class="stat-label">Κατευθυνση (Azimuth)</span>
+        <span class="stat-val" id="statAz">--°</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Υψος στον Ουρανο (Alt)</span>
+        <span class="stat-val" id="statAlt">--°</span>
+      </div>
+    </div>
+
+    <div class="guide-box" id="guideBox">
+      Υπολογισμός οδηγιών στόχευσης...
+    </div>
+
+    <button type="button" class="btn-compass-perm" id="btnPerm">🧭 Ενεργοποίηση Ζωντανής Πυξίδας</button>
   </div>
 
   <script>
     const OBSERVER = new Astronomy.Observer(40.76, 22.58, 20);
 
-    const video = document.getElementById('cameraVideo');
-    const canvas = document.getElementById('arCanvas');
+    const canvas = document.getElementById('radarCanvas');
     const ctx = canvas.getContext('2d');
     const planetSelect = document.getElementById('planetSelect');
-    const guideText = document.getElementById('guideText');
-    const targetName = document.getElementById('targetName');
-    const calibModal = document.getElementById('calibModal');
-    const calibProgressRing = document.getElementById('calibProgressRing');
-    const calibPercent = document.getElementById('calibPercent');
-    const calibInstruction = document.getElementById('calibInstruction');
-    const btnStartSensors = document.getElementById('btnStartSensors');
-    const btnRestartCalib = document.getElementById('btnRestartCalib');
+    const cardTitle = document.getElementById('cardTitle');
+    const cardVis = document.getElementById('cardVis');
+    const statAz = document.getElementById('statAz');
+    const statAlt = document.getElementById('statAlt');
+    const guideBox = document.getElementById('guideBox');
+    const btnPerm = document.getElementById('btnPerm');
 
-    let isCalibrating = true;
-    let calibScore = 0;
-    const recordedAngles = new Set();
+    let phoneHeading = 0; // Σε μοίρες (0 = Βορράς)
+    let currentTarget = { az: 0, alt: 0, isUp: false, name: "Δίας" };
 
-    // Φιλτραρισμένες γωνίες συσκευής (Low-pass filter για σταθερότητα)
-    let curAlpha = 0, curBeta = 0, curGamma = 0;
-    let compassHeading = 0;
-    let smoothedCamVector = [0, 1, 0];
-
-    let currentTargetCoords = { az: 0, alt: 0 };
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    function getCardinalDirection(deg) {
+      const dirs = ['Β', 'ΒΑ', 'Α', 'ΝΑ', 'Ν', 'ΝΔ', 'Δ', 'ΒΔ'];
+      const index = Math.round(deg / 45) % 8;
+      return dirs[index];
     }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
 
-    function updateCelestialTarget() {
+    function updateTarget() {
       const now = new Date();
-      const body = Astronomy.Body[planetSelect.value];
+      const bodyKey = planetSelect.value;
+      const body = Astronomy.Body[bodyKey];
+
       const eq = Astronomy.Equator(body, now, OBSERVER, true, true);
       const hor = Astronomy.Horizon(now, OBSERVER, eq.ra, eq.dec, 'normal');
 
-      currentTargetCoords.az = hor.azimuth;
-      currentTargetCoords.alt = hor.altitude;
+      currentTarget.az = hor.azimuth;
+      currentTarget.alt = hor.altitude;
+      currentTarget.isUp = hor.altitude > 0;
+      currentTarget.name = planetSelect.options[planetSelect.selectedIndex].text;
 
-      targetName.textContent = `Στόχος: ${planetSelect.options[planetSelect.selectedIndex].text}`;
+      cardTitle.textContent = currentTarget.name;
+      statAz.textContent = `${Math.round(currentTarget.az)}° (${getCardinalDirection(currentTarget.az)})`;
+      statAlt.textContent = `${currentTarget.alt.toFixed(1)}°`;
+
+      if (currentTarget.isUp) {
+        cardVis.className = "vis-pill vis-up";
+        cardVis.textContent = "● Ορατός στον ουρανό";
+      } else {
+        cardVis.className = "vis-pill vis-down";
+        cardVis.textContent = "○ Υπό τον ορίζοντα";
+      }
+
+      // Οδηγός στόχευσης
+      if (currentTarget.isUp) {
+        guideBox.innerHTML = `Κοιτάξτε προς τα <strong>${getCardinalDirection(currentTarget.az)}</strong> (${Math.round(currentTarget.az)}°) και σηκώστε το βλέμμα σας <strong>${Math.round(currentTarget.alt)}°</strong> ψηλά από τον ορίζοντα.`;
+      } else {
+        guideBox.innerHTML = `Το σώμα βρίσκεται <strong>κάτω από τη γη</strong> (${Math.abs(Math.round(currentTarget.alt))}° υπό τον ορίζοντα). Περιμένετε την επόμενη ανατολή του.`;
+      }
+
+      drawRadar();
     }
 
-    // Μετατροπή Azimuth & Altitude σε 3D Διάνυσμα (X: East, Y: North, Z: Up)
-    function azAltToVector(azDeg, altDeg) {
-      const azRad = azDeg * (Math.PI / 180);
-      const altRad = altDeg * (Math.PI / 180);
+    function drawRadar() {
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const radius = w * 0.42;
 
-      const x = Math.sin(azRad) * Math.cos(altRad); // East
-      const y = Math.cos(azRad) * Math.cos(altRad); // North
-      const z = Math.sin(altRad);                   // Up
-      return [x, y, z];
-    }
+      ctx.clearRect(0, 0, w, h);
 
-    // Μαθηματική Μήτρα Περιστροφής της πίσω κάμερας στον πραγματικό χώρο
-    function getCameraWorldVector(alphaDeg, betaDeg, gammaDeg, headingDeg) {
-      const deg2rad = Math.PI / 180;
-      const b = betaDeg * deg2rad;
-      const g = gammaDeg * deg2rad;
+      ctx.save();
+      ctx.translate(cx, cy);
+      // Περιστροφή του ραντάρ ανάλογα με το πού κοιτάζει το κινητό
+      ctx.rotate((-phoneHeading * Math.PI) / 180);
 
-      // Διάνυσμα της κάμερας σε τοπικό σύστημα συσκευής (κοιτάει προς το -Z του κινητού)
-      let camX = -Math.sin(g) * Math.cos(b);
-      let camY = Math.sin(b);
-      let camZ = -Math.cos(g) * Math.cos(b);
+      // Βάση ραντάρ
+      const bgGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, radius);
+      bgGrad.addColorStop(0, '#0f172a');
+      bgGrad.addColorStop(1, '#050814');
+      ctx.fillStyle = bgGrad;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Περιστροφή με βάση την πραγματική πυξίδα
-      const headRad = (headingDeg !== null ? headingDeg : (360 - alphaDeg)) * deg2rad;
-      const finalX = camX * Math.cos(headRad) + camY * Math.sin(headRad);
-      const finalY = -camX * Math.sin(headRad) + camY * Math.cos(headRad);
-      const finalZ = camZ;
+      // Ομόκεντροι κύκλοι
+      [0.33, 0.66, 1.0].forEach((fraction) => {
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * fraction, 0, Math.PI * 2);
+        ctx.strokeStyle = fraction === 1.0 ? 'rgba(56, 189, 248, 0.4)' : 'rgba(255, 255, 255, 0.08)';
+        ctx.lineWidth = fraction === 1.0 ? 3 : 1.5;
+        ctx.stroke();
+      });
 
-      return [finalX, finalY, finalZ];
+      // Σταυρός προσανατολισμού
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.2)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(0, -radius); ctx.lineTo(0, radius);
+      ctx.moveTo(-radius, 0); ctx.lineTo(radius, 0);
+      ctx.stroke();
+
+      // Σημεία Ορίζοντα
+      const cardinals = [
+        { label: 'Β', angle: 0, color: '#f43f5e' },
+        { label: 'Α', angle: 90, color: '#38bdf8' },
+        { label: 'Ν', angle: 180, color: '#cbd5e1' },
+        { label: 'Δ', angle: 270, color: '#38bdf8' }
+      ];
+
+      ctx.font = 'bold 24px Orbitron';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      cardinals.forEach(c => {
+        const rad = (c.angle * Math.PI) / 180;
+        const tx = Math.sin(rad) * (radius - 28);
+        const ty = -Math.cos(rad) * (radius - 28);
+        ctx.fillStyle = c.color;
+        ctx.fillText(c.label, tx, ty);
+      });
+
+      // Θέση Πλανήτη
+      const targetRad = (currentTarget.az * Math.PI) / 180;
+      // Αν είναι πάνω απ' τον ορίζοντα, όσο πιο ψηλά είναι τόσο πλησιάζει στο κέντρο (Ζενίθ)
+      const altFraction = currentTarget.isUp ? (1 - Math.min(90, currentTarget.alt) / 90) : 1;
+      const planetDist = radius * 0.78 * altFraction;
+
+      const px = Math.sin(targetRad) * planetDist;
+      const py = -Math.cos(targetRad) * planetDist;
+
+      // Φωτεινός στόχος
+      ctx.beginPath();
+      ctx.arc(px, py, currentTarget.isUp ? 14 : 9, 0, Math.PI * 2);
+      ctx.fillStyle = currentTarget.isUp ? 'rgba(56, 189, 248, 0.35)' : 'rgba(239, 68, 68, 0.2)';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(px, py, currentTarget.isUp ? 8 : 5, 0, Math.PI * 2);
+      ctx.fillStyle = currentTarget.isUp ? '#38bdf8' : '#f87171';
+      ctx.shadowColor = currentTarget.isUp ? '#38bdf8' : 'transparent';
+      ctx.shadowBlur = 12;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Ετικέτα πλανήτη
+      ctx.font = 'bold 16px Inter';
+      ctx.fillStyle = '#fff';
+      ctx.fillText(currentTarget.name, px, py - 16);
+
+      ctx.restore();
+
+      // Σταθερό βέλος κατεύθυνσης της συσκευής (μπροστά)
+      ctx.fillStyle = '#fde047';
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - radius - 12);
+      ctx.lineTo(cx - 10, cy - radius - 26);
+      ctx.lineTo(cx + 10, cy - radius - 26);
+      ctx.closePath();
+      ctx.fill();
     }
 
     function handleOrientation(e) {
-      if (typeof e.webkitCompassHeading !== 'undefined') {
-        compassHeading = e.webkitCompassHeading;
+      if (typeof e.webkitCompassHeading !== "undefined") {
+        phoneHeading = e.webkitCompassHeading;
       } else if (e.alpha !== null) {
-        compassHeading = (360 - e.alpha) % 360;
+        phoneHeading = (360 - e.alpha) % 360;
       }
-
-      const a = e.alpha || 0;
-      const b = e.beta || 0;
-      const g = e.gamma || 0;
-
-      // Εξομάλυνση (Smoothing) για αποφυγή τρεμοπαίγματος
-      curAlpha += (a - curAlpha) * 0.15;
-      curBeta  += (b - curBeta) * 0.15;
-      curGamma += (g - curGamma) * 0.15;
-
-      // Βαθμονόμηση: Συλλογή δειγμάτων κίνησης σε όλους τους άξονες
-      if (isCalibrating) {
-        const bucket = `${Math.round(curBeta / 15)}_${Math.round(curGamma / 15)}_${Math.round(compassHeading / 20)}`;
-        if (!recordedAngles.has(bucket)) {
-          recordedAngles.add(bucket);
-          calibScore = Math.min(100, Math.round((recordedAngles.size / 24) * 100));
-
-          const offset = 440 - (440 * (calibScore / 100));
-          calibProgressRing.style.strokeDashoffset = offset;
-          calibPercent.textContent = `${calibScore}%`;
-
-          if (calibScore >= 100) {
-            finishCalibration();
-          }
-        }
-      }
-
-      // Υπολογισμός πραγματικού διανύσματος θέας
-      const targetVec = getCameraWorldVector(curAlpha, curBeta, curGamma, compassHeading);
-      smoothedCamVector[0] += (targetVec[0] - smoothedCamVector[0]) * 0.2;
-      smoothedCamVector[1] += (targetVec[1] - smoothedCamVector[1]) * 0.2;
-      smoothedCamVector[2] += (targetVec[2] - smoothedCamVector[2]) * 0.2;
+      drawRadar();
     }
 
-    function finishCalibration() {
-      isCalibrating = false;
-      calibInstruction.textContent = "Η βαθμονόμηση ολοκληρώθηκε επιτυχώς!";
-      setTimeout(() => {
-        calibModal.style.display = 'none';
-        updateCelestialTarget();
-      }, 500);
-    }
-
-    function renderAR() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      if (!isCalibrating) {
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-
-        // Διάνυσμα του πλανήτη
-        const planetVec = azAltToVector(currentTargetCoords.az, currentTargetCoords.alt);
-
-        // Εσωτερικό γινόμενο (Dot Product) = Συνημίτονο της γωνίας ανάμεσα σε Κάμερα και Πλανήτη
-        const dot = smoothedCamVector[0] * planetVec[0] +
-                    smoothedCamVector[1] * planetVec[1] +
-                    smoothedCamVector[2] * planetVec[2];
-
-        // Εξωτερικό γινόμενο (Cross Product) για υπολογισμό θέσης X, Y στην οθόνη
-        // Κάθετο διάνυσμα δεξιά
-        const rightX = smoothedCamVector[1];
-        const rightY = -smoothedCamVector[0];
-        const rightDot = planetVec[0] * rightX + planetVec[1] * rightY;
-
-        // Κάθετο διάνυσμα πάνω
-        const upDot = planetVec[2] - (smoothedCamVector[2] * dot);
-
-        // Προβολή στην οθόνη με Fov ≈ 60°
-        const fovScale = (canvas.width / 2) / Math.tan((30 * Math.PI) / 180);
-
-        if (dot > 0.4) { // Μπροστά από την κάμερα (πεδίο ~110 μοιρών)
-          const px = cx + (rightDot * fovScale);
-          const py = cy - (upDot * fovScale);
-
-          const inScreen = (px >= 20 && px <= canvas.width - 20 && py >= 20 && py <= canvas.height - 20);
-
-          if (inScreen) {
-            // Στόχος κλειδωμένος στον ουρανό
-            ctx.beginPath();
-            ctx.arc(px, py, 26, 0, Math.PI * 2);
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 3;
-            ctx.shadowColor = '#38bdf8';
-            ctx.shadowBlur = 18;
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.arc(px, py, 6, 0, Math.PI * 2);
-            ctx.fillStyle = '#ffffff';
-            ctx.fill();
-
-            ctx.shadowBlur = 0;
-            ctx.font = 'bold 15px Orbitron';
-            ctx.fillStyle = '#38bdf8';
-            ctx.textAlign = 'center';
-            ctx.fillText(planetSelect.options[planetSelect.selectedIndex].text, px, py + 42);
-
-            guideText.textContent = "🎯 ΣΤΟΧΟΣ ΣΤΟ ΟΠΤΙΚΟ ΠΕΔΙΟ";
-            guideText.style.color = "#4ade80";
-          } else {
-            guideText.textContent = "Στρέψτε προς την ένδειξη...";
-            guideText.style.color = "#f1f5f9";
-          }
-        } else {
-          guideText.textContent = "Ο πλανήτης βρίσκεται πίσω από τη συσκευή.";
-          guideText.style.color = "#fb7185";
-        }
-
-        // Κεντρικός σταυρός σκόπευσης
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.arc(cx, cy, 18, 0, Math.PI * 2);
-        ctx.moveTo(cx - 26, cy); ctx.lineTo(cx + 26, cy);
-        ctx.moveTo(cx, cy - 26); ctx.lineTo(cx, cy + 26);
-        ctx.stroke();
-      }
-
-      requestAnimationFrame(renderAR);
-    }
-
-    async function initSensorsAndCamera() {
-      btnStartSensors.disabled = true;
-      btnStartSensors.textContent = "⏳ Σύνδεση...";
-
+    async function enableCompass() {
       if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         try {
           const res = await DeviceOrientationEvent.requestPermission();
-          if (res !== 'granted') {
-            alert('Απαιτείται άδεια αισθητήρων κίνησης για τον προσανατολισμό.');
-            return;
+          if (res === 'granted') {
+            window.addEventListener('deviceorientation', handleOrientation, true);
+            btnPerm.style.display = 'none';
           }
         } catch (e) {
           console.warn(e);
         }
-      }
-
-      window.addEventListener('deviceorientation', handleOrientation, true);
-
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { exact: 'environment' } }
-        }).catch(() => {
-          return navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        });
-
-        video.srcObject = stream;
-        btnStartSensors.style.display = 'none';
-        calibInstruction.innerHTML = "Κουνήστε το κινητό σχηματίζοντας <strong>«8»</strong> στον αέρα μέχρι το 100%...";
-        requestAnimationFrame(renderAR);
-      } catch (err) {
-        alert('Σφάλμα κάμερας: ' + (err.message || err));
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation, true);
+        btnPerm.style.display = 'none';
       }
     }
 
-    btnStartSensors.addEventListener('click', initSensorsAndCamera);
+    btnPerm.addEventListener('click', enableCompass);
+    planetSelect.addEventListener('change', updateTarget);
 
-    btnRestartCalib.addEventListener('click', () => {
-      recordedAngles.clear();
-      calibScore = 0;
-      isCalibrating = true;
-      calibPercent.textContent = "0%";
-      calibProgressRing.style.strokeDashoffset = 440;
-      calibInstruction.innerHTML = "Κουνήστε το κινητό σχηματίζοντας <strong>«8»</strong> στον αέρα...";
-      calibModal.style.display = 'flex';
-      btnStartSensors.style.display = 'none';
-    });
-
-    planetSelect.addEventListener('change', updateCelestialTarget);
-    setInterval(updateCelestialTarget, 3000);
+    updateTarget();
+    setInterval(updateTarget, 10000);
   </script>
 </body>
 </html>
