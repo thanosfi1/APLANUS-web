@@ -200,6 +200,9 @@
       font-size: 0.75rem;
       cursor: pointer;
       transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
     }
     .btn-action:hover {
       background: rgba(56, 189, 248, 0.3);
@@ -209,6 +212,11 @@
       background: rgba(245, 158, 11, 0.2);
       border-color: rgba(245, 158, 11, 0.4);
       color: #fde047;
+    }
+    .btn-planets {
+      background: rgba(192, 132, 252, 0.2);
+      border-color: rgba(192, 132, 252, 0.5);
+      color: #d8b4fe;
     }
 
     .stargazing-panel {
@@ -928,8 +936,7 @@
 
       <button type="button" class="btn-action" id="btnResetNow">Επαναφορά</button>
       <button type="button" class="btn-action btn-notify" id="btnNotify">🔔 Ειδοποιήσεις</button>
-      <a href="ar.html" class="btn-action" style="background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.5); text-decoration: none; display: inline-flex; align-items: center;">🎯 AR Ουρανός</a>
-
+      <a href="planets.html" class="btn-action btn-planets">🪐 Πλανήτες</a>
     </div>
 
     <section class="stargazing-panel">
@@ -1044,7 +1051,7 @@
 
     <section class="stars-section">
       <div class="stars-title">
-        <span>✨ Τα 3 Φωτεινότερα Αστέρια της Εποχής</span>
+        <span>✨ Τα 3 Φωτεινότερα Αστέρια της Βραδιάς</span>
       </div>
       <div class="stars-grid" id="seasonalStarsContainer"></div>
     </section>
@@ -1212,6 +1219,25 @@
       Pluto: { a: 39.48, e: 0.249, I: 17.16, L0: 238.9, w: 113.8, node: 110.3, periodDays: 90560,  H: -0.7, G: 0.15 }
     };
 
+    // Κατάλογος φωτεινών αστέρων για δυναμικό υπολογισμό ορατότητας
+    const BRIGHT_STARS_CATALOG = [
+      { name: "Σείριος (Sirius)", const: "Μέγας Κύων", ra: 6.7525, dec: -16.7161, mag: -1.46, ly: "8.6", grad: "radial-gradient(circle at 35% 35%, #ffffff, #7dd3fc, #0284c7)" },
+      { name: "Αρκτούρος (Arcturus)", const: "Βοώτης", ra: 14.261, dec: 19.182, mag: -0.05, ly: "37", grad: "radial-gradient(circle at 35% 35%, #ffedd5, #f97316, #c2410c)" },
+      { name: "Βέγας (Vega)", const: "Λύρα", ra: 18.6156, dec: 38.7836, mag: 0.03, ly: "25", grad: "radial-gradient(circle at 35% 35%, #ffffff, #38bdf8, #0284c7)" },
+      { name: "Αιγοκέρως / Καπέλλα (Capella)", const: "Ηνίοχος", ra: 5.278, dec: 45.998, mag: 0.08, ly: "43", grad: "radial-gradient(circle at 35% 35%, #fffbeb, #fef08a, #ca8a04)" },
+      { name: "Ρίγκελ (Rigel)", const: "Ωρίων", ra: 5.242, dec: -8.201, mag: 0.18, ly: "860", grad: "radial-gradient(circle at 35% 35%, #ffffff, #93c5fd, #1d4ed8)" },
+      { name: "Προκύων (Procyon)", const: "Μικρός Κύων", ra: 7.655, dec: 5.225, mag: 0.38, ly: "11.4", grad: "radial-gradient(circle at 35% 35%, #ffffff, #fef08a, #d97706)" },
+      { name: "Μπετελγκέζ (Betelgeuse)", const: "Ωρίων", ra: 5.919, dec: 7.407, mag: 0.50, ly: "642", grad: "radial-gradient(circle at 35% 35%, #ffedd5, #ef4444, #991b1b)" },
+      { name: "Αλτάιρ (Altair)", const: "Αετός", ra: 19.846, dec: 8.868, mag: 0.77, ly: "17", grad: "radial-gradient(circle at 35% 35%, #ffffff, #e2e8f0, #94a3b8)" },
+      { name: "Άλντεμπαραν (Aldebaran)", const: "Ταύρος", ra: 4.598, dec: 16.509, mag: 0.85, ly: "65", grad: "radial-gradient(circle at 35% 35%, #ffedd5, #ea580c, #9a3412)" },
+      { name: "Στάχυς (Spica)", const: "Παρθένος", ra: 13.419, dec: -11.161, mag: 0.98, ly: "250", grad: "radial-gradient(circle at 35% 35%, #ffffff, #60a5fa, #1d4ed8)" },
+      { name: "Αντάρης (Antares)", const: "Σκορπιός", ra: 16.490, dec: -26.432, mag: 1.06, ly: "550", grad: "radial-gradient(circle at 35% 35%, #fee2e2, #dc2626, #7f1d1d)" },
+      { name: "Πολλύδευκης (Pollux)", const: "Δίδυμοι", ra: 7.755, dec: 28.026, mag: 1.14, ly: "34", grad: "radial-gradient(circle at 35% 35%, #fff7ed, #fb923c, #c2410c)" },
+      { name: "Φομαλώ (Fomalhaut)", const: "Νότιος Ιχθύς", ra: 22.960, dec: -29.622, mag: 1.17, ly: "25", grad: "radial-gradient(circle at 35% 35%, #ffffff, #cbd5e1, #64748b)" },
+      { name: "Ντενέμπ (Deneb)", const: "Κύκνος", ra: 20.690, dec: 45.280, mag: 1.25, ly: "2615", grad: "radial-gradient(circle at 35% 35%, #ffffff, #bae6fd, #0284c7)" },
+      { name: "Βασιλίσκος (Regulus)", const: "Λέων", ra: 10.139, dec: 11.967, mag: 1.36, ly: "79", grad: "radial-gradient(circle at 35% 35%, #ffffff, #93c5fd, #2563eb)" }
+    ];
+
     function solveKepler(M, e) {
       let E = M;
       for (let i = 0; i < 15; i++) {
@@ -1301,11 +1327,6 @@
     const SEASON_DATA = {
       spring: {
         name: "Άνοιξη (Spring)",
-        stars: [
-          { name: "Αρκτούρος (Arcturus)", const: "Βοώτης", mag: "-0.05", ly: "37", grad: "radial-gradient(circle at 35% 35%, #ffedd5, #f97316, #c2410c)" },
-          { name: "Στάχυς (Spica)", const: "Παρθένος", mag: "+0.98", ly: "250", grad: "radial-gradient(circle at 35% 35%, #ffffff, #60a5fa, #1d4ed8)" },
-          { name: "Βασιλίσκος (Regulus)", const: "Λέων", mag: "+1.36", ly: "79", grad: "radial-gradient(circle at 35% 35%, #ffffff, #93c5fd, #2563eb)" }
-        ],
         constellation: {
           name: "Μεγάλη Άρκτος & Λέων (Ursa Major & Leo)",
           desc: "Η Μεγάλη Άρκτος μεσουρανεί στο ζενίθ και οδηγεί στον Πολικό Αστέρα και στον Αρκτούρο. Δίπλα της δεσπόζει ο Λέων με το χαρακτηριστικό ανάποδο ερωτηματικό.",
@@ -1314,11 +1335,6 @@
       },
       summer: {
         name: "Καλοκαίρι (Summer)",
-        stars: [
-          { name: "Βέγας (Vega)", const: "Λύρα", mag: "+0.03", ly: "25", grad: "radial-gradient(circle at 35% 35%, #ffffff, #38bdf8, #0284c7)" },
-          { name: "Αλτάιρ (Altair)", const: "Αετός", mag: "+0.77", ly: "17", grad: "radial-gradient(circle at 35% 35%, #ffffff, #e2e8f0, #94a3b8)" },
-          { name: "Ντενέμπ (Deneb)", const: "Κύκνος", mag: "+1.25", ly: "2615", grad: "radial-gradient(circle at 35% 35%, #ffffff, #bae6fd, #0284c7)" }
-        ],
         constellation: {
           name: "Κύκνος / Βόρειος Σταυρός & Θερινό Τρίγωνο (Cygnus & Lyra)",
           desc: "Ο Κύκνος διασχίζει τον Γαλαξία σαν σταυρός που πετά προς τον Νότο. Μαζί με τον Βέγα και τον Αλτάιρ σχηματίζουν το διάσημο Θερινό Τρίγωνο.",
@@ -1327,11 +1343,6 @@
       },
       autumn: {
         name: "Φθινόπωρο (Autumn)",
-        stars: [
-          { name: "Βέγας (Vega)", const: "Λύρα", mag: "+0.03", ly: "25", grad: "radial-gradient(circle at 35% 35%, #ffffff, #38bdf8, #0284c7)" },
-          { name: "Φομαλώ (Fomalhaut)", const: "Νότιος Ιχθύς", mag: "+1.17", ly: "25", grad: "radial-gradient(circle at 35% 35%, #ffffff, #cbd5e1, #64748b)" },
-          { name: "Αλφεράτζ (Alpheratz)", const: "Ανδρομέδα", mag: "+2.06", ly: "97", grad: "radial-gradient(circle at 35% 35%, #ffffff, #93c5fd, #3b82f6)" }
-        ],
         constellation: {
           name: "Κασσιόπη & Μέγα Τετράγωνο Πηγάσου (Cassiopeia & Pegasus)",
           desc: "Το 'W' της Κασσιόπης είναι άμεσα αναγνωρίσιμο ψηλά στον βορειοανατολικό ουρανό, ενώ το Τετράγωνο του Πηγάσου οδηγεί στον Γαλαξία της Ανδρομέδας.",
@@ -1340,11 +1351,6 @@
       },
       winter: {
         name: "Χειμώνας (Winter)",
-        stars: [
-          { name: "Σείριος (Sirius)", const: "Μέγας Κύων", mag: "-1.46", ly: "8.6", grad: "radial-gradient(circle at 35% 35%, #ffffff, #7dd3fc, #0284c7)" },
-          { name: "Ρίγκελ (Rigel)", const: "Ωρίων", mag: "+0.18", ly: "860", grad: "radial-gradient(circle at 35% 35%, #ffffff, #93c5fd, #1d4ed8)" },
-          { name: "Μπετελγκέζ (Betelgeuse)", const: "Ωρίων", mag: "+0.50", ly: "642", grad: "radial-gradient(circle at 35% 35%, #ffedd5, #ef4444, #991b1b)" }
-        ],
         constellation: {
           name: "Ωρίων (Orion)",
           desc: "Ο πιο επιβλητικός αστερισμός του ουρανού με τη διάσημη Ζώνη του και το Μεγάλο Νεφέλωμα που αποτελεί κορυφαίο θέαμα για κάθε τηλεσκόπιο.",
@@ -1845,18 +1851,40 @@
         }
       }
 
+      const observer = new Astronomy.Observer(currentCoords.lat, currentCoords.lon, 0);
+
+      // Υπολογισμός των 3 Φωτεινότερων Αστεριών που είναι πραγματικά ορατά απόψε
       const starsContainer = document.getElementById('seasonalStarsContainer');
       if (starsContainer) {
         starsContainer.innerHTML = '';
-        seasonInfo.stars.forEach(star => {
+
+        const visibleStars = BRIGHT_STARS_CATALOG.map(star => {
+          const hor = Astronomy.Horizon(evaluationTime, observer, star.ra, star.dec, 'normal');
+          return {
+            ...star,
+            altitude: hor.altitude,
+            azimuth: hor.azimuth
+          };
+        })
+        .filter(star => star.altitude > 5) // Μόνο όσα είναι πάνω από τον ορίζοντα
+        .sort((a, b) => a.mag - b.mag)     // Ταξινόμηση από το λαμπρότερο στο αμυδρότερο
+        .slice(0, 3);                      // Επιλογή των 3 κορυφαίων
+
+        if (visibleStars.length === 0) {
+          // Αν είναι μέρα ή δεν βρέθηκε κάποιο, fallback στα κορυφαία του καταλόγου
+          visibleStars.push(...BRIGHT_STARS_CATALOG.slice(0, 3).map(s => ({ ...s, altitude: 0 })));
+        }
+
+        visibleStars.forEach(star => {
           const starEl = document.createElement('div');
           starEl.className = 'star-card';
+          const altText = star.altitude > 0 ? ` • Ύψος: ${Math.round(star.altitude)}°` : '';
           starEl.innerHTML = `
             <div class="star-orb" style="background: ${star.grad}; box-shadow: 0 0 16px rgba(255,255,255,0.2);"></div>
             <div class="star-info">
               <span class="star-name">${star.name}</span>
               <span class="star-const">${star.const}</span>
-              <span class="star-meta">Μέγεθος: ${star.mag} mag • ${star.ly} ly</span>
+              <span class="star-meta">Μέγεθος: ${star.mag >= 0 ? '+' + star.mag : star.mag} mag • ${star.ly} ly${altText}</span>
             </div>
           `;
           starsContainer.appendChild(starEl);
@@ -1878,7 +1906,6 @@
         domeTimeStatusEl.textContent = `Προβολή: ${evaluationTime.toLocaleTimeString('el-GR', {hour:'2-digit', minute:'2-digit'})} (${d}/${m}/${y})`;
       }
 
-      const observer = new Astronomy.Observer(currentCoords.lat, currentCoords.lon, 0);
       const visibleBodiesForMap = [];
 
       // 1. MOON
