@@ -31,7 +31,6 @@
       color: #fff;
     }
 
-    /* Video feed κάμερας */
     #cameraVideo {
       position: fixed;
       top: 0;
@@ -42,7 +41,6 @@
       z-index: 1;
     }
 
-    /* Canvas για το στόχαστρο */
     #arCanvas {
       position: fixed;
       top: 0;
@@ -53,7 +51,6 @@
       pointer-events: none;
     }
 
-    /* UI Controls Overlays */
     .ar-ui-top {
       position: fixed;
       top: 20px;
@@ -124,7 +121,6 @@
       font-family: 'Orbitron', monospace;
     }
 
-    /* Modal έναρξης για δικαιώματα iOS */
     #startModal {
       position: fixed;
       top: 0;
@@ -164,13 +160,15 @@
   <div class="ar-ui-top">
     <a href="index.html" class="btn-back">⬅ Πίσω</a>
     <select id="planetSelect" class="planet-selector">
-      <option value="Venus">Αφροδίτη</option>
+      <option value="Moon">Σελήνη</option>
       <option value="Jupiter" selected>Δίας</option>
       <option value="Saturn">Κρόνος</option>
       <option value="Mars">Άρης</option>
+      <option value="Venus">Αφροδίτη</option>
       <option value="Mercury">Ερμής</option>
+      <option value="Uranus">Ουρανός</option>
+      <option value="Neptune">Ποσειδώνας</option>
       <option value="Pluto">Πλούτωνας</option>
-      <option value="Moon">Σελήνη</option>
       <option value="Sun">Ήλιος</option>
     </select>
   </div>
@@ -181,7 +179,6 @@
     <div class="status-subtext" id="coordsInfo">Υπολογισμός θέσης...</div>
   </div>
 
-  <!-- Αρχική οθόνη για έγκριση κάμερας και γυροσκοπίου iOS -->
   <div id="startModal">
     <h2 style="font-family: 'Orbitron'; font-size: 1.6rem; color: #38bdf8; margin-bottom: 12px;">APLANUS AR</h2>
     <p style="color: #cbd5e1; font-size: 0.9rem; max-width: 320px; line-height: 1.5;">
@@ -191,7 +188,6 @@
   </div>
 
   <script>
-    // Σταθερές συντεταγμένες (Ελλάδα / Κεντρική Μακεδονία)
     const OBSERVER = new Astronomy.Observer(40.76, 22.58, 20);
 
     const video = document.getElementById('cameraVideo');
@@ -204,8 +200,8 @@
     const startModal = document.getElementById('startModal');
     const btnStartAR = document.getElementById('btnStartAR');
 
-    let phoneHeading = 0;   // Πυξίδα (0-360 Azimuth)
-    let phonePitch = 0;     // Κλίση πάνω/κάτω (0-90 Altitude)
+    let phoneHeading = 0;
+    let phoneAltitude = 0;
     let currentTarget = { az: 0, alt: 0, name: "Δίας", isUp: false };
 
     function resizeCanvas() {
@@ -215,7 +211,6 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Υπολογισμός θέσης του επιλεγμένου ουράνιου σώματος
     function updateCelestialTarget() {
       const bodyName = planetSelect.value;
       const now = new Date();
@@ -229,61 +224,66 @@
       currentTarget.alt = hor.altitude;
       currentTarget.isUp = hor.altitude > 0;
 
-      coordsInfo.textContent = `Πλανήτης: Αζιμ ${currentTarget.az.toFixed(1)}° | Ύψος ${currentTarget.alt.toFixed(1)}° ${currentTarget.isUp ? '(Ορατός)' : '(Κάτω απ\' τη γη)'}`;
+      coordsInfo.textContent = `Πλανήτης: Αζιμ ${currentTarget.az.toFixed(1)}° | Ύψος ${currentTarget.alt.toFixed(1)}° ${currentTarget.isUp ? '(Πάνω απ\' τον ορίζοντα)' : '(Υπό τον ορίζοντα)'}`;
     }
 
-    // Διαχείριση Αισθητήρων Κίνησης (Γυροσκόπιο & Πυξίδα)
     function handleOrientation(e) {
-      // 1. Heading (Πυξίδα / Αζιμούθιο)
-      if (typeof e.webkitCompassHeading !== "undefined") {
-        phoneHeading = e.webkitCompassHeading; // iOS ακριβής πυξίδα
-      } else if (e.alpha !== null) {
-        phoneHeading = (360 - e.alpha) % 360;  // Android fallback
-      }
+      const deg2rad = Math.PI / 180;
 
-      // 2. Pitch (Κλίση προς τον ουρανό / Altitude)
-      // Όταν κρατάς το κινητό όρθιο στραμμένο στον ορίζοντα beta ≈ 90 -> pitch = 0
-      // Όταν το σηκώνεις προς τα πάνω beta ≈ 0 -> pitch = 90
-      if (e.beta !== null) {
-        phonePitch = 90 - e.beta;
+      const alpha = (e.alpha || 0) * deg2rad;
+      const beta  = (e.beta || 0) * deg2rad;
+      const gamma = (e.gamma || 0) * deg2rad;
+
+      const cA = Math.cos(alpha), sA = Math.sin(alpha);
+      const cB = Math.cos(beta),  sB = Math.sin(beta);
+      const cG = Math.cos(gamma), sG = Math.sin(gamma);
+
+      const x = - (cA * sG + sA * sB * cG);
+      const y = - (sA * sG - cA * sB * cG);
+      const z = - (cB * cG);
+
+      phoneAltitude = Math.asin(Math.max(-1, Math.min(1, -z))) * (180 / Math.PI);
+
+      if (typeof e.webkitCompassHeading !== "undefined") {
+        phoneHeading = e.webkitCompassHeading;
+      } else {
+        let headingRad = Math.atan2(x, y);
+        let headingDeg = headingRad * (180 / Math.PI);
+        phoneHeading = (headingDeg + 360) % 360;
       }
     }
 
-    // Σχεδιασμός στόχαστρου και οδηγιών στην οθόνη
     function drawAR() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const cx = canvas.width / 2;
       const cy = canvas.height / 2;
 
-      // Διαφορά ανάμεσα στον πλανήτη και το πού κοιτάζει το κινητό
       let diffAz = currentTarget.az - phoneHeading;
       while (diffAz > 180) diffAz -= 360;
       while (diffAz < -180) diffAz += 360;
 
-      const diffAlt = currentTarget.alt - phonePitch;
+      const diffAlt = currentTarget.alt - phoneAltitude;
 
-      // Εύρος πεδίου κάμερας (περίπου 60° οριζόντια, 80° κάθετα)
-      const fovX = 60;
-      const fovY = 80;
+      const fovX = 55;
+      const fovY = 75;
 
       const pixelX = cx + (diffAz / (fovX / 2)) * (canvas.width / 2);
       const pixelY = cy - (diffAlt / (fovY / 2)) * (canvas.height / 2);
 
-      const isTargetInView = Math.abs(diffAz) < (fovX / 2) && Math.abs(diffAlt) < (fovY / 2);
+      const isInsideScreen = (pixelX >= 30 && pixelX <= canvas.width - 30 && pixelY >= 30 && pixelY <= canvas.height - 30);
 
-      if (isTargetInView) {
-        // Κλείδωμα στόχου - Σχεδιασμός φωτεινού κύκλου
+      if (isInsideScreen) {
         ctx.beginPath();
-        ctx.arc(pixelX, pixelY, 26, 0, Math.PI * 2);
+        ctx.arc(pixelX, pixelY, 24, 0, Math.PI * 2);
         ctx.strokeStyle = '#38bdf8';
         ctx.lineWidth = 3;
         ctx.shadowColor = '#38bdf8';
-        ctx.shadowBlur = 15;
+        ctx.shadowBlur = 12;
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(pixelX, pixelY, 6, 0, Math.PI * 2);
+        ctx.arc(pixelX, pixelY, 5, 0, Math.PI * 2);
         ctx.fillStyle = '#fff';
         ctx.fill();
 
@@ -291,40 +291,36 @@
         ctx.font = 'bold 14px Orbitron';
         ctx.fillStyle = '#38bdf8';
         ctx.textAlign = 'center';
-        ctx.fillText(planetSelect.options[planetSelect.selectedIndex].text, pixelX, pixelY + 44);
+        ctx.fillText(planetSelect.options[planetSelect.selectedIndex].text, pixelX, pixelY + 40);
 
-        guideText.textContent = "🎯 ΣΤΟΧΟΣ ΕΝΤΟΠΙΣΤΗΚΕ!";
+        guideText.textContent = "🎯 ΣΤΟΧΟΣ ΣΤΟ ΚΕΝΤΡΟ";
         guideText.style.color = "#4ade80";
       } else {
-        // Οδηγός εκτός οπτικού πεδίου
         guideText.style.color = "#f1f5f9";
         let instruction = "";
 
-        if (Math.abs(diffAz) > 5) {
+        if (Math.abs(diffAz) > 4) {
           instruction += diffAz > 0 ? `Στρίψτε δεξιά ${Math.round(diffAz)}° ` : `Στρίψτε αριστερά ${Math.round(-diffAz)}° `;
         }
-        if (Math.abs(diffAlt) > 5) {
+        if (Math.abs(diffAlt) > 4) {
           instruction += diffAlt > 0 ? `| Σηκώστε ψηλότερα ${Math.round(diffAlt)}°` : `| Χαμηλώστε ${Math.round(-diffAlt)}°`;
         }
 
-        guideText.textContent = instruction || "Πλησιάζετε στον στόχο...";
+        guideText.textContent = instruction || "Ευθυγραμμίστε...";
 
-        // Σταθερός κεντρικός σταυρός σκόπευσης
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.arc(cx, cy, 18, 0, Math.PI * 2);
-        ctx.moveTo(cx - 28, cy); ctx.lineTo(cx + 28, cy);
-        ctx.moveTo(cx, cy - 28); ctx.lineTo(cx, cy + 28);
+        ctx.arc(cx, cy, 16, 0, Math.PI * 2);
+        ctx.moveTo(cx - 24, cy); ctx.lineTo(cx + 24, cy);
+        ctx.moveTo(cx, cy - 24); ctx.lineTo(cx, cy + 24);
         ctx.stroke();
       }
 
       requestAnimationFrame(drawAR);
     }
 
-    // Έναρξη AR
     async function startAR() {
-      // 1. Άδεια αισθητήρων στο iOS
       if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         try {
           const permission = await DeviceOrientationEvent.requestPermission();
@@ -339,16 +335,18 @@
 
       window.addEventListener('deviceorientation', handleOrientation, true);
 
-      // 2. Άνοιγμα κάμερας (πίσω κάμερα)
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' }
+          video: { facingMode: { exact: 'environment' } }
+        }).catch(() => {
+          return navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
         });
+
         video.srcObject = stream;
         startModal.style.display = 'none';
 
         updateCelestialTarget();
-        setInterval(updateCelestialTarget, 3000);
+        setInterval(updateCelestialTarget, 4000);
         requestAnimationFrame(drawAR);
       } catch (err) {
         alert('Αδυναμία πρόσβασης στην κάμερα: ' + (err.message || err));
