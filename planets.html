@@ -16,10 +16,11 @@
   <style>
     :root {
       --bg-dark: #070913;
-      --card-bg: rgba(16, 23, 42, 0.72);
+      --card-bg: rgba(16, 23, 42, 0.75);
       --card-border: rgba(99, 102, 241, 0.22);
       --accent-cyan: #38bdf8;
       --accent-purple: #c084fc;
+      --accent-gold: #f59e0b;
       --text-main: #f1f5f9;
       --text-muted: #94a3b8;
     }
@@ -28,6 +29,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -43,7 +45,7 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 960px;
       width: 100%;
     }
 
@@ -66,11 +68,16 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-back:hover {
+      background: rgba(56, 189, 248, 0.3);
+      color: #fff;
     }
 
     h1 {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
       font-weight: 900;
       text-align: center;
       background: linear-gradient(135deg, #ffffff 35%, var(--accent-cyan) 100%);
@@ -82,8 +89,9 @@
     .subtitle {
       text-align: center;
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       margin-bottom: 28px;
+      line-height: 1.4;
     }
 
     .planets-list {
@@ -98,22 +106,20 @@
       backdrop-filter: blur(14px);
       border: 1px solid var(--card-border);
       border-radius: 20px;
-      padding: 18px 22px;
-      cursor: pointer;
+      padding: 18px 20px;
       transition: all 0.25s ease;
-      overflow: hidden;
+      cursor: pointer;
     }
 
     .planet-item:hover {
       border-color: var(--accent-cyan);
-      transform: translateY(-2px);
     }
 
     .planet-main-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
     }
 
     .planet-left {
@@ -122,17 +128,20 @@
       gap: 16px;
     }
 
-    .planet-avatar {
-      width: 52px;
-      height: 52px;
+    .planet-avatar-img {
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
+      object-fit: cover;
       flex-shrink: 0;
-      box-shadow: 0 0 15px rgba(255,255,255,0.15);
+      background: #1e293b;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
     }
 
     .planet-meta h3 {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       color: #fff;
       margin-bottom: 4px;
     }
@@ -153,13 +162,13 @@
       white-space: nowrap;
     }
 
-    /* Αναπτυσσόμενη Λίστα Δορυφόρων */
+    /* Αναπτυσσόμενο Πλαίσιο με Εσωτερικό Scroll */
     .moons-dropdown {
       display: none;
-      margin-top: 18px;
-      padding-top: 16px;
+      margin-top: 16px;
+      padding-top: 14px;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
-      animation: fadeIn 0.3s ease forwards;
+      animation: fadeIn 0.25s ease forwards;
     }
 
     .moons-dropdown.open {
@@ -167,44 +176,136 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-6px); }
+      from { opacity: 0; transform: translateY(-4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .moons-grid {
+    .scroll-container {
+      max-height: 270px;
+      overflow-y: auto;
+      padding-right: 6px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
-      margin-top: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    /* Custom Scrollbar */
+    .scroll-container::-webkit-scrollbar {
+      width: 5px;
+    }
+    .scroll-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 4px;
+    }
+    .scroll-container::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.35);
+      border-radius: 4px;
     }
 
     .moon-card {
-      background: rgba(10, 15, 30, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(10, 15, 30, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px;
       padding: 10px 14px;
       display: flex;
       align-items: center;
       gap: 12px;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .moon-card:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.4);
     }
 
     .moon-img {
-      width: 42px;
-      height: 42px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       object-fit: cover;
-      background: #1e293b;
+      flex-shrink: 0;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     .moon-info h4 {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       color: #fff;
     }
 
     .moon-info span {
-      font-size: 0.72rem;
+      font-size: 0.73rem;
       color: var(--accent-cyan);
+    }
+
+    /* Modal / Lightbox για προβολή εικόνας σε μεγάλο μέγεθος */
+    #imageModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(4, 7, 18, 0.92);
+      backdrop-filter: blur(16px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    #imageModal.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--accent-cyan);
+      border-radius: 20px;
+      padding: 22px;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      animation: modalPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes modalPop {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-preview-img {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 16px auto;
+      display: block;
+      border: 2px solid var(--accent-cyan);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+    }
+
+    .modal-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.25rem;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .modal-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .btn-close-modal {
+      background: rgba(56, 189, 248, 0.18);
+      border: 1px solid var(--accent-cyan);
+      color: #fff;
+      padding: 8px 24px;
+      border-radius: 12px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -216,44 +317,104 @@
     </div>
 
     <h1>Ουράνια Σώματα & Δορυφόροι</h1>
-    <p class="subtitle">Πατήστε σε οποιονδήποτε πλανήτη για να δείτε τους κύριους δορυφόρους του.</p>
+    <p class="subtitle">
+      Ταξινομημένα κατά πλήθος δορυφόρων.<br/>
+      Πατήστε σε κάθε πλανήτη για να δείτε τους δορυφόρους και επιλέξτε έναν για μεγέθυνση.
+    </p>
 
     <div class="planets-list" id="planetsList"></div>
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div id="imageModal">
+    <div class="modal-box">
+      <img id="modalImg" class="modal-preview-img" src="" alt="Zoom" />
+      <h3 id="modalTitle" class="modal-title">--</h3>
+      <p id="modalDesc" class="modal-desc">--</p>
+      <button type="button" class="btn-close-modal" id="btnCloseModal">Κλείσιμο</button>
+    </div>
   </div>
 
   <script>
     const PLANET_DATA = [
       {
-        name: "Ερμής (Mercury)",
-        type: "Βραχώδης Πλανήτης",
-        distSun: "57.9 εκ. χλμ",
-        color: "radial-gradient(circle at 35% 35%, #e2e8f0, #94a3b8, #475569)",
-        moonsCount: 0,
-        moons: []
-      },
-      {
-        name: "Αφροδίτη (Venus)",
-        type: "Βραχώδης Πλανήτης",
-        distSun: "108.2 εκ. χλμ",
-        color: "radial-gradient(circle at 35% 35%, #fef08a, #f59e0b, #b45309)",
-        moonsCount: 0,
-        moons: []
-      },
-      {
-        name: "Γη (Earth)",
-        type: "Βραχώδης Πλανήτης",
-        distSun: "149.6 εκ. χλμ",
-        color: "radial-gradient(circle at 35% 35%, #67e8f9, #0284c7, #1e3a8a)",
-        moonsCount: 1,
+        name: "Κρόνος (Saturn)",
+        type: "Αέριος Γίγαντας με Δακτυλίους",
+        distSun: "1.43 δις χλμ",
+        img: "https://images-assets.nasa.gov/image/PIA14922/PIA14922~orig.jpg",
+        moonsCount: 146,
         moons: [
-          { name: "Σελήνη (Moon)", desc: "Διάμετρος: 3.474 χλμ", img: "https://images-assets.nasa.gov/image/PIA00405/PIA00405~orig.jpg" }
+          { name: "Τιτάνας (Titan)", desc: "Πυκνή ατμόσφαιρα (5.149 χλμ)", img: "https://images-assets.nasa.gov/image/PIA02145/PIA02145~orig.jpg" },
+          { name: "Εγκέλαδος (Enceladus)", desc: "Πίδακες πάγου & ωκεανός (504 χλμ)", img: "https://images-assets.nasa.gov/image/PIA08329/PIA08329~orig.jpg" },
+          { name: "Ρέα (Rhea)", desc: "Διάμετρος: 1.527 χλμ", img: "https://images-assets.nasa.gov/image/PIA07763/PIA07763~orig.jpg" },
+          { name: "Ιαπετός (Iapetus)", desc: "Δίχρωμη επιφάνεια (1.470 χλμ)", img: "https://images-assets.nasa.gov/image/PIA08384/PIA08384~orig.jpg" },
+          { name: "Διώνη (Dione)", desc: "Παγωμένη επιφάνεια (1.122 χλμ)", img: "https://images-assets.nasa.gov/image/PIA08183/PIA08183~orig.jpg" },
+          { name: "Τηθύς (Tethys)", desc: "Τεράστιος κρατήρας Οδυσσέας (1.062 χλμ)", img: "https://images-assets.nasa.gov/image/PIA07738/PIA07738~orig.jpg" },
+          { name: "Μίμας (Mimas)", desc: "Ο δορυφόρος Death Star (396 χλμ)", img: "https://images-assets.nasa.gov/image/PIA12570/PIA12570~orig.jpg" },
+          { name: "Υπερίων (Hyperion)", desc: "Σπογγώδης μορφή (270 χλμ)", img: "https://images-assets.nasa.gov/image/PIA07740/PIA07740~orig.jpg" }
+        ]
+      },
+      {
+        name: "Δίας (Jupiter)",
+        type: "Αέριος Γίγαντας",
+        distSun: "778.5 εκ. χλμ",
+        img: "https://images-assets.nasa.gov/image/PIA02873/PIA02873~orig.jpg",
+        moonsCount: 95,
+        moons: [
+          { name: "Γανυμήδης (Ganymede)", desc: "Ο μεγαλύτερος δορυφόρος (5.268 χλμ)", img: "https://images-assets.nasa.gov/image/PIA00716/PIA00716~orig.jpg" },
+          { name: "Καλλιστώ (Callisto)", desc: "Πανάρχαια κρατηρογενής επιφάνεια (4.820 χλμ)", img: "https://images-assets.nasa.gov/image/PIA03456/PIA03456~orig.jpg" },
+          { name: "Ιώ (Io)", desc: "Ο πιο ηφαιστειογενής κόσμος (3.642 χλμ)", img: "https://images-assets.nasa.gov/image/PIA02308/PIA02308~orig.jpg" },
+          { name: "Ευρώπη (Europa)", desc: "Παγκόσμιος υπόγειος ωκεανός (3.121 χλμ)", img: "https://images-assets.nasa.gov/image/PIA00502/PIA00502~orig.jpg" },
+          { name: "Αμάλθεια (Amalthea)", desc: "Ακανόνιστος κοκκινωπός (167 χλμ)", img: "https://images-assets.nasa.gov/image/PIA01077/PIA01077~orig.jpg" },
+          { name: "Ιμαλία (Himalia)", desc: "Εξωτερικός δορυφόρος (140 χλμ)", img: "https://images-assets.nasa.gov/image/PIA02875/PIA02875~orig.jpg" }
+        ]
+      },
+      {
+        name: "Ουρανός (Uranus)",
+        type: "Γίγαντας Πάγου",
+        distSun: "2.87 δις χλμ",
+        img: "https://images-assets.nasa.gov/image/PIA18182/PIA18182~orig.jpg",
+        moonsCount: 28,
+        moons: [
+          { name: "Τιτάνια (Titania)", desc: "Μεγαλύτερος δορυφόρος Ουρανού (1.578 χλμ)", img: "https://images-assets.nasa.gov/image/PIA00036/PIA00036~orig.jpg" },
+          { name: "Όμπερον (Oberon)", desc: "Παλαιός κρατηρογενής (1.523 χλμ)", img: "https://images-assets.nasa.gov/image/PIA00034/PIA00034~orig.jpg" },
+          { name: "Άριελ (Ariel)", desc: "Φωτεινότερη επιφάνεια (1.158 χλμ)", img: "https://images-assets.nasa.gov/image/PIA00041/PIA00041~orig.jpg" },
+          { name: "Ουμβριήλ (Umbriel)", desc: "Σκοτεινή επιφάνεια (1.169 χλμ)", img: "https://images-assets.nasa.gov/image/PIA00040/PIA00040~orig.jpg" },
+          { name: "Μιράντα (Miranda)", desc: "Ακραία γεωλογικά ρήγματα (471 χλμ)", img: "https://images-assets.nasa.gov/image/PIA01354/PIA01354~orig.jpg" }
+        ]
+      },
+      {
+        name: "Ποσειδώνας (Neptune)",
+        type: "Γίγαντας Πάγου",
+        distSun: "4.50 δις χλμ",
+        img: "https://images-assets.nasa.gov/image/PIA01492/PIA01492~orig.jpg",
+        moonsCount: 16,
+        moons: [
+          { name: "Τρίτωνας (Triton)", desc: "Ανάδρομη τροχιά με κρυοηφαίστεια (2.706 χλμ)", img: "https://images-assets.nasa.gov/image/PIA01537/PIA01537~orig.jpg" },
+          { name: "Πρωτέας (Proteus)", desc: "Σκούρος ακανόνιστος (420 χλμ)", img: "https://images-assets.nasa.gov/image/PIA00057/PIA00057~orig.jpg" },
+          { name: "Νηρηίδα (Nereid)", desc: "Εξαιρετικά εκκεντρική τροχιά (340 χλμ)", img: "https://images-assets.nasa.gov/image/PIA00055/PIA00055~orig.jpg" },
+          { name: "Λάρισσα (Larissa)", desc: "Εσωτερικός δορυφόρος (194 χλμ)", img: "https://images-assets.nasa.gov/image/PIA00054/PIA00054~orig.jpg" }
+        ]
+      },
+      {
+        name: "Πλούτωνας (Pluto)",
+        type: "Νάνος Πλανήτης (Ζώνη Kuiper)",
+        distSun: "5.91 δις χλμ",
+        img: "https://images-assets.nasa.gov/image/PIA19952/PIA19952~orig.jpg",
+        moonsCount: 5,
+        moons: [
+          { name: "Χάρων (Charon)", desc: "Διάμετρος: 1.212 χλμ (Διπλό πλανητικό σύστημα)", img: "https://images-assets.nasa.gov/image/PIA19966/PIA19966~orig.jpg" },
+          { name: "Νύχτα (Nix)", desc: "Μέγεθος: 49 χλμ", img: "https://images-assets.nasa.gov/image/PIA19859/PIA19859~orig.jpg" },
+          { name: "Ύδρα (Hydra)", desc: "Μέγεθος: 50 χλμ", img: "https://images-assets.nasa.gov/image/PIA19858/PIA19858~orig.jpg" },
+          { name: "Κέρβερος (Kerberos)", desc: "Μέγεθος: 19 χλμ", img: "https://images-assets.nasa.gov/image/PIA20042/PIA20042~orig.jpg" },
+          { name: "Στύγα (Styx)", desc: "Μέγεθος: 16 χλμ", img: "https://images-assets.nasa.gov/image/PIA19968/PIA19968~orig.jpg" }
         ]
       },
       {
         name: "Άρης (Mars)",
         type: "Βραχώδης Πλανήτης",
         distSun: "227.9 εκ. χλμ",
-        color: "radial-gradient(circle at 35% 35%, #fca5a5, #ef4444, #991b1b)",
+        img: "https://images-assets.nasa.gov/image/PIA04304/PIA04304~orig.jpg",
         moonsCount: 2,
         moons: [
           { name: "Φόβος (Phobos)", desc: "Μέγεθος: 22 χλμ", img: "https://images-assets.nasa.gov/image/PIA10368/PIA10368~orig.jpg" },
@@ -261,78 +422,62 @@
         ]
       },
       {
-        name: "Δήμητρα (1 Ceres)",
-        type: "Νάνος Πλανήτης (Ζώνη Αστεροειδών)",
-        distSun: "413.7 εκ. χλμ",
-        color: "radial-gradient(circle at 35% 35%, #e9d5ff, #c084fc, #6b21a8)",
+        name: "Γη (Earth)",
+        type: "Βραχώδης Πλανήτης",
+        distSun: "149.6 εκ. χλμ",
+        img: "https://images-assets.nasa.gov/image/PIA18033/PIA18033~orig.jpg",
+        moonsCount: 1,
+        moons: [
+          { name: "Σελήνη (Moon)", desc: "Διάμετρος: 3.474 χλμ", img: "https://images-assets.nasa.gov/image/PIA00405/PIA00405~orig.jpg" }
+        ]
+      },
+      {
+        name: "Ερμής (Mercury)",
+        type: "Βραχώδης Πλανήτης",
+        distSun: "57.9 εκ. χλμ",
+        img: "https://images-assets.nasa.gov/image/PIA11364/PIA11364~orig.jpg",
         moonsCount: 0,
         moons: []
       },
       {
-        name: "Δίας (Jupiter)",
-        type: "Αέριος Γίγαντας",
-        distSun: "778.5 εκ. χλμ",
-        color: "radial-gradient(circle at 35% 35%, #fed7aa, #f97316, #9a3412)",
-        moonsCount: 95,
-        moons: [
-          { name: "Γανυμήδης (Ganymede)", desc: "Μεγαλύτερος δορυφόρος (5.268 χλμ)", img: "https://images-assets.nasa.gov/image/PIA00716/PIA00716~orig.jpg" },
-          { name: "Καλλιστώ (Callisto)", desc: "Διάμετρος: 4.820 χλμ", img: "https://images-assets.nasa.gov/image/PIA03456/PIA03456~orig.jpg" },
-          { name: "Ιώ (Io)", desc: "Ηφαιστειογενής (3.642 χλμ)", img: "https://images-assets.nasa.gov/image/PIA02308/PIA02308~orig.jpg" },
-          { name: "Ευρώπη (Europa)", desc: "Υποθαλάσσιος ωκεανός (3.121 χλμ)", img: "https://images-assets.nasa.gov/image/PIA00502/PIA00502~orig.jpg" }
-        ]
+        name: "Αφροδίτη (Venus)",
+        type: "Βραχώδης Πλανήτης",
+        distSun: "108.2 εκ. χλμ",
+        img: "https://images-assets.nasa.gov/image/PIA00271/PIA00271~orig.jpg",
+        moonsCount: 0,
+        moons: []
       },
       {
-        name: "Κρόνος (Saturn)",
-        type: "Αέριος Γίγαντας με Δακτυλίους",
-        distSun: "1.43 δις χλμ",
-        color: "radial-gradient(circle at 35% 35%, #fef08a, #eab308, #854d0e)",
-        moonsCount: 146,
-        moons: [
-          { name: "Τιτάνας (Titan)", desc: "Πυκνή ατμόσφαιρα (5.149 χλμ)", img: "https://images-assets.nasa.gov/image/PIA02145/PIA02145~orig.jpg" },
-          { name: "Εγκέλαδος (Enceladus)", desc: "Πίδακες πάγου (504 χλμ)", img: "https://images-assets.nasa.gov/image/PIA08329/PIA08329~orig.jpg" },
-          { name: "Ρέα (Rhea)", desc: "Διάμετρος: 1.527 χλμ", img: "https://images-assets.nasa.gov/image/PIA07763/PIA07763~orig.jpg" },
-          { name: "Ιαπετός (Iapetus)", desc: "Δίχρωμος δορυφόρος (1.470 χλμ)", img: "https://images-assets.nasa.gov/image/PIA08384/PIA08384~orig.jpg" }
-        ]
-      },
-      {
-        name: "Ουρανός (Uranus)",
-        type: "Γίγαντας Πάγου",
-        distSun: "2.87 δις χλμ",
-        color: "radial-gradient(circle at 35% 35%, #a5f3fc, #06b6d4, #164e63)",
-        moonsCount: 28,
-        moons: [
-          { name: "Τιτάνια (Titania)", desc: "Διάμετρος: 1.578 χλμ", img: "https://images-assets.nasa.gov/image/PIA00036/PIA00036~orig.jpg" },
-          { name: "Όμπερον (Oberon)", desc: "Διάμετρος: 1.523 χλμ", img: "https://images-assets.nasa.gov/image/PIA00034/PIA00034~orig.jpg" },
-          { name: "Άριελ (Ariel)", desc: "Διάμετρος: 1.158 χλμ", img: "https://images-assets.nasa.gov/image/PIA00041/PIA00041~orig.jpg" },
-          { name: "Μιράντα (Miranda)", desc: "Χαράδρες πάγου (471 χλμ)", img: "https://images-assets.nasa.gov/image/PIA01354/PIA01354~orig.jpg" }
-        ]
-      },
-      {
-        name: "Ποσειδώνας (Neptune)",
-        type: "Γίγαντας Πάγου",
-        distSun: "4.50 δις χλμ",
-        color: "radial-gradient(circle at 35% 35%, #93c5fd, #2563eb, #1e3a8a)",
-        moonsCount: 16,
-        moons: [
-          { name: "Τρίτωνας (Triton)", desc: "Ανάδρομη τροχιά (2.706 χλμ)", img: "https://images-assets.nasa.gov/image/PIA01537/PIA01537~orig.jpg" },
-          { name: "Πρωτέας (Proteus)", desc: "Διάμετρος: 420 χλμ", img: "https://images-assets.nasa.gov/image/PIA00057/PIA00057~orig.jpg" }
-        ]
-      },
-      {
-        name: "Πλούτωνας (Pluto)",
-        type: "Νάνος Πλανήτης (Ζώνη Kuiper)",
-        distSun: "5.91 δις χλμ",
-        color: "radial-gradient(circle at 35% 35%, #ddd6fe, #8b5cf6, #4c1d95)",
-        moonsCount: 5,
-        moons: [
-          { name: "Χάρων (Charon)", desc: "Διάμετρος: 1.212 χλμ (Διπλό σύστημα)", img: "https://images-assets.nasa.gov/image/PIA19966/PIA19966~orig.jpg" },
-          { name: "Νύχτα (Nix)", desc: "Μέγεθος: 49 χλμ", img: "https://images-assets.nasa.gov/image/PIA19859/PIA19859~orig.jpg" },
-          { name: "Ύδρα (Hydra)", desc: "Μέγεθος: 50 χλμ", img: "https://images-assets.nasa.gov/image/PIA19858/PIA19858~orig.jpg" }
-        ]
+        name: "Δήμητρα (1 Ceres)",
+        type: "Νάνος Πλανήτης (Ζώνη Αστεροειδών)",
+        distSun: "413.7 εκ. χλμ",
+        img: "https://images-assets.nasa.gov/image/PIA19562/PIA19562~orig.jpg",
+        moonsCount: 0,
+        moons: []
       }
     ];
 
+    // Αυτόματη ταξινόμηση από τον πλανήτη με τους περισσότερους δορυφόρους στον λιγότερο
+    PLANET_DATA.sort((a, b) => b.moonsCount - a.moonsCount);
+
     const listEl = document.getElementById('planetsList');
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDesc');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+
+    function openImagePreview(name, desc, imgSrc) {
+      modalImg.src = imgSrc;
+      modalTitle.textContent = name;
+      modalDesc.textContent = desc;
+      modal.classList.add('active');
+    }
+
+    btnCloseModal.addEventListener('click', () => modal.classList.remove('active'));
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('active');
+    });
 
     PLANET_DATA.forEach((p, idx) => {
       const card = document.createElement('div');
@@ -342,11 +487,13 @@
       if (p.moons.length > 0) {
         moonsHtml = `
           <div class="moons-dropdown" id="dropdown-${idx}">
-            <div style="font-size: 0.8rem; color: #38bdf8; font-family: 'Orbitron'; margin-bottom: 6px;">Κυριοι Δορυφοροι:</div>
-            <div class="moons-grid">
+            <div style="font-size: 0.78rem; color: var(--accent-cyan); font-family: 'Orbitron'; margin-bottom: 8px;">
+              Δορυφόροι (Scroll για προβολή όλων):
+            </div>
+            <div class="scroll-container">
               ${p.moons.map(m => `
-                <div class="moon-card">
-                  <img src="${m.img}" alt="${m.name}" class="moon-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'42\\' height=\\'42\\'><circle cx=\\'21\\' cy=\\'21\\' r=\\'20\\' fill=\\'%2364748b\\'/></svg>'">
+                <div class="moon-card" onclick="event.stopPropagation(); openImagePreview('${m.name.replace(/'/g, "\\'")}', '${m.desc.replace(/'/g, "\\'")}', '${m.img}')">
+                  <img src="${m.img}" alt="${m.name}" class="moon-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'44\\' height=\\'44\\'><circle cx=\\'22\\' cy=\\'22\\' r=\\'20\\' fill=\\'%23475569\\'/></svg>'">
                   <div class="moon-info">
                     <h4>${m.name}</h4>
                     <span>${m.desc}</span>
@@ -359,7 +506,7 @@
       } else {
         moonsHtml = `
           <div class="moons-dropdown" id="dropdown-${idx}">
-            <p style="font-size: 0.82rem; color: var(--text-muted); padding: 6px 0;">Δεν διαθέτει φυσικούς δορυφόρους.</p>
+            <p style="font-size: 0.82rem; color: var(--text-muted); padding: 4px 0;">Δεν διαθέτει φυσικούς δορυφόρους.</p>
           </div>
         `;
       }
@@ -367,7 +514,7 @@
       card.innerHTML = `
         <div class="planet-main-row">
           <div class="planet-left">
-            <div class="planet-avatar" style="background: ${p.color};"></div>
+            <img src="${p.img}" alt="${p.name}" class="planet-avatar-img" onclick="event.stopPropagation(); openImagePreview('${p.name.replace(/'/g, "\\'")}', '${p.type} • Απόσταση: ${p.distSun}', '${p.img}')" />
             <div class="planet-meta">
               <h3>${p.name}</h3>
               <p>${p.type} • Απόσταση: ${p.distSun}</p>
