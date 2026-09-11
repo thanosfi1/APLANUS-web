@@ -162,7 +162,6 @@
       white-space: nowrap;
     }
 
-    /* Αναπτυσσόμενο Πλαίσιο με Εσωτερικό Scroll */
     .moons-dropdown {
       display: none;
       margin-top: 16px;
@@ -189,7 +188,6 @@
       gap: 12px;
     }
 
-    /* Custom Scrollbar */
     .scroll-container::-webkit-scrollbar {
       width: 5px;
     }
@@ -240,7 +238,6 @@
       color: var(--accent-cyan);
     }
 
-    /* Modal / Lightbox για προβολή εικόνας σε μεγάλο μέγεθος */
     #imageModal {
       display: none;
       position: fixed;
@@ -325,7 +322,6 @@
     <div class="planets-list" id="planetsList"></div>
   </div>
 
-  <!-- Lightbox Modal -->
   <div id="imageModal">
     <div class="modal-box">
       <img id="modalImg" class="modal-preview-img" src="" alt="Zoom" />
@@ -457,7 +453,6 @@
       }
     ];
 
-    // Αυτόματη ταξινόμηση από τον πλανήτη με τους περισσότερους δορυφόρους στον λιγότερο
     PLANET_DATA.sort((a, b) => b.moonsCount - a.moonsCount);
 
     const listEl = document.getElementById('planetsList');
@@ -501,6 +496,11 @@
                 </div>
               `).join('')}
             </div>
+            ${p.moonsCount > p.moons.length ? `
+              <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 10px; font-style: italic;">
+                * Οι υπόλοιποι ${p.moonsCount - p.moons.length} δορυφόροι είναι μικρά ακανόνιστα θραύσματα πάγου (2-5 χλμ) χωρίς φωτογραφική χαρτογράφηση.
+              </p>
+            ` : ''}
           </div>
         `;
       } else {
