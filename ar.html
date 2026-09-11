@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>APLANUS | AR Στόχευση Πλανητών</title>
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#070913">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+    }
+
+    /* Video feed κάμερας */
+    #cameraVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    /* Canvas για το στόχαστρο */
+    #arCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* UI Controls Overlays */
+    .ar-ui-top {
+      position: fixed;
+      top: 20px;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+    }
+
+    .btn-back {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #38bdf8;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      text-decoration: none;
+    }
+
+    .planet-selector {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid #38bdf8;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .ar-info-panel {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 16px;
+      padding: 14px 18px;
+      z-index: 10;
+      text-align: center;
+    }
+
+    .target-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.05rem;
+      color: #38bdf8;
+      margin-bottom: 4px;
+    }
+    .guide-text {
+      font-size: 0.85rem;
+      color: #f1f5f9;
+      font-weight: 500;
+    }
+    .status-subtext {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      margin-top: 4px;
+      font-family: 'Orbitron', monospace;
+    }
+
+    /* Modal έναρξης για δικαιώματα iOS */
+    #startModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(7, 9, 19, 0.95);
+      backdrop-filter: blur(20px);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .btn-start-ar {
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      border: none;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 14px 28px;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <video id="cameraVideo" playsinline autoplay muted></video>
+  <canvas id="arCanvas"></canvas>
+
+  <div class="ar-ui-top">
+    <a href="index.html" class="btn-back">⬅ Πίσω</a>
+    <select id="planetSelect" class="planet-selector">
+      <option value="Venus">Αφροδίτη</option>
+      <option value="Jupiter" selected>Δίας</option>
+      <option value="Saturn">Κρόνος</option>
+      <option value="Mars">Άρης</option>
+      <option value="Mercury">Ερμής</option>
+      <option value="Pluto">Πλούτωνας</option>
+      <option value="Moon">Σελήνη</option>
+      <option value="Sun">Ήλιος</option>
+    </select>
+  </div>
+
+  <div class="ar-info-panel">
+    <div class="target-title" id="targetName">Στόχος: Δίας</div>
+    <div class="guide-text" id="guideText">Ευθυγραμμίστε τη συσκευή...</div>
+    <div class="status-subtext" id="coordsInfo">Υπολογισμός θέσης...</div>
+  </div>
+
+  <!-- Αρχική οθόνη για έγκριση κάμερας και γυροσκοπίου iOS -->
+  <div id="startModal">
+    <h2 style="font-family: 'Orbitron'; font-size: 1.6rem; color: #38bdf8; margin-bottom: 12px;">APLANUS AR</h2>
+    <p style="color: #cbd5e1; font-size: 0.9rem; max-width: 320px; line-height: 1.5;">
+      Στρέψτε την κάμερα προς τον ουρανό για να εντοπίσετε με ακρίβεια τους πλανήτες σε πραγματικό χρόνο.
+    </p>
+    <button type="button" class="btn-start-ar" id="btnStartAR">Εκκίνηση Κάμερας</button>
+  </div>
+
+  <script>
+    // Σταθερές συντεταγμένες (Ελλάδα / Κεντρική Μακεδονία)
+    const OBSERVER = new Astronomy.Observer(40.76, 22.58, 20);
+
+    const video = document.getElementById('cameraVideo');
+    const canvas = document.getElementById('arCanvas');
+    const ctx = canvas.getContext('2d');
+    const planetSelect = document.getElementById('planetSelect');
+    const guideText = document.getElementById('guideText');
+    const coordsInfo = document.getElementById('coordsInfo');
+    const targetName = document.getElementById('targetName');
+    const startModal = document.getElementById('startModal');
+    const btnStartAR = document.getElementById('btnStartAR');
+
+    let phoneHeading = 0;   // Πυξίδα (0-360 Azimuth)
+    let phonePitch = 0;     // Κλίση πάνω/κάτω (0-90 Altitude)
+    let currentTarget = { az: 0, alt: 0, name: "Δίας", isUp: false };
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Υπολογισμός θέσης του επιλεγμένου ουράνιου σώματος
+    function updateCelestialTarget() {
+      const bodyName = planetSelect.value;
+      const now = new Date();
+      targetName.textContent = `Στόχος: ${planetSelect.options[planetSelect.selectedIndex].text}`;
+
+      const body = Astronomy.Body[bodyName];
+      const eq = Astronomy.Equator(body, now, OBSERVER, true, true);
+      const hor = Astronomy.Horizon(now, OBSERVER, eq.ra, eq.dec, 'normal');
+
+      currentTarget.az = hor.azimuth;
+      currentTarget.alt = hor.altitude;
+      currentTarget.isUp = hor.altitude > 0;
+
+      coordsInfo.textContent = `Πλανήτης: Αζιμ ${currentTarget.az.toFixed(1)}° | Ύψος ${currentTarget.alt.toFixed(1)}° ${currentTarget.isUp ? '(Ορατός)' : '(Κάτω απ\' τη γη)'}`;
+    }
+
+    // Διαχείριση Αισθητήρων Κίνησης (Γυροσκόπιο & Πυξίδα)
+    function handleOrientation(e) {
+      // 1. Heading (Πυξίδα / Αζιμούθιο)
+      if (typeof e.webkitCompassHeading !== "undefined") {
+        phoneHeading = e.webkitCompassHeading; // iOS ακριβής πυξίδα
+      } else if (e.alpha !== null) {
+        phoneHeading = (360 - e.alpha) % 360;  // Android fallback
+      }
+
+      // 2. Pitch (Κλίση προς τον ουρανό / Altitude)
+      // Όταν κρατάς το κινητό όρθιο στραμμένο στον ορίζοντα beta ≈ 90 -> pitch = 0
+      // Όταν το σηκώνεις προς τα πάνω beta ≈ 0 -> pitch = 90
+      if (e.beta !== null) {
+        phonePitch = 90 - e.beta;
+      }
+    }
+
+    // Σχεδιασμός στόχαστρου και οδηγιών στην οθόνη
+    function drawAR() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+
+      // Διαφορά ανάμεσα στον πλανήτη και το πού κοιτάζει το κινητό
+      let diffAz = currentTarget.az - phoneHeading;
+      while (diffAz > 180) diffAz -= 360;
+      while (diffAz < -180) diffAz += 360;
+
+      const diffAlt = currentTarget.alt - phonePitch;
+
+      // Εύρος πεδίου κάμερας (περίπου 60° οριζόντια, 80° κάθετα)
+      const fovX = 60;
+      const fovY = 80;
+
+      const pixelX = cx + (diffAz / (fovX / 2)) * (canvas.width / 2);
+      const pixelY = cy - (diffAlt / (fovY / 2)) * (canvas.height / 2);
+
+      const isTargetInView = Math.abs(diffAz) < (fovX / 2) && Math.abs(diffAlt) < (fovY / 2);
+
+      if (isTargetInView) {
+        // Κλείδωμα στόχου - Σχεδιασμός φωτεινού κύκλου
+        ctx.beginPath();
+        ctx.arc(pixelX, pixelY, 26, 0, Math.PI * 2);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 15;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(pixelX, pixelY, 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+        ctx.font = 'bold 14px Orbitron';
+        ctx.fillStyle = '#38bdf8';
+        ctx.textAlign = 'center';
+        ctx.fillText(planetSelect.options[planetSelect.selectedIndex].text, pixelX, pixelY + 44);
+
+        guideText.textContent = "🎯 ΣΤΟΧΟΣ ΕΝΤΟΠΙΣΤΗΚΕ!";
+        guideText.style.color = "#4ade80";
+      } else {
+        // Οδηγός εκτός οπτικού πεδίου
+        guideText.style.color = "#f1f5f9";
+        let instruction = "";
+
+        if (Math.abs(diffAz) > 5) {
+          instruction += diffAz > 0 ? `Στρίψτε δεξιά ${Math.round(diffAz)}° ` : `Στρίψτε αριστερά ${Math.round(-diffAz)}° `;
+        }
+        if (Math.abs(diffAlt) > 5) {
+          instruction += diffAlt > 0 ? `| Σηκώστε ψηλότερα ${Math.round(diffAlt)}°` : `| Χαμηλώστε ${Math.round(-diffAlt)}°`;
+        }
+
+        guideText.textContent = instruction || "Πλησιάζετε στον στόχο...";
+
+        // Σταθερός κεντρικός σταυρός σκόπευσης
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+        ctx.moveTo(cx - 28, cy); ctx.lineTo(cx + 28, cy);
+        ctx.moveTo(cx, cy - 28); ctx.lineTo(cx, cy + 28);
+        ctx.stroke();
+      }
+
+      requestAnimationFrame(drawAR);
+    }
+
+    // Έναρξη AR
+    async function startAR() {
+      // 1. Άδεια αισθητήρων στο iOS
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+          const permission = await DeviceOrientationEvent.requestPermission();
+          if (permission !== 'granted') {
+            alert('Απαιτείται πρόσβαση στους αισθητήρες κίνησης.');
+            return;
+          }
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+
+      window.addEventListener('deviceorientation', handleOrientation, true);
+
+      // 2. Άνοιγμα κάμερας (πίσω κάμερα)
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' }
+        });
+        video.srcObject = stream;
+        startModal.style.display = 'none';
+
+        updateCelestialTarget();
+        setInterval(updateCelestialTarget, 3000);
+        requestAnimationFrame(drawAR);
+      } catch (err) {
+        alert('Αδυναμία πρόσβασης στην κάμερα: ' + (err.message || err));
+      }
+    }
+
+    btnStartAR.addEventListener('click', startAR);
+    planetSelect.addEventListener('change', updateCelestialTarget);
+  </script>
+</body>
+</html>
