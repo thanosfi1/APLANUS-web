@@ -1694,9 +1694,9 @@
     }
 
     // ==========================================
-    // ΡΥΘΜΙΣΗ WEB PUSH NOTIFICATIONS ΜΕΣΩ BACKEND
+    // ΡΥΘΜΙΣΗ WEB PUSH NOTIFICATIONS & ΣΥΓΧΡΟΝΙΣΜΟΥ
     // ==========================================
-   const PUBLIC_VAPID_KEY = "BCmOZp7hQTWFSfJhJ9I3n61e9S69zge2y1IpYYpFd7CJrpIGoAnQAzKE2IQK4kNwGnLteNo5-1ndD1mI9A-X164";
+    const PUBLIC_VAPID_KEY = "BCmOZp7hQTWFSfJhJ9I3n61e9S69zge2y1IpYYpFd7CJrpIGoAnQAzKE2IQK4kNwGnLteNo5-1ndD1mI9A-X164";
     const SERVER_URL = "https://aplanus-server.onrender.com";
 
     function urlBase64ToUint8Array(base64String) {
@@ -1766,6 +1766,21 @@
     }
 
     btnNotify.addEventListener('click', setupNotifications);
+
+    // Αποστολή των έτοιμων ωρών ανατολής στον Render server
+    async function syncPlanetsWithServer(scheduleList) {
+      if (!navigator.onLine || !scheduleList || scheduleList.length === 0) return;
+      try {
+        await fetch(`${SERVER_URL}/api/sync-schedule`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ schedule: scheduleList })
+        });
+        console.log('Συγχρονίστηκαν επιτυχώς όλες οι ανατολές με τον server!');
+      } catch (err) {
+        console.warn('Σφάλμα κατά τον συγχρονισμό με τον server:', err);
+      }
+    }
 
     function calculateSky() {
       if (typeof Astronomy === "undefined") return;
@@ -1961,6 +1976,8 @@
 
       // 3. PLANETS & MINOR BODIES
       const planetsContainer = document.getElementById('planetsContainer');
+      const scheduleToSync = [];
+
       if (planetsContainer) {
         planetsContainer.innerHTML = '';
 
@@ -1997,6 +2014,13 @@
 
             const eq = Astronomy.Equator(body, evaluationTime, observer, true, true);
             hor = Astronomy.Horizon(evaluationTime, observer, eq.ra, eq.dec, 'normal');
+          }
+
+          if (rise && rise.date) {
+            scheduleToSync.push({
+              name: planet.name,
+              riseTimestamp: rise.date.getTime()
+            });
           }
 
           const isUp = hor.altitude > 0;
@@ -2087,6 +2111,11 @@
           `;
           planetsContainer.appendChild(card);
         });
+
+        // Αυτόματος συγχρονισμός με τον backend server σε πραγματικό χρόνο
+        if (!userManualTime && scheduleToSync.length > 0) {
+          syncPlanetsWithServer(scheduleToSync);
+        }
       }
 
       drawSkyDome(visibleBodiesForMap);
