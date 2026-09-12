@@ -58,6 +58,96 @@
       user-select: none;
     }
 
+    /* Μενού Τρεις Παύλες (Hamburger) */
+    .top-header-bar {
+      position: relative;
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .menu-btn-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 50;
+    }
+
+    .btn-menu {
+      background: rgba(16, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: var(--accent-cyan);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+    }
+    .btn-menu:hover {
+      background: rgba(56, 189, 248, 0.2);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+    }
+    .btn-menu span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--accent-cyan);
+      border-radius: 2px;
+      transition: all 0.2s ease;
+    }
+
+    /* Αναπτυσσόμενο Μενού (Dropdown) */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 52px;
+      left: 0;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid var(--accent-cyan);
+      border-radius: 16px;
+      padding: 8px;
+      min-width: 230px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.7), var(--glow-cyan);
+      backdrop-filter: blur(16px);
+      z-index: 100;
+      animation: menuFadeIn 0.2s ease forwards;
+    }
+    .dropdown-menu.show {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    @keyframes menuFadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #f1f5f9;
+      text-decoration: none;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.84rem;
+      transition: all 0.2s ease;
+    }
+    .dropdown-item:hover {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+    }
+
     #offlineBanner {
       display: none;
       width: 100%;
@@ -200,9 +290,6 @@
       font-size: 0.75rem;
       cursor: pointer;
       transition: all 0.2s ease;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
     }
     .btn-action:hover {
       background: rgba(56, 189, 248, 0.3);
@@ -212,11 +299,6 @@
       background: rgba(245, 158, 11, 0.2);
       border-color: rgba(245, 158, 11, 0.4);
       color: #fde047;
-    }
-    .btn-planets {
-      background: rgba(192, 132, 252, 0.2);
-      border-color: rgba(192, 132, 252, 0.5);
-      color: #d8b4fe;
     }
 
     .stargazing-panel {
@@ -900,17 +982,34 @@
   </div>
 
   <div class="container">
-    <header>
-      <h1>APLANUS</h1>
-      <div class="header-badges">
-        <span class="badge" id="seasonBadge">ΕΠΟΧΗ: --</span>
-      </div>
-      <p class="season-events" id="seasonEvents">
-        Επόμενη Ισημερία: --<br/>Επόμενο Ηλιοστάσιο: --
-      </p>
-    </header>
+    
+    <!-- Επάνω μπάρα με Κουμπί Μενού (☰) -->
+    <div class="top-header-bar">
+      <div class="menu-btn-wrap">
+        <button type="button" class="btn-menu" id="menuToggleBtn" title="Μενού Επιλογών">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-    <div class="controls-panel">
+        <div class="dropdown-menu" id="appDropdownMenu">
+          <a href="planets.html" class="dropdown-item">🪐 Πλανήτες & Δορυφόροι</a>
+          <a href="nebulae.html" class="dropdown-item">🌌 Νεφελώματα & Μαιευτήρια</a>
+        </div>
+      </div>
+
+      <header style="margin-bottom: 0;">
+        <h1>APLANUS</h1>
+        <div class="header-badges">
+          <span class="badge" id="seasonBadge">ΕΠΟΧΗ: --</span>
+        </div>
+        <p class="season-events" id="seasonEvents">
+          Επόμενη Ισημερία: --<br/>Επόμενο Ηλιοστάσιο: --
+        </p>
+      </header>
+    </div>
+
+    <div class="controls-panel" style="margin-top: 20px;">
       <div class="control-group">
         <label for="citySelect">Τοποθεσία:</label>
         <select id="citySelect">
@@ -936,7 +1035,6 @@
 
       <button type="button" class="btn-action" id="btnResetNow">Επαναφορά</button>
       <button type="button" class="btn-action btn-notify" id="btnNotify">🔔 Ειδοποιήσεις</button>
-      <a href="planets.html" class="btn-action btn-planets">🪐 Πλανήτες</a>
     </div>
 
     <section class="stargazing-panel">
@@ -1219,7 +1317,6 @@
       Pluto: { a: 39.48, e: 0.249, I: 17.16, L0: 238.9, w: 113.8, node: 110.3, periodDays: 90560,  H: -0.7, G: 0.15 }
     };
 
-    // Κατάλογος φωτεινών αστέρων για δυναμικό υπολογισμό ορατότητας
     const BRIGHT_STARS_CATALOG = [
       { name: "Σείριος (Sirius)", const: "Μέγας Κύων", ra: 6.7525, dec: -16.7161, mag: -1.46, ly: "8.6", grad: "radial-gradient(circle at 35% 35%, #ffffff, #7dd3fc, #0284c7)" },
       { name: "Αρκτούρος (Arcturus)", const: "Βοώτης", ra: 14.261, dec: 19.182, mag: -0.05, ly: "37", grad: "radial-gradient(circle at 35% 35%, #ffedd5, #f97316, #c2410c)" },
@@ -1385,6 +1482,21 @@
     const heroRise = document.getElementById('heroRise');
     const heroSet = document.getElementById('heroSet');
     const swipeHintLabel = document.getElementById('swipeHintLabel');
+
+    // Χειρισμός Hamburger Μενού
+    const menuToggleBtn = document.getElementById('menuToggleBtn');
+    const appDropdownMenu = document.getElementById('appDropdownMenu');
+
+    menuToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      appDropdownMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!menuToggleBtn.contains(e.target) && !appDropdownMenu.contains(e.target)) {
+        appDropdownMenu.classList.remove('show');
+      }
+    });
 
     function checkConnectionStatus() {
       if (!navigator.onLine) {
@@ -1775,7 +1887,6 @@
 
     btnNotify.addEventListener('click', setupNotifications);
 
-    // Αποστολή των έτοιμων ωρών ανατολής στον Render server
     async function syncPlanetsWithServer(scheduleList) {
       if (!navigator.onLine || !scheduleList || scheduleList.length === 0) return;
       try {
@@ -1866,12 +1977,11 @@
             azimuth: hor.azimuth
           };
         })
-        .filter(star => star.altitude > 5) // Μόνο όσα είναι πάνω από τον ορίζοντα
-        .sort((a, b) => a.mag - b.mag)     // Ταξινόμηση από το λαμπρότερο στο αμυδρότερο
-        .slice(0, 3);                      // Επιλογή των 3 κορυφαίων
+        .filter(star => star.altitude > 5)
+        .sort((a, b) => a.mag - b.mag)
+        .slice(0, 3);
 
         if (visibleStars.length === 0) {
-          // Αν είναι μέρα ή δεν βρέθηκε κάποιο, fallback στα κορυφαία του καταλόγου
           visibleStars.push(...BRIGHT_STARS_CATALOG.slice(0, 3).map(s => ({ ...s, altitude: 0 })));
         }
 
@@ -2141,7 +2251,6 @@
           planetsContainer.appendChild(card);
         });
 
-        // Αυτόματος συγχρονισμός με τον backend server σε πραγματικό χρόνο
         if (!userManualTime && scheduleToSync.length > 0) {
           syncPlanetsWithServer(scheduleToSync);
         }
