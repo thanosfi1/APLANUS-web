@@ -238,6 +238,19 @@
       color: var(--accent-cyan);
     }
 
+    .scroll-end-note {
+      grid-column: 1 / -1;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      text-align: center;
+      font-style: italic;
+      margin-top: 4px;
+    }
+
     #imageModal {
       display: none;
       position: fixed;
@@ -495,12 +508,12 @@
                   </div>
                 </div>
               `).join('')}
+              ${p.moonsCount > p.moons.length ? `
+                <div class="scroll-end-note">
+                  * Οι υπόλοιποι ${p.moonsCount - p.moons.length} δορυφόροι είναι μικρά ακανόνιστα θραύσματα πάγου (2-5 χλμ) χωρίς φωτογραφική χαρτογράφηση.
+                </div>
+              ` : ''}
             </div>
-            ${p.moonsCount > p.moons.length ? `
-              <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 10px; font-style: italic;">
-                * Οι υπόλοιποι ${p.moonsCount - p.moons.length} δορυφόροι είναι μικρά ακανόνιστα θραύσματα πάγου (2-5 χλμ) χωρίς φωτογραφική χαρτογράφηση.
-              </p>
-            ` : ''}
           </div>
         `;
       } else {
