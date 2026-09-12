@@ -36,6 +36,27 @@
       --glow-neon: 0 0 25px rgba(99, 102, 241, 0.3);
     }
 
+    /* Red Shift Mode (Night Vision) */
+    body.night-vision {
+      --bg-dark: #060000;
+      --card-bg: rgba(28, 4, 4, 0.85);
+      --card-border: rgba(239, 68, 68, 0.35);
+      --accent-cyan: #ef4444;
+      --accent-neon: #b91c1c;
+      --accent-purple: #dc2626;
+      --accent-gold: #f87171;
+      --text-main: #fca5a5;
+      --text-muted: #991b1b;
+      --glow-cyan: 0 0 25px rgba(239, 68, 68, 0.4);
+      --glow-neon: 0 0 25px rgba(185, 28, 28, 0.35);
+    }
+
+    body.night-vision img,
+    body.night-vision canvas,
+    body.night-vision svg {
+      filter: sepia(100%) hue-rotate(315deg) saturate(450%) brightness(80%);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -54,6 +75,7 @@
       position: relative;
       overflow-x: hidden;
       user-select: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .top-header-bar {
@@ -73,9 +95,16 @@
       z-index: 50;
     }
 
-    .btn-menu {
+    .settings-btn-wrap {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 50;
+    }
+
+    .btn-icon-top {
       background: rgba(16, 23, 42, 0.85);
-      border: 1px solid rgba(56, 189, 248, 0.4);
+      border: 1px solid var(--accent-cyan);
       color: var(--accent-cyan);
       width: 44px;
       height: 44px;
@@ -84,12 +113,12 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 5px;
       cursor: pointer;
       backdrop-filter: blur(10px);
       transition: all 0.2s ease;
+      font-size: 1.25rem;
     }
-    .btn-menu:hover {
+    .btn-icon-top:hover {
       background: rgba(56, 189, 248, 0.2);
       box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
     }
@@ -99,7 +128,7 @@
       height: 2px;
       background: var(--accent-cyan);
       border-radius: 2px;
-      transition: all 0.2s ease;
+      margin: 2px 0;
     }
 
     .dropdown-menu {
@@ -122,6 +151,28 @@
       flex-direction: column;
       gap: 4px;
     }
+
+    .settings-menu {
+      display: none;
+      position: absolute;
+      top: 52px;
+      right: 0;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid var(--accent-cyan);
+      border-radius: 16px;
+      padding: 16px;
+      min-width: 260px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.7), var(--glow-cyan);
+      backdrop-filter: blur(16px);
+      z-index: 100;
+      animation: menuFadeIn 0.2s ease forwards;
+    }
+    .settings-menu.show {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
     @keyframes menuFadeIn {
       from { opacity: 0; transform: translateY(-6px); }
       to { opacity: 1; transform: translateY(0); }
@@ -141,6 +192,62 @@
     .dropdown-item:hover {
       background: rgba(56, 189, 248, 0.15);
       color: var(--accent-cyan);
+    }
+
+    .settings-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      color: var(--accent-cyan);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 8px;
+    }
+
+    .setting-toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.84rem;
+      color: #f1f5f9;
+    }
+
+    /* Toggle Switch Switch */
+    .switch-wrap {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .switch-wrap input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 255, 255, 0.2);
+      transition: 0.3s;
+      border-radius: 24px;
+    }
+    .switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    input:checked + .switch-slider {
+      background-color: #ef4444;
+    }
+    input:checked + .switch-slider:before {
+      transform: translateX(20px);
     }
 
     #offlineBanner {
@@ -222,8 +329,8 @@
       padding: 6px 16px;
       border-radius: 50px;
       background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      color: #7dd3fc;
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
       text-transform: uppercase;
     }
     .season-events {
@@ -291,14 +398,20 @@
       color: #fff;
     }
     .btn-notify {
+      width: 100%;
       background: rgba(245, 158, 11, 0.2);
-      border-color: rgba(245, 158, 11, 0.4);
+      border: 1px solid rgba(245, 158, 11, 0.4);
       color: #fde047;
+      padding: 10px;
+      border-radius: 10px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      cursor: pointer;
     }
 
     .stargazing-panel {
       background: linear-gradient(135deg, rgba(16, 23, 42, 0.9), rgba(15, 23, 42, 0.6));
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      border: 1px solid var(--accent-cyan);
       border-radius: 20px;
       padding: 24px;
       margin: 0 auto 28px auto;
@@ -979,8 +1092,9 @@
   <div class="container">
     
     <div class="top-header-bar">
+      <!-- Μενού Επιλογών (Αριστερά) -->
       <div class="menu-btn-wrap">
-        <button type="button" class="btn-menu" id="menuToggleBtn" title="Μενού Επιλογών">
+        <button type="button" class="btn-icon-top btn-menu" id="menuToggleBtn" title="Μενού Επιλογών">
           <span></span>
           <span></span>
           <span></span>
@@ -1001,6 +1115,27 @@
           Επόμενη Ισημερία: --<br/>Επόμενο Ηλιοστάσιο: --
         </p>
       </header>
+
+      <!-- Ρυθμίσεις (Δεξιά) -->
+      <div class="settings-btn-wrap">
+        <button type="button" class="btn-icon-top" id="settingsToggleBtn" title="Ρυθμίσεις">⚙️</button>
+
+        <div class="settings-menu" id="appSettingsMenu">
+          <div class="settings-title">ΡΥΘΜΙΣΕΙΣ</div>
+          
+          <div class="setting-toggle-row">
+            <span>Νυχτερινή Όραση (Red Shift)</span>
+            <label class="switch-wrap">
+              <input type="checkbox" id="nightVisionToggle" />
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px;">
+            <button type="button" class="btn-notify" id="btnNotify">🔔 Ειδοποιήσεις</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="controls-panel" style="margin-top: 20px;">
@@ -1028,7 +1163,6 @@
       </div>
 
       <button type="button" class="btn-action" id="btnResetNow">Επαναφορά</button>
-      <button type="button" class="btn-action btn-notify" id="btnNotify">🔔 Ειδοποιήσεις</button>
     </div>
 
     <section class="stargazing-panel">
@@ -1479,15 +1613,44 @@
 
     const menuToggleBtn = document.getElementById('menuToggleBtn');
     const appDropdownMenu = document.getElementById('appDropdownMenu');
+    const settingsToggleBtn = document.getElementById('settingsToggleBtn');
+    const appSettingsMenu = document.getElementById('appSettingsMenu');
+    const nightVisionToggle = document.getElementById('nightVisionToggle');
+
+    // Αποθηκευμένη ρύθμιση Red Shift Mode
+    if (localStorage.getItem('aplanus_night_vision') === 'true') {
+      document.body.classList.add('night-vision');
+      nightVisionToggle.checked = true;
+    }
+
+    nightVisionToggle.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        document.body.classList.add('night-vision');
+        localStorage.setItem('aplanus_night_vision', 'true');
+      } else {
+        document.body.classList.remove('night-vision');
+        localStorage.setItem('aplanus_night_vision', 'false');
+      }
+    });
 
     menuToggleBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       appDropdownMenu.classList.toggle('show');
+      appSettingsMenu.classList.remove('show');
+    });
+
+    settingsToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      appSettingsMenu.classList.toggle('show');
+      appDropdownMenu.classList.remove('show');
     });
 
     document.addEventListener('click', (e) => {
       if (!menuToggleBtn.contains(e.target) && !appDropdownMenu.contains(e.target)) {
         appDropdownMenu.classList.remove('show');
+      }
+      if (!settingsToggleBtn.contains(e.target) && !appSettingsMenu.contains(e.target)) {
+        appSettingsMenu.classList.remove('show');
       }
     });
 
