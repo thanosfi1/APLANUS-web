@@ -134,7 +134,7 @@
       border-radius: 16px;
       object-fit: cover;
       flex-shrink: 0;
-      background: #1e293b;
+      background: #0f172a;
       box-shadow: 0 0 16px rgba(192, 132, 252, 0.3);
       border: 1.5px solid rgba(255, 255, 255, 0.15);
     }
@@ -220,6 +220,7 @@
       color: var(--accent-cyan);
     }
 
+    /* Modal / Lightbox */
     #imageModal {
       display: none;
       position: fixed;
@@ -258,6 +259,7 @@
       object-fit: cover;
       margin: 0 auto 16px auto;
       display: block;
+      background: #0f172a;
       border: 1.5px solid var(--accent-purple);
       box-shadow: 0 0 25px rgba(192, 132, 252, 0.4);
     }
@@ -307,7 +309,7 @@
 
   <div id="imageModal">
     <div class="modal-box">
-      <img id="modalImg" class="modal-preview-img" src="" alt="Zoom" />
+      <img id="modalImg" class="modal-preview-img" src="" alt="" referrerpolicy="no-referrer" />
       <h3 id="modalTitle" class="modal-title">--</h3>
       <p id="modalDesc" class="modal-desc">--</p>
       <button type="button" class="btn-close-modal" id="btnCloseModal">Κλείσιμο</button>
@@ -322,7 +324,8 @@
         constellation: "Ωρίων",
         dist: "1.344 έτη φωτός",
         type: "Διάχυτο Νεφέλωμα Εκπομπής",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Orion_Nebula_-_Hubble_2006_mosaic_18000.jpg/1200px-Orion_Nebula_-_Hubble_2006_mosaic_18000.jpg",
+        img: "https://cdn.eso.org/images/screen/eso0603a.jpg",
+        fallbackImg: "https://hubblesite.org/files/live/sites/hubble/files/home/science/stars-and-nebulae/_images/hs-2006-01-a-1440_web.jpg",
         bornBodies: "Το διάσημο σμήνος Trapezium (Τραπέζιο) με 4 γιγάντια υπέρλαμπρα άστρα τύπου O και B. Επίσης, τα τηλεσκόπια Hubble και JWST έχουν εντοπίσει πάνω από 150 πρωτοπλανητικούς δίσκους (proplyds) — ολόκληρα ηλιακά συστήματα και πλανήτες που βρίσκονται στη διαδικασία γέννησης.",
         facts: ["Ηλικία: ~3 εκατ. έτη", "Διάμετρος: 24 έτη φωτός", "Ορατό και με γυμνό μάτι κάτω από τη ζώνη του Ωρίωνα"]
       },
@@ -332,7 +335,8 @@
         constellation: "Όφις",
         dist: "7.000 έτη φωτός",
         type: "Νεφέλωμα Εκπομπής & Ανοικτό Σμήνος",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pillars_of_creation_2014_HST_WFC3-UVIS_full-res_denoised.jpg/1200px-Pillars_of_creation_2014_HST_WFC3-UVIS_full-res_denoised.jpg",
+        img: "https://cdn.eso.org/images/screen/eso0926a.jpg",
+        fallbackImg: "https://cdn.eso.org/images/screen/eso1501a.jpg",
         bornBodies: "Μέσα στους περίφημους Πυλώνες της Δημιουργίας γεννιούνται δεκάδες νεαροί αστέρες τύπου T-Tauri. Στην κορυφή των πυλώνων βρίσκονται τα EGGs (Evaporating Gaseous Globules), θύλακες πυκνού αερίου μέσα στους οποίους σχηματίζονται πρωτοαστέρες και πρωτοπλανήτες.",
         facts: ["Εμβληματική λήψη Hubble & JWST", "Μήκος πυλώνων: 4-5 έτη φωτός", "Φιλοξενεί το αστρικό σμήνος NGC 6611"]
       },
@@ -342,7 +346,8 @@
         constellation: "Τρόπις (Carina)",
         dist: "8.500 έτη φωτός",
         type: "Γιγάντιο Νεφέλωμα Εκπομπής",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Carina_Nebula.jpg/1200px-Carina_Nebula.jpg",
+        img: "https://cdn.eso.org/images/screen/eso1208a.jpg",
+        fallbackImg: "https://cdn.eso.org/images/screen/eso0905a.jpg",
         bornBodies: "Φιλοξενεί το υπερμεγέθες και ασταθές άστρο Ήτα Καρίνας (Eta Carinae) — με μάζα 100+ φορές μεγαλύτερη από τον Ήλιο — καθώς και το σμήνος Trumpler 14. Στους «Κοσμικούς Γκρεμούς» (Cosmic Cliffs) το τηλεσκόπιο Webb φωτογράφισε εκατοντάδες νεογέννητα άστρα και δίσκους πλανητογένεσης.",
         facts: ["4 φορές μεγαλύτερο και λαμπρότερο από τον Ωρίωνα", "Διάμετρος: 460 έτη φωτός", "Εξαιρετικά έντονοι αστρικοί άνεμοι"]
       },
@@ -352,7 +357,8 @@
         constellation: "Ωρίων",
         dist: "1.375 έτη φωτός",
         type: "Σκοτεινό Νεφέλωμα Απορρόφησης",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Hubble_Sees_a_Horsehead_of_a_Different_Color.jpg/1200px-Hubble_Sees_a_Horsehead_of_a_Different_Color.jpg",
+        img: "https://cdn.eso.org/images/screen/eso0202a.jpg",
+        fallbackImg: "https://cdn.eso.org/images/screen/eso1303a.jpg",
         bornBodies: "Πρόκειται για ένα εξαιρετικά πυκνό νέφος σκόνης και αερίων που προβάλλεται μπροστά από το ιονισμένο νεφέλωμα IC 434. Στο εσωτερικό του σχηματίζονται αυτή τη στιγμή αστέρες μικρής μάζας και καφέ νάνοι (αποτυχημένα άστρα).",
         facts: ["Ανακαλύφθηκε το 1888 από τη Williamina Fleming", "Το σχήμα του οφείλεται σε σκοτεινή διαστρική σκόνη", "Σταδιακά διαβρώνεται από υπεριώδη ακτινοβολία"]
       },
@@ -362,7 +368,8 @@
         constellation: "Τοξότης",
         dist: "4.100 έτη φωτός",
         type: "Γιγάντιο Νέφος Ιονισμένου Αερίου",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Lagoon_Nebula.jpg/1200px-Lagoon_Nebula.jpg",
+        img: "https://cdn.eso.org/images/screen/eso1403a.jpg",
+        fallbackImg: "https://cdn.eso.org/images/screen/eso0936a.jpg",
         bornBodies: "Στο κέντρο του γεννήθηκε ο υπεργίγαντας Herschel 36, του οποίου η υπεριώδης ακτινοβολία σμιλεύει το νεφέλωμα. Φιλοξενεί επίσης το νεαρό αστρικό σμήνος NGC 6530 και πολυάριθμα σφαιρίδια Bok (συμπυκνώσεις αερίων που καταρρέουν σχηματίζοντας νέα ηλιακά συστήματα).",
         facts: ["Διάμετρος: 110 x 50 έτη φωτός", "Εύκολα ορατό με κιάλια το καλοκαίρι", "Περιέχει τη δομή «Κλεψύδρα»"]
       },
@@ -371,8 +378,9 @@
         catalog: "Messier 20 / NGC 6514",
         constellation: "Τοξότης",
         dist: "5.200 έτη φωτός",
-        type: "Σύνθετο Νεφέλωμα (Εκπομπής, Ανάκλασης & Σκοτεινό)",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Trifid_Nebula_by_Deddy_Dayag.jpg/1200px-Trifid_Nebula_by_Deddy_Dayag.jpg",
+        type: "Σύνθετο Νεφέλωμα (Εκπομπής & Ανάκλασης)",
+        img: "https://cdn.eso.org/images/screen/eso0930a.jpg",
+        fallbackImg: "https://cdn.eso.org/images/screen/eso1332a.jpg",
         bornBodies: "Περιέχει ένα κεντρικό τριπλό αστρικό σύστημα που τροφοδοτεί με φως το νεφέλωμα. Στα σκοτεινά κανάλια σκόνης γεννιούνται πρωτοαστέρες που εκτοξεύουν αστρικούς πίδακες (stellar jets) μήκους τρισεκατομμυρίων χιλιομέτρων.",
         facts: ["Χωρίζεται σε 3 διακριτούς λοβούς", "Συνδυάζει ροζ αέριο εκπομπής και μπλε σκόνη ανάκλασης", "Ανακαλύφθηκε από τον Guillaume Le Gentil το 1747"]
       },
@@ -382,7 +390,8 @@
         constellation: "Ταύρος",
         dist: "6.500 έτη φωτός",
         type: "Υπόλειμμα Υπερκαινοφανούς (Supernova)",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Crab_Nebula.jpg/1200px-Crab_Nebula.jpg",
+        img: "https://cdn.eso.org/images/screen/eso9948a.jpg",
+        fallbackImg: "https://cdn.eso.org/images/screen/eso2309a.jpg",
         bornBodies: "Το απομεινάρι του ιστορικού υπερκαινοφανούς αστέρα του 1054 μ.Χ. Στην καρδιά του γεννήθηκε ένας εξωτικός Αστέρας Νετρονίων (Crab Pulsar), ο οποίος περιστρέφεται 30 φορές το δευτερόλεπτο και εκπέμπει ακτινοβολία από ραδιοκύματα μέχρι ακτίνες γάμμα.",
         facts: ["Διαστελλεται με ταχύτητα 1.500 χλμ/δευτερόλεπτο", "Πρώτο αντικείμενο στον κατάλογο Messier", "Εμπλουτίζει το διάστημα με βαρέα χημικά στοιχεία"]
       },
@@ -392,7 +401,8 @@
         constellation: "Λύρα",
         dist: "2.570 έτη φωτός",
         type: "Πλανητικό Νεφέλωμα",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/M57_The_Ring_Nebula.jpg/1200px-M57_The_Ring_Nebula.jpg",
+        img: "https://cdn.eso.org/images/screen/eso1328a.jpg",
+        fallbackImg: "https://cdn.eso.org/images/screen/eso9845a.jpg",
         bornBodies: "Δημιουργήθηκε όταν ένα άστρο σαν τον Ήλιο απέβαλε τα εξωτερικά του στρώματα. Στο κέντρο γεννήθηκε ένας υπέρθερμος Λευκός Νάνος (White Dwarf), το πυρακτωμένο απομεινάρι του πυρήνα του, που ακτινοβολεί σε θερμοκρασία άνω των 100.000°C.",
         facts: ["Διάσημο κυκλικό σχήμα σαν δαχτυλίδι", "Εξαιρετικός στόχος για ερασιτεχνικά τηλεσκόπια", "Δείχνει τη μελλοντική μοίρα του Ήλιου μας"]
       },
@@ -402,7 +412,8 @@
         constellation: "Αλώπηξ (Vulpecula)",
         dist: "1.360 έτη φωτός",
         type: "Πλανητικό Νεφέλωμα",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/M27_-_Dumbbell_Nebula.jpg/1200px-M27_-_Dumbbell_Nebula.jpg",
+        img: "https://cdn.eso.org/images/screen/eso9846a.jpg",
+        fallbackImg: "https://cdn.eso.org/images/screen/eso0034a.jpg",
         bornBodies: "Το πρώτο πλανητικό νεφέλωμα που ανακαλύφθηκε στην ιστορία (Charles Messier, 1764). Στο κέντρο του βρίσκεται ο μεγαλύτερος γνωστός λευκός νάνος, ο οποίος ιονίζει τα αέρια δημιουργώντας τη χαρακτηριστική διπολική μορφή αλτήρα.",
         facts: ["Ηλικία: ~10.000 έτη", "Πολύ φωτεινό και ευδιάκριτο με μικρά τηλεσκόπια", "Διάμετρος: ~3 έτη φωτός"]
       },
@@ -412,7 +423,8 @@
         constellation: "Υδροχόος",
         dist: "650 έτη φωτός",
         type: "Πλανητικό Νεφέλωμα",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/NGC7293_%282004%29.jpg/1200px-NGC7293_%282004%29.jpg",
+        img: "https://cdn.eso.org/images/screen/eso0907a.jpg",
+        fallbackImg: "https://cdn.eso.org/images/screen/eso1205a.jpg",
         bornBodies: "Το πλησιέστερο στη Γη πλανητικό νεφέλωμα. Περιέχει χιλιάδες «κομητικές κεφαλές» (κομβία συμπυκνωμένου αερίου με ουρές στραμμένες μακριά από τον κεντρικό λευκό νάνο), μέσα στις οποίες διατηρούνται μόρια νερού και οργανικές ενώσεις.",
         facts: ["Γνωστό ως «Το Μάτι του Θεού»", "Καλύπτει στον ουρανό έκταση ίση με τη μισή Πανσέληνο", "Απόσταση: μόλις 650 έτη φωτός"]
       },
@@ -422,7 +434,8 @@
         constellation: "Δοράς (Μεγάλο Νέφος Μαγγελάνου)",
         dist: "160.000 έτη φωτός",
         type: "Υπεργιγάντιο Αστρικό Μαιευτήριο",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Tarantula_Nebula_TRAPPIST.jpg/1200px-Tarantula_Nebula_TRAPPIST.jpg",
+        img: "https://cdn.eso.org/images/screen/eso1802a.jpg",
+        fallbackImg: "https://cdn.eso.org/images/screen/eso0640a.jpg",
         bornBodies: "Το πιο δραστήριο και ενεργό αστρικό μαιευτήριο σε ολόκληρη την Τοπική Ομάδα Γαλαξιών. Περιλαμβάνει το σμήνος R136, όπου γεννήθηκε το άστρο R136a1 — το πιο ογκώδες και λαμπρό άστρο που έχει παρατηρηθεί ποτέ στο σύμπαν (250+ ηλιακές μάζες).",
         facts: ["Αν ήταν στην απόσταση του Ωρίωνα, θα κάλυπτε τον μισό ουρανό", "Φιλοξένησε τον υπερκαινοφανή SN 1987A", "Εξωγαλαξιακό αντικείμενο"]
       },
@@ -432,7 +445,8 @@
         constellation: "Κύκνος",
         dist: "2.400 έτη φωτός",
         type: "Υπόλειμμα Υπερκαινοφανούς",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/The_Veil_Nebula_HST.jpg/1200px-The_Veil_Nebula_HST.jpg",
+        img: "https://cdn.eso.org/images/screen/eso0032a.jpg",
+        fallbackImg: "https://cdn.eso.org/images/screen/eso1537a.jpg",
         bornBodies: "Τα νήματα αερίου δημιουργήθηκαν πριν από 20.000 χρόνια όταν ένα άστρο με μάζα 20 φορές μεγαλύτερη από τον Ήλιο εξερράγη. Το ωστικό κύμα συμπιέζει τα γύρω διαστρικά νέφη, πυροδοτώντας τη γέννηση επόμενης γενιάς άστρων εμπλουτισμένων με σίδηρο, άνθρακα και οξυγόνο.",
         facts: ["Τεράστια έκταση 3 μοιρών στον ουρανό", "Αποτελείται από λεπτεπίλεπτα φωτεινά νήματα αερίου", "Ανακαλύφθηκε από τον William Herschel το 1784"]
       }
@@ -445,7 +459,12 @@
     const modalDesc = document.getElementById('modalDesc');
     const btnCloseModal = document.getElementById('btnCloseModal');
 
-    function openImagePreview(name, desc, imgSrc) {
+    function openImagePreview(name, desc, imgSrc, fallbackSrc) {
+      modalImg.onerror = function() {
+        if (fallbackSrc && this.src !== fallbackSrc) {
+          this.src = fallbackSrc;
+        }
+      };
       modalImg.src = imgSrc;
       modalTitle.textContent = name;
       modalDesc.innerHTML = desc;
@@ -464,7 +483,12 @@
       card.innerHTML = `
         <div class="nebula-main-row">
           <div class="nebula-left">
-            <img src="${neb.img}" alt="${neb.name}" class="nebula-avatar-img" onclick="event.stopPropagation(); openImagePreview('${neb.name.replace(/'/g, "\\'")}', '<strong>Αστερισμός:</strong> ${neb.constellation}<br/><strong>Απόσταση:</strong> ${neb.dist}<br/><br/>${neb.bornBodies.replace(/'/g, "\\'")}', '${neb.img}')" />
+            <img src="${neb.img}" 
+                 alt="${neb.name}" 
+                 class="nebula-avatar-img" 
+                 referrerpolicy="no-referrer"
+                 onerror="if(this.src!=='${neb.fallbackImg}'){this.src='${neb.fallbackImg}';}"
+                 onclick="event.stopPropagation(); openImagePreview('${neb.name.replace(/'/g, "\\'")}', '<strong>Αστερισμός:</strong> ${neb.constellation}<br/><strong>Απόσταση:</strong> ${neb.dist}<br/><br/>${neb.bornBodies.replace(/'/g, "\\'")}', '${neb.img}', '${neb.fallbackImg}')" />
             <div class="nebula-meta">
               <h3>${neb.name}</h3>
               <p>${neb.constellation} • Απόσταση: ${neb.dist}</p>
