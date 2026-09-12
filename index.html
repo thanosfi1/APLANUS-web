@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>APLANUS | Αστρονομικός Παρατηρητής</title>
   
-  <!-- Ρυθμίσεις για iPhone (iOS Standalone PWA) -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="APLANUS">
@@ -20,7 +19,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
-  <!-- Αστρονομική Μηχανή Υπολογισμών -->
   <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
 
   <style>
@@ -58,7 +56,6 @@
       user-select: none;
     }
 
-    /* Μενού Τρεις Παύλες (Hamburger) */
     .top-header-bar {
       position: relative;
       width: 100%;
@@ -105,7 +102,6 @@
       transition: all 0.2s ease;
     }
 
-    /* Αναπτυσσόμενο Μενού (Dropdown) */
     .dropdown-menu {
       display: none;
       position: absolute;
@@ -115,7 +111,7 @@
       border: 1px solid var(--accent-cyan);
       border-radius: 16px;
       padding: 8px;
-      min-width: 230px;
+      min-width: 180px;
       box-shadow: 0 12px 35px rgba(0,0,0,0.7), var(--glow-cyan);
       backdrop-filter: blur(16px);
       z-index: 100;
@@ -132,16 +128,15 @@
     }
 
     .dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      display: block;
       color: #f1f5f9;
       text-decoration: none;
       padding: 12px 14px;
       border-radius: 10px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.84rem;
+      font-size: 0.88rem;
       transition: all 0.2s ease;
+      letter-spacing: 1px;
     }
     .dropdown-item:hover {
       background: rgba(56, 189, 248, 0.15);
@@ -983,7 +978,6 @@
 
   <div class="container">
     
-    <!-- Επάνω μπάρα με Κουμπί Μενού (☰) -->
     <div class="top-header-bar">
       <div class="menu-btn-wrap">
         <button type="button" class="btn-menu" id="menuToggleBtn" title="Μενού Επιλογών">
@@ -993,8 +987,8 @@
         </button>
 
         <div class="dropdown-menu" id="appDropdownMenu">
-          <a href="planets.html" class="dropdown-item">🪐 Πλανήτες & Δορυφόροι</a>
-          <a href="nebulae.html" class="dropdown-item">🌌 Νεφελώματα & Μαιευτήρια</a>
+          <a href="planets.html" class="dropdown-item">Πλανήτες</a>
+          <a href="nebulae.html" class="dropdown-item">Νεφελώματα</a>
         </div>
       </div>
 
@@ -1483,7 +1477,6 @@
     const heroSet = document.getElementById('heroSet');
     const swipeHintLabel = document.getElementById('swipeHintLabel');
 
-    // Χειρισμός Hamburger Μενού
     const menuToggleBtn = document.getElementById('menuToggleBtn');
     const appDropdownMenu = document.getElementById('appDropdownMenu');
 
@@ -1813,9 +1806,6 @@
       }
     }
 
-    // ==========================================
-    // ΡΥΘΜΙΣΗ WEB PUSH NOTIFICATIONS & ΣΥΓΧΡΟΝΙΣΜΟΥ
-    // ==========================================
     const PUBLIC_VAPID_KEY = "BCmOZp7hQTWFSfJhJ9I3n61e9S69zge2y1IpYYpFd7CJrpIGoAnQAzKE2IQK4kNwGnLteNo5-1ndD1mI9A-X164";
     const SERVER_URL = "https://aplanus-server.onrender.com";
 
@@ -1964,7 +1954,6 @@
 
       const observer = new Astronomy.Observer(currentCoords.lat, currentCoords.lon, 0);
 
-      // Υπολογισμός των 3 Φωτεινότερων Αστεριών που είναι πραγματικά ορατά απόψε
       const starsContainer = document.getElementById('seasonalStarsContainer');
       if (starsContainer) {
         starsContainer.innerHTML = '';
@@ -2018,7 +2007,6 @@
 
       const visibleBodiesForMap = [];
 
-      // 1. MOON
       const moonIllum = Astronomy.Illumination(Astronomy.Body.Moon, evaluationTime);
       const moonPhaseAngle = Astronomy.MoonPhase(evaluationTime);
       const percentIllum = Math.round(moonIllum.phase_fraction * 100);
@@ -2054,7 +2042,6 @@
         });
       }
 
-      // 2. SUN
       const sunRise = Astronomy.SearchRiseSet(Astronomy.Body.Sun, observer, +1, startOfDay, 1);
       const sunSet  = Astronomy.SearchRiseSet(Astronomy.Body.Sun, observer, -1, startOfDay, 1);
       cachedSunTimes.rise = formatTime(sunRise);
@@ -2113,7 +2100,6 @@
         heroSet.textContent  = cachedMoonTimes.set;
       }
 
-      // 3. PLANETS & MINOR BODIES
       const planetsContainer = document.getElementById('planetsContainer');
       const scheduleToSync = [];
 
