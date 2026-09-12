@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>APLANUS | Νεφελώματα & Αστρικά Μαιευτήρια</title>
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#070913">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #070913;
+      --card-bg: rgba(16, 23, 42, 0.75);
+      --card-border: rgba(99, 102, 241, 0.22);
+      --accent-cyan: #38bdf8;
+      --accent-purple: #c084fc;
+      --accent-gold: #f59e0b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 960px;
+      width: 100%;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .btn-back {
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: var(--accent-cyan);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-back:hover {
+      background: rgba(56, 189, 248, 0.3);
+      color: #fff;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
+      font-weight: 900;
+      text-align: center;
+      background: linear-gradient(135deg, #ffffff 35%, var(--accent-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-bottom: 28px;
+      line-height: 1.4;
+    }
+
+    .nebulae-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .nebula-item {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 18px 20px;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .nebula-item:hover {
+      border-color: var(--accent-purple);
+    }
+
+    .nebula-main-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .nebula-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nebula-avatar-img {
+      width: 62px;
+      height: 62px;
+      border-radius: 16px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #1e293b;
+      box-shadow: 0 0 16px rgba(192, 132, 252, 0.3);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .nebula-meta h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .nebula-meta p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .type-badge {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.74rem;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(192, 132, 252, 0.15);
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      color: #d8b4fe;
+      white-space: nowrap;
+    }
+
+    .nebula-dropdown {
+      display: none;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      animation: fadeIn 0.25s ease forwards;
+    }
+
+    .nebula-dropdown.open {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .born-section {
+      background: rgba(10, 15, 30, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .born-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.82rem;
+      color: var(--accent-gold);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .born-desc {
+      font-size: 0.84rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .detail-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .detail-pill {
+      font-size: 0.74rem;
+      font-family: 'Orbitron', monospace;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-cyan);
+    }
+
+    /* Modal / Lightbox */
+    #imageModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(4, 7, 18, 0.94);
+      backdrop-filter: blur(16px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    #imageModal.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--accent-purple);
+      border-radius: 20px;
+      padding: 22px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      animation: modalPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes modalPop {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-preview-img {
+      width: 100%;
+      max-height: 280px;
+      border-radius: 14px;
+      object-fit: cover;
+      margin: 0 auto 16px auto;
+      display: block;
+      border: 1.5px solid var(--accent-purple);
+      box-shadow: 0 0 25px rgba(192, 132, 252, 0.4);
+    }
+
+    .modal-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.25rem;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .modal-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .btn-close-modal {
+      background: rgba(192, 132, 252, 0.2);
+      border: 1px solid var(--accent-purple);
+      color: #fff;
+      padding: 8px 24px;
+      border-radius: 12px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="top-nav">
+      <a href="index.html" class="btn-back">⬅ Επιστροφή</a>
+    </div>
+
+    <h1>Νεφελώματα & Μαιευτήρια</h1>
+    <p class="subtitle">
+      Τα επιβλητικότερα κοσμικά εργοστάσια παραγωγής νέων άστρων και πλανητών.<br/>
+      Πατήστε σε κάθε νεφέλωμα για να εξερευνήσετε τα σώματα που γεννήθηκαν μέσα του.
+    </p>
+
+    <div class="nebulae-list" id="nebulaeList"></div>
+  </div>
+
+  <div id="imageModal">
+    <div class="modal-box">
+      <img id="modalImg" class="modal-preview-img" src="" alt="Zoom" />
+      <h3 id="modalTitle" class="modal-title">--</h3>
+      <p id="modalDesc" class="modal-desc">--</p>
+      <button type="button" class="btn-close-modal" id="btnCloseModal">Κλείσιμο</button>
+    </div>
+  </div>
+
+  <script>
+    const NEBULAE_DATA = [
+      {
+        name: "Μέγα Νεφέλωμα Ωρίωνα (M42)",
+        catalog: "Messier 42 / NGC 1976",
+        constellation: "Ωρίων",
+        dist: "1.344 έτη φωτός",
+        type: "Διάχυτο Νεφέλωμα Εκπομπής",
+        img: "https://images-assets.nasa.gov/image/PIA08653/PIA08653~orig.jpg",
+        bornBodies: "Το διάσημο σμήνος Trapezium (Τραπέζιο) με 4 γιγάντια υπέρλαμπρα άστρα τύπου O και B. Επίσης, το τηλεσκόπιο Hubble και το JWST έχουν ανακαλύψει μέσα του πάνω από 150 πρωτοπλανητικούς δίσκους (proplyds) — ηλιακά συστήματα και πλανήτες που βρίσκονται στη διαδικασία γέννησης!",
+        facts: ["Ηλικία: ~3 εκατ. έτη", "Διάμετρος: 24 έτη φωτός", "Ορατό και με γυμνό μάτι κάτω από τη ζώνη του Ωρίωνα"]
+      },
+      {
+        name: "Νεφέλωμα Αετού & Πυλώνες της Δημιουργίας (M16)",
+        catalog: "Messier 16 / NGC 6611",
+        constellation: "Όφις",
+        dist: "7.000 έτη φωτός",
+        type: "Νεφέλωμα Εκπομπής & Ανοικτό Σμήνος",
+        img: "https://images-assets.nasa.gov/image/PIA25432/PIA25432~orig.jpg",
+        bornBodies: "Μέσα στους περίφημους «Πυλώνες της Δημιουργίας» (Pillars of Creation) γεννιούνται δεκάδες νεαροί αστέρες τύπου TTauri. Στην κορυφή των πυλώνων βρίσκονται τα λεγόμενα EGGs (Evaporating Gaseous Globules), θύλακες αερίου μέσα στους οποίους σχηματίζονται πρωτοαστέρες και πλανήτες.",
+        facts: ["Εμβληματική λήψη James Webb & Hubble", "Οι πυλώνες έχουν μήκος 4-5 έτη φωτός", "Φιλοξενεί το αστρικό σμήνος NGC 6611"]
+      },
+      {
+        name: "Νεφέλωμα της Καρίνας (Carina Nebula / NGC 3372)",
+        catalog: "NGC 3372",
+        constellation: "Τρόπις (Carina)",
+        dist: "8.500 έτη φωτός",
+        type: "Γιγάντιο Νεφέλωμα Εκπομπής",
+        img: "https://images-assets.nasa.gov/image/PIA25328/PIA25328~orig.jpg",
+        bornBodies: "Φιλοξενεί το εξαιρετικά ασταθές και υπερμεγέθες άστρο Ήτα Καρίνας (Eta Carinae) — με μάζα 100+ φορές μεγαλύτερη από τον Ήλιο — καθώς και το σμήνος Trumpler 14. Μέσα στους «Κοσμικούς Γκρεμούς» (Cosmic Cliffs) το τηλεσκόπιο Webb εντόπισε εκατοντάδες νεογέννητα άστρα και πλανητικά συστήματα.",
+        facts: ["4 φορές μεγαλύτερο και λαμπρότερο από τον Ωρίωνα", "Διάμετρος: 460 έτη φωτός", "Εντυπωσιακή κοσμική σκόνη & αστρικοί άνεμοι"]
+      },
+      {
+        name: "Νεφέλωμα Λιμνοθάλασσας (Lagoon Nebula / M8)",
+        catalog: "Messier 8 / NGC 6523",
+        constellation: "Τοξότης",
+        dist: "4.100 έτη φωτός",
+        type: "Γιγάντιο Νέφος Ιονισμένου Αερίου",
+        img: "https://images-assets.nasa.gov/image/PIA22359/PIA22359~orig.jpg",
+        bornBodies: "Στο κέντρο του γεννήθηκε ο υπεργίγαντας Herschel 36, του οποίου η υπεριώδης ακτινοβολία σμιλεύει το νεφέλωμα. Φιλοξενεί επίσης το νεαρό αστρικό σμήνος NGC 6530 και πολυάριθμα σφαιρίδια Bok (συμπυκνώσεις αερίων που καταρρέουν σχηματίζοντας νέα ηλιακά συστήματα).",
+        facts: ["Διάμετρος: 110 x 50 έτη φωτός", "Εύκολα ορατό με κιάλια το καλοκαίρι", "Περιέχει τη δομή «Κλεψύδρα»"]
+      },
+      {
+        name: "Νεφέλωμα Καρκίνου (Crab Nebula / M1)",
+        catalog: "Messier 1 / NGC 1952",
+        constellation: "Ταύρος",
+        dist: "6.500 έτη φωτός",
+        type: "Υπόλειμμα Υπερκαινοφανούς (Supernova)",
+        img: "https://images-assets.nasa.gov/image/PIA25959/PIA25959~orig.jpg",
+        bornBodies: "Δεν είναι αστρικό μαιευτήριο, αλλά το αποτέλεσμα του θανάτου ενός γίγαντα αστέρα (υπερκαινοφανής του 1054 μ.Χ.). Στην καρδιά του «γεννήθηκε» ένας εξωτικός Αστέρας Νετρονίων (Crab Pulsar), ο οποίος περιστρέφεται 30 φορές το δευτερόλεπτο και εκπέμπει ισχυρούς παλμούς ακτινοβολίας.",
+        facts: ["Διαστελλεται με 1.500 χλμ/δευτερόλεπτο", "Πρώτο αντικείμενο στον κατάλογο Messier", "Εμπλουτίζει το σύμπαν με βαρέα μέταλλα"]
+      },
+      {
+        name: "Νεφέλωμα Δακτύλιος (Ring Nebula / M57)",
+        catalog: "Messier 57 / NGC 6720",
+        constellation: "Λύρα",
+        dist: "2.570 έτη φωτός",
+        type: "Πλανητικό Νεφέλωμα",
+        img: "https://images-assets.nasa.gov/image/PIA25964/PIA25964~orig.jpg",
+        bornBodies: "Δημιουργήθηκε όταν ένα άστρο σαν τον Ήλιο μας απέβαλε τα εξωτερικά του στρώματα στο τέλος της ζωής του. Στο κέντρο γεννήθηκε ένας Λευκός Νάνος (White Dwarf), το πυρακτωμένο απομεινάρι του πυρήνα του, που λάμπει σε θερμοκρασία άνω των 100.000 βαθμών Κελσίου.",
+        facts: ["Διάσημο κυκλικό σχήμα σαν δαχτυλίδι", "Εξαιρετικός στόχος για ερασιτεχνικά τηλεσκόπια", "Δείχνει τη μελλοντική μοίρα του Ήλιου μας"]
+      }
+    ];
+
+    const listEl = document.getElementById('nebulaeList');
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDesc');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+
+    function openImagePreview(name, desc, imgSrc) {
+      modalImg.src = imgSrc;
+      modalTitle.textContent = name;
+      modalDesc.innerHTML = desc;
+      modal.classList.add('active');
+    }
+
+    btnCloseModal.addEventListener('click', () => modal.classList.remove('active'));
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('active');
+    });
+
+    NEBULAE_DATA.forEach((neb, idx) => {
+      const card = document.createElement('div');
+      card.className = 'nebula-item';
+
+      card.innerHTML = `
+        <div class="nebula-main-row">
+          <div class="nebula-left">
+            <img src="${neb.img}" alt="${neb.name}" class="nebula-avatar-img" onclick="event.stopPropagation(); openImagePreview('${neb.name.replace(/'/g, "\\'")}', '<strong>Αστερισμός:</strong> ${neb.constellation}<br/><strong>Απόσταση:</strong> ${neb.dist}<br/><br/>${neb.bornBodies.replace(/'/g, "\\'")}', '${neb.img}')" />
+            <div class="nebula-meta">
+              <h3>${neb.name}</h3>
+              <p>${neb.constellation} • Απόσταση: ${neb.dist}</p>
+            </div>
+          </div>
+          <div class="type-badge">${neb.type.split(' ')[0]}</div>
+        </div>
+
+        <div class="nebula-dropdown" id="dropdown-${idx}">
+          <div class="born-section">
+            <div class="born-title">✨ Τι γεννήθηκε / υπάρχει μέσα του:</div>
+            <p class="born-desc">${neb.bornBodies}</p>
+            <div class="detail-pill-row">
+              ${neb.facts.map(f => `<span class="detail-pill">${f}</span>`).join('')}
+            </div>
+          </div>
+          <p style="font-size: 0.72rem; color: var(--text-muted); font-style: italic; text-align: center;">
+            * Πατήστε στην εικόνα για μεγέθυνση σε υψηλή ανάλυση.
+          </p>
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        const drop = document.getElementById(`dropdown-${idx}`);
+        drop.classList.toggle('open');
+      });
+
+      listEl.appendChild(card);
+    });
+  </script>
+</body>
+</html>
