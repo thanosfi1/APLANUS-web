@@ -36,25 +36,22 @@
       --glow-neon: 0 0 25px rgba(99, 102, 241, 0.3);
     }
 
-    /* Red Shift Mode (Night Vision) */
-    body.night-vision {
-      --bg-dark: #060000;
-      --card-bg: rgba(28, 4, 4, 0.85);
-      --card-border: rgba(239, 68, 68, 0.35);
-      --accent-cyan: #ef4444;
-      --accent-neon: #b91c1c;
-      --accent-purple: #dc2626;
-      --accent-gold: #f87171;
-      --text-main: #fca5a5;
-      --text-muted: #991b1b;
-      --glow-cyan: 0 0 25px rgba(239, 68, 68, 0.4);
-      --glow-neon: 0 0 25px rgba(185, 28, 28, 0.35);
+    /* Καθολικό Full-Screen Κόκκινο Φίλτρο (True Night Vision) */
+    html.night-vision {
+      filter: grayscale(100%) sepia(100%) hue-rotate(315deg) saturate(700%) brightness(75%) contrast(140%) !important;
+      background-color: #050000 !important;
     }
 
-    body.night-vision img,
-    body.night-vision canvas,
-    body.night-vision svg {
-      filter: sepia(100%) hue-rotate(315deg) saturate(450%) brightness(80%);
+    html.night-vision::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 0, 0, 0.12);
+      pointer-events: none;
+      z-index: 999999;
     }
 
     * {
@@ -211,7 +208,7 @@
       color: #f1f5f9;
     }
 
-    /* Toggle Switch Switch */
+    /* Toggle Switch */
     .switch-wrap {
       position: relative;
       display: inline-block;
@@ -1617,20 +1614,25 @@
     const appSettingsMenu = document.getElementById('appSettingsMenu');
     const nightVisionToggle = document.getElementById('nightVisionToggle');
 
-    // Αποθηκευμένη ρύθμιση Red Shift Mode
+    // Καθολικό Full-Screen Red Shift Mode
+    function setNightVision(enable) {
+      if (enable) {
+        document.documentElement.classList.add('night-vision');
+        if (nightVisionToggle) nightVisionToggle.checked = true;
+        localStorage.setItem('aplanus_night_vision', 'true');
+      } else {
+        document.documentElement.classList.remove('night-vision');
+        if (nightVisionToggle) nightVisionToggle.checked = false;
+        localStorage.setItem('aplanus_night_vision', 'false');
+      }
+    }
+
     if (localStorage.getItem('aplanus_night_vision') === 'true') {
-      document.body.classList.add('night-vision');
-      nightVisionToggle.checked = true;
+      setNightVision(true);
     }
 
     nightVisionToggle.addEventListener('change', (e) => {
-      if (e.target.checked) {
-        document.body.classList.add('night-vision');
-        localStorage.setItem('aplanus_night_vision', 'true');
-      } else {
-        document.body.classList.remove('night-vision');
-        localStorage.setItem('aplanus_night_vision', 'false');
-      }
+      setNightVision(e.target.checked);
     });
 
     menuToggleBtn.addEventListener('click', (e) => {
