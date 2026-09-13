@@ -128,15 +128,19 @@
       gap: 16px;
     }
 
+    /* Αλλαγμένη κλάση για καθαρό πλανήτη με φωσφοριζέ εφέ */
     .planet-avatar-img {
       width: 58px;
       height: 58px;
-      border-radius: 50%;
-      object-fit: cover;
+      object-fit: contain; /* Για να μην κόβεται η PNG */
       flex-shrink: 0;
-      background: #1e293b;
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
-      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      /* Αφαίρεση παλιού στυλ */
+      background: transparent;
+      box-shadow: none;
+      border: none;
+      border-radius: 0;
+      /* Προσθήκη φωσφοριζέ εφέ γύρω από το σώμα του πλανήτη */
+      filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
     }
 
     .planet-meta h3 {
@@ -382,7 +386,8 @@
         name: "Ουρανός (Uranus)",
         type: "Γίγαντας Πάγου",
         distSun: "2.87 δις χλμ",
-        img: "https://images-assets.nasa.gov/image/PIA18182/PIA18182~orig.jpg",
+        /* Αλλαγή εικόνας σε PNG με διαφανές φόντο για να λειτουργήσει το εφέ */
+        img: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Uranus_visible_spectrum_png_corrected.png",
         moonsCount: 28,
         moons: [
           { name: "Τιτάνια (Titania)", desc: "Μεγαλύτερος δορυφόρος Ουρανού (1.578 χλμ)", img: "https://images-assets.nasa.gov/image/PIA00036/PIA00036~orig.jpg" },
