@@ -208,7 +208,6 @@
       color: #f1f5f9;
     }
 
-    /* Toggle Switch */
     .switch-wrap {
       position: relative;
       display: inline-block;
@@ -261,11 +260,6 @@
       font-size: 0.88rem;
       border: 1px solid rgba(254, 202, 202, 0.4);
       box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
-      animation: pulseAlert 2s infinite ease-in-out;
-    }
-    @keyframes pulseAlert {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.85; }
     }
 
     body::before, body::after {
@@ -1083,7 +1077,7 @@
 <body>
 
   <div id="offlineBanner">
-    ⚠️ Δεν υπάρχει σύνδεση στο Διαδίκτυο. Ενεργοποιήστε το Wi-Fi ή τα δεδομένα κινητής τηλεφωνίας για πλήρη λειτουργία και ακριβή δεδομένα.
+    Δεν υπάρχει σύνδεση στο Διαδίκτυο. Ενεργοποιήστε το Wi-Fi ή τα δεδομένα κινητής τηλεφωνίας για πλήρη λειτουργία και ακριβή δεδομένα.
   </div>
 
   <div class="container">
@@ -1115,7 +1109,7 @@
 
       <!-- Ρυθμίσεις (Δεξιά) -->
       <div class="settings-btn-wrap">
-        <button type="button" class="btn-icon-top" id="settingsToggleBtn" title="Ρυθμίσεις">⚙️</button>
+        <button type="button" class="btn-icon-top" id="settingsToggleBtn" title="Ρυθμίσεις" style="font-size: 0.75rem; font-family: 'Orbitron';">SET</button>
 
         <div class="settings-menu" id="appSettingsMenu">
           <div class="settings-title">ΡΥΘΜΙΣΕΙΣ</div>
@@ -1129,7 +1123,7 @@
           </div>
 
           <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px;">
-            <button type="button" class="btn-notify" id="btnNotify">🔔 Ειδοποιήσεις</button>
+            <button type="button" class="btn-notify" id="btnNotify">Ειδοποιήσεις</button>
           </div>
         </div>
       </div>
@@ -1145,7 +1139,7 @@
           <option value="35.3387,25.1442">Ηράκλειο (Κρήτη)</option>
           <option value="39.6243,19.9217">Κέρκυρα</option>
           <option value="36.4432,28.2258">Ρόδος</option>
-          <option value="auto">📍 Αυτόματο (GPS)</option>
+          <option value="auto">Αυτόματο (GPS)</option>
         </select>
       </div>
 
@@ -1178,7 +1172,7 @@
 
     <section class="hero-wrapper" id="heroSwipeContainer">
       <div class="hero-swipe-hint">
-        <span id="swipeHintLabel">Σύρετε για Ήλιο ⇄</span>
+        <span id="swipeHintLabel">Σύρετε για Ήλιο &lt;&gt;</span>
       </div>
 
       <div class="hero-inner">
@@ -1274,7 +1268,7 @@
 
     <section class="stars-section">
       <div class="stars-title">
-        <span>✨ Τα 3 Φωτεινότερα Αστέρια της Βραδιάς</span>
+        <span>Τα 3 Φωτεινότερα Αστέρια της Βραδιάς</span>
       </div>
       <div class="stars-grid" id="seasonalStarsContainer"></div>
     </section>
@@ -1282,7 +1276,7 @@
     <section class="skydome-section">
       <div class="skydome-header">
         <div class="skydome-title-group">
-          <span class="skydome-title">🌌 Χάρτης Ουράνιου Θόλου (Ζωντανή Προβολή)</span>
+          <span class="skydome-title">Χάρτης Ουράνιου Θόλου (Ζωντανή Προβολή)</span>
           <span class="dome-time-badge" id="domeTimeStatus">Προβολή: Τώρα</span>
         </div>
       </div>
@@ -1308,7 +1302,7 @@
 
     <section class="eclipses-section">
       <div class="eclipses-title">
-        <span>🌘 Επερχόμενες Εκλείψεις (Σεληνιακή & Ηλιακή)</span>
+        <span>Επερχόμενες Εκλείψεις (Σεληνιακή & Ηλιακή)</span>
       </div>
       <div class="eclipses-grid">
         <div class="eclipse-card">
@@ -1614,7 +1608,6 @@
     const appSettingsMenu = document.getElementById('appSettingsMenu');
     const nightVisionToggle = document.getElementById('nightVisionToggle');
 
-    // Καθολικό Full-Screen Red Shift Mode
     function setNightVision(enable) {
       if (enable) {
         document.documentElement.classList.add('night-vision');
@@ -1793,7 +1786,7 @@
         }
         if (desc) desc.textContent = moonIsUp 
           ? `Η Σελήνη έχει ελάχιστο φως (${moonPercent}%). Ιδανική νύχτα για αμυδρούς γαλαξίες, νεφελώματα και σφαιρωτά σμήνη.` 
-          : "Η Σελήνη βρίσκεται υπό τον ορίζοντα! Απόλυτο σκοτάδι, τέλειες συνθήκες για Deep-Sky αντικείμενα και αστροφωτογράφιση.";
+          : "Η Σελήνη βρίσκεται υπό τον ορίζοντα. Απόλυτο σκοτάδι, τέλειες συνθήκες για Deep-Sky αντικείμενα και αστροφωτογράφιση.";
       } else if (score >= 55) {
         if (pill) {
           pill.textContent = "Καλές / Μέτριες Συνθήκες";
@@ -1809,7 +1802,7 @@
           pill.style.color = "#fb7185";
           pill.style.border = "1px solid rgba(244, 63, 94, 0.3)";
         }
-        if (desc) desc.textContent = `Η Σελήνη φωτίζει στο ${moonPercent}% και υπερφωτίζει τον ουρανό. Οι αμυδροί γαλαξίες χάνονται, όμως είναι εξαιρετική στιγμή για υψηλή μεγέθυνση στη Σελήνη και στους λαμπρούς πλανήτες!`;
+        if (desc) desc.textContent = `Η Σελήνη φωτίζει στο ${moonPercent}% και υπερφωτίζει τον ουρανό. Οι αμυδροί γαλαξίες χάνονται, όμως είναι εξαιρετική στιγμή για υψηλή μεγέθυνση στη Σελήνη και στους λαμπρούς πλανήτες.`;
       }
     }
 
@@ -1902,7 +1895,7 @@
         ephemSetLabel.textContent  = "Δυση Ηλιου";
         heroRise.textContent = cachedSunTimes.rise;
         heroSet.textContent  = cachedSunTimes.set;
-        swipeHintLabel.textContent = "Σύρετε για Σελήνη ⇄";
+        swipeHintLabel.textContent = "Σύρετε για Σελήνη <>";
       } else {
         heroWrapper.classList.remove('sun-active');
         sunSlide.classList.remove('active-slide');
@@ -1914,7 +1907,7 @@
         ephemSetLabel.textContent  = "Δυση Σεληνης";
         heroRise.textContent = cachedMoonTimes.rise;
         heroSet.textContent  = cachedMoonTimes.set;
-        swipeHintLabel.textContent = "Σύρετε για Ήλιο ⇄";
+        swipeHintLabel.textContent = "Σύρετε για Ήλιο <>";
       }
     }
 
@@ -1959,12 +1952,12 @@
       const active = isSubscribed || isGranted;
 
       if (active) {
-        btnNotify.textContent = "🔔 Ενεργές";
+        btnNotify.textContent = "Ενεργές";
         btnNotify.style.background = "rgba(34, 197, 94, 0.25)";
         btnNotify.style.color = "#4ade80";
         btnNotify.style.borderColor = "#4ade80";
       } else {
-        btnNotify.textContent = "🔔 Ειδοποιήσεις";
+        btnNotify.textContent = "Ειδοποιήσεις";
         btnNotify.style.background = "rgba(245, 158, 11, 0.2)";
         btnNotify.style.color = "#fde047";
         btnNotify.style.borderColor = "rgba(245, 158, 11, 0.4)";
@@ -1996,12 +1989,12 @@
       }
 
       btnNotify.disabled = true;
-      btnNotify.textContent = "⏳ Σύνδεση...";
+      btnNotify.textContent = "Σύνδεση...";
 
       try {
         const permission = await Notification.requestPermission();
         if (permission !== 'granted') {
-          alert("Δεν επιτράπηκαν οι ειδοποιήσεις. Ελέγξτε τις Ρυθμίσεις του iPhone.");
+          alert("Δεν επιτράπηκαν οι ειδοποιήσεις. Ελέγξτε τις Ρυθμίσεις του κινητού.");
           updateNotificationButtonUI(false);
           return;
         }
@@ -2429,10 +2422,10 @@
           const lVisEl = document.getElementById('lunarEclipseVis');
           if (moonHorEcl.altitude > 0) {
             lVisEl.className = "visibility-pill vis-yes";
-            lVisEl.textContent = `● Ορατή από την Ελλάδα (${moonHorEcl.altitude.toFixed(0)}° ύψος)`;
+            lVisEl.textContent = `Ορατή από την Ελλάδα (${moonHorEcl.altitude.toFixed(0)}° ύψος)`;
           } else {
             lVisEl.className = "visibility-pill vis-no";
-            lVisEl.textContent = "○ Μη ορατή από την Ελλάδα (Υπό τον ορίζοντα)";
+            lVisEl.textContent = "Μη ορατή από την Ελλάδα (Υπό τον ορίζοντα)";
           }
         }
 
@@ -2455,10 +2448,10 @@
           const localEcl = Astronomy.SearchLocalSolarEclipse(sDate, observer);
           if (localEcl && localEcl.peak && localEcl.mag > 0.05) {
             sVisEl.className = "visibility-pill vis-yes";
-            sVisEl.textContent = `● Ορατή από την Ελλάδα (${(localEcl.mag * 100).toFixed(0)}% κάλυψη)`;
+            sVisEl.textContent = `Ορατή από την Ελλάδα (${(localEcl.mag * 100).toFixed(0)}% κάλυψη)`;
           } else {
             sVisEl.className = "visibility-pill vis-no";
-            sVisEl.textContent = "○ Μη ορατή από την Ελλάδα";
+            sVisEl.textContent = "Μη ορατή από την Ελλάδα";
           }
         }
       } catch (err) {
@@ -2523,7 +2516,7 @@
         } else if (attempts > 60) {
           clearInterval(checker);
           offlineBanner.style.display = 'block';
-          offlineBanner.textContent = "⚠️ Αδυναμία φόρτωσης βιβλιοθήκης αστρονομίας. Ελέγξτε τη σύνδεσή σας στο διαδίκτυο.";
+          offlineBanner.textContent = "Αδυναμία φόρτωσης βιβλιοθήκης αστρονομίας. Ελέγξτε τη σύνδεσή σας στο διαδίκτυο.";
         }
       }, 50);
     }
