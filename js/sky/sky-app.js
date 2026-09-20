@@ -1,14 +1,15 @@
 import {getObserver} from "./location.js";
 import {calculateSky} from "./astronomy.js";
 import {startSensors,stopSensors,sensorState} from "./sensors.js";
+import {startAR,stopAR} from "../ar/ar.js";
 const canvas=document.getElementById("skyCanvas"),ctx=canvas.getContext("2d"),statusEl=document.getElementById("status"),locationEl=document.getElementById("locationLabel"),timeEl=document.getElementById("timeLabel");
-let observer={lat:40.6401,lon:22.9444,source:"fallback"},date=new Date(),viewAz=180,viewAlt=35,fov=100,drag=null,lastObjects=[],pinch=null;
+let observer={lat:40.6401,lon:22.9444,source:"fallback"},date=new Date(),viewAz=180,viewAlt=35,fov=65,drag=null,lastObjects=[],pinch=null,arActive=false;
 
 const wrap=a=>((a+540)%360)-180;
 function project(o,w,h){const dx=wrap(o.azimuth-viewAz),dy=o.altitude-viewAlt,scale=w/fov;if(Math.abs(dx)>fov*.65)return null;return{x:w/2+dx*scale,y:h/2-dy*scale};}
 function render(){
  const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;
- const g=ctx.createRadialGradient(w*.5,h*.45,10,w*.5,h*.45,Math.max(w,h));g.addColorStop(0,"#111b3c");g.addColorStop(1,"#02040d");ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ if(!arActive){const g=ctx.createRadialGradient(w*.5,h*.45,10,w*.5,h*.45,Math.max(w,h));g.addColorStop(0,"#111b3c");g.addColorStop(1,"#02040d");ctx.fillStyle=g;ctx.fillRect(0,0,w,h);}else ctx.clearRect(0,0,w,h);
  ctx.fillStyle="rgba(148,163,184,.65)";ctx.font="11px system-ui";ctx.textAlign="center";
  for(const [az,label] of [[0,"Β"],[90,"Α"],[180,"Ν"],[270,"Δ"]]){const p=project({azimuth:az,altitude:2},w,h);if(p)ctx.fillText(label,p.x,p.y);}
  try{
@@ -34,5 +35,6 @@ function showObject(o){const labels={star:"ΑΣΤΕΡΑΣ",planet:"ΠΛΑΝΗΤ�
 document.getElementById("closePanel").addEventListener("click",()=>document.getElementById("objectPanel").hidden=true);
 canvas.addEventListener("wheel",e=>{e.preventDefault();fov=Math.max(25,Math.min(150,fov+Math.sign(e.deltaY)*10));render()},{passive:false});
 async function locate(){statusEl.textContent="Εντοπισμός θέσης…";observer=await getObserver();locationEl.textContent=observer.source==="gps"?`GPS • ${observer.lat.toFixed(3)}, ${observer.lon.toFixed(3)}`:"Θέση: προεπιλογή";render()}
+document.getElementById("arBtn").addEventListener("click",async()=>{const btn=document.getElementById("arBtn"),video=document.getElementById("arVideo"),vp=document.querySelector(".viewport");try{if(arActive){stopAR(video);arActive=false;vp.classList.remove("ar-active");btn.textContent="📷 AR";render();return}await startAR(video);arActive=true;fov=65;vp.classList.add("ar-active");btn.textContent="■ AR";if(!sensorState.active)document.getElementById("sensorBtn").click();render()}catch(e){statusEl.textContent=e.message}});
 document.getElementById("sensorBtn").addEventListener("click",async()=>{const btn=document.getElementById("sensorBtn");if(sensorState.active){stopSensors();btn.textContent="🧭";return}try{await startSensors(s=>{viewAz=s.heading;viewAlt=Math.max(-10,Math.min(90,s.pitch));render()});btn.textContent="🧭 ON"}catch(e){statusEl.textContent=e.message}});
 document.getElementById("locateBtn").addEventListener("click",locate);document.getElementById("nowBtn").addEventListener("click",()=>{date=new Date();render()});window.addEventListener("resize",resize);setInterval(()=>{date=new Date();render()},1000);resize();
