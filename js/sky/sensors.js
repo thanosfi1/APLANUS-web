@@ -13,7 +13,7 @@ export async function startSensors(onUpdate){
   if(rawHeading===null)return;
   const beta=typeof e.beta==="number"?e.beta:90;
   const gamma=typeof e.gamma==="number"?e.gamma:0;
-  // Back-camera optical axis. Portrait phone: vertical => horizon, top edge tilted backward => sky.
+  // Back-camera optical axis: screen tilt must move the sky opposite to the phone tilt.\n  // Portrait vertical ≈ horizon; tilting camera upward increases the viewed altitude.
   let rawPitch=90-Math.abs(beta);
   if(beta<0)rawPitch=-rawPitch;
   rawPitch=Math.max(-90,Math.min(90,rawPitch));
