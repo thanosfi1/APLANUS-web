@@ -1,5 +1,5 @@
 export const sensorState={supported:false,active:false,matrix:null,heading:null,pitch:null,roll:null};
-let listener=null,eventName=null;
+let listener=null,eventName=null,absoluteListener=null;
 const R=Math.PI/180,norm=n=>(n%360+360)%360;
 function mul(a,b){const r=Array(9).fill(0);for(let i=0;i<3;i++)for(let j=0;j<3;j++)for(let k=0;k<3;k++)r[i*3+j]+=a[i*3+k]*b[k*3+j];return r}
 function rotZ(a){a*=R;return[Math.cos(a),-Math.sin(a),0,Math.sin(a),Math.cos(a),0,0,0,1]}
@@ -37,4 +37,8 @@ export async function startSensors(onUpdate){
  // Mark active only after the first real sensor event; caller can detect a silent sensor.
  return sensorState;
 }
-export function stopSensors(){if(listener&&eventName)window.removeEventListener(eventName,listener,true);listener=null;eventName=null;sensorState.active=false;sensorState.matrix=null}
+export function stopSensors(){
+ if(listener&&eventName)window.removeEventListener(eventName,listener,true);
+ if(absoluteListener)window.removeEventListener("deviceorientationabsolute",absoluteListener,true);
+ listener=null;absoluteListener=null;eventName=null;sensorState.active=false;sensorState.matrix=null;
+}
