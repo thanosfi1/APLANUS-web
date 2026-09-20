@@ -21,12 +21,15 @@ const D=[
 {name:"Μακεμάκε",en:"Makemake",type:"Νάνος πλανήτης · Ζώνη Kuiper",dist:"~6,9 δισ. χλμ",cls:"makemake",moonCount:1,moons:["MK 2"]},
 {name:"Έρις",en:"Eris",type:"Νάνος πλανήτης · Διασκορπισμένος δίσκος",dist:"~10,1 δισ. χλμ",cls:"eris",moonCount:1,moons:["Δυσνομία"]}
 ];
+const DIAM={"mercury":4879,"venus":12104,"earth":12756,"mars":6792,"jupiter":142984,"saturn":120536,"uranus":51118,"neptune":49528};
+const scaleSize=cls=>Math.max(10,Math.round(DIAM[cls]/142984*118));
+const sizeStyle=p=>DIAM[p.cls]?`style="width:${scaleSize(p.cls)}px;height:${scaleSize(p.cls)}px"`:"";
 const system=document.querySelector("#system"),cards=document.querySelector("#cards");
 function card(p){
  const moons=p.moons.length?'<div class="moons">'+p.moons.map(m=>'<div class="moon-chip"><div class="orb moon tiny"></div>'+m+'</div>').join("")+'</div>':"";
  cards.insertAdjacentHTML("beforeend",'<article class="card"><div class="planet-visual"><div class="orb '+p.cls+'"></div></div><h2>'+p.name+' <span class="meta">('+p.en+')</span></h2><div class="meta">'+p.type+'<br>Μέση απόσταση από Ήλιο: '+p.dist+'<br>Φυσικοί δορυφόροι: <strong style="color:#eef6ff">'+p.moonCount+'</strong></div>'+moons+'</article>');
 }
-P.forEach(p=>{system.insertAdjacentHTML("beforeend",'<div class="system-item"><div class="orb '+p.cls+'"></div><b>'+p.name+'</b></div>');card(p)});
+P.forEach(p=>{system.insertAdjacentHTML("beforeend",'<div class="system-item"><div class="orb '+p.cls+'" '+sizeStyle(p)+'></div><b>'+p.name+'</b></div>');card(p)});
 cards.insertAdjacentHTML("beforeend",'<h2 class="section-title">Νάνοι Πλανήτες</h2><p class="dwarf-note">Οι πέντε επίσημα αναγνωρισμένοι νάνοι πλανήτες του Ηλιακού Συστήματος.</p>');
 D.forEach(card);
 </script></body></html>
