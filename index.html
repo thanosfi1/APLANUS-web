@@ -1092,8 +1092,13 @@
         </button>
 
         <div class="dropdown-menu" id="appDropdownMenu">
-          <a href="planets.html" class="dropdown-item">Πλανήτες</a>
-          <a href="nebulae.html" class="dropdown-item">Νεφελώματα</a>
+          <div style="padding:8px 14px 5px;color:#94a3b8;font-size:.65rem;letter-spacing:1.5px;">ΕΞΕΡΕΥΝΗΣΗ</div>
+          <a href="calendar.html" class="dropdown-item">📅 Αστρονομικό Ημερολόγιο</a>
+          <a href="planets.html" class="dropdown-item">🪐 Πλανήτες & Δορυφόροι</a>
+          <a href="nebulae.html" class="dropdown-item">🌌 Deep Sky & Νεφελώματα</a>
+          <a href="sky.html" class="dropdown-item">✨ Ζωντανός Ουρανός</a>
+          <div style="height:1px;background:rgba(255,255,255,.08);margin:6px 8px;"></div>
+          <a href="observation.html" class="dropdown-item">🔭 Παρατήρηση</a>\n          <a href="stars.html" class="dropdown-item">⭐ Αστέρια & Αστερισμοί</a>
         </div>
       </div>
 
@@ -1155,20 +1160,6 @@
 
       <button type="button" class="btn-action" id="btnResetNow">Επαναφορά</button>
     </div>
-
-    <section class="stargazing-panel">
-      <div class="stargazing-top">
-        <div class="stargazing-gauge">
-          <span class="stargazing-score" id="obsScore">--</span>
-          <span style="font-size: 0.65rem; color: var(--text-muted);">/100</span>
-        </div>
-        <div>
-          <h3 class="stargazing-title">Καταλληλότητα Ουρανού για Τηλεσκόπιο</h3>
-          <div class="quality-pill" id="obsPill">Ανάλυση...</div>
-        </div>
-      </div>
-      <p class="stargazing-desc" id="obsDesc">Υπολογισμός συνθηκών...</p>
-    </section>
 
     <section class="hero-wrapper" id="heroSwipeContainer">
       <div class="hero-swipe-hint">

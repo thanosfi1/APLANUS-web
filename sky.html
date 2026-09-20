@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050711">
+  <title>APLANUS Sky</title>
+  <link rel="stylesheet" href="css/sky.css">
+  <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+</head>
+<body>
+  <main class="sky-app">
+    <header class="sky-header">
+      <a class="back" href="index.html" aria-label="Επιστροφή">‹</a>
+      <div><strong>APLANUS</strong><span>SKY</span></div>
+      <div class="header-actions"><button id="calBtn" type="button">◎ CAL</button><button id="arBtn" type="button">📷 AR</button><button id="sensorBtn" type="button">🧭</button><button id="locateBtn" type="button">GPS</button></div>
+    </header>
+    <nav class="sky-tools"><button id="searchBtn">⌕ Αναζήτηση</button><button id="tonightBtn">✦ Απόψε</button><button id="constBtn">♈ Αστερισμοί</button><button id="deepBtn">🌌 Deep Sky</button><button id="nightBtn">● Night</button></nav><section class="viewport">
+      <video id="arVideo" class="ar-video" playsinline muted></video><canvas id="skyCanvas"></canvas>
+      <div id="status" class="status">Προετοιμασία ουρανού…</div><div id="searchPanel" class="search-panel" hidden><input id="searchInput" placeholder="Αναζήτηση: Κρόνος, Σείριος, M31…"><div id="searchResults"></div></div><div id="tonightPanel" class="tonight-panel" hidden><strong>Τι βλέπω απόψε;</strong><div id="tonightList"></div></div><pre id="sensorDebug" class="sensor-debug" hidden></pre>
+      <div class="crosshair" aria-hidden="true"></div><div id="calibration" class="calibration" hidden><strong>Βαθμονόμηση AR</strong><span>Στόχευσε ένα γνωστό αντικείμενο στο κέντρο και πάτησε το όνομά του.</span><div id="calTargets"></div><button id="calCancel" type="button">Ακύρωση</button></div><aside id="objectPanel" class="object-panel" hidden><button id="closePanel" aria-label="Κλείσιμο">×</button><strong id="objectName">—</strong><span id="objectType">—</span><div><b id="objectAlt">—</b><small>Ύψος</small></div><div><b id="objectAz">—</b><small>Αζιμούθιο</small></div></aside>
+    </section>
+    <footer class="sky-controls">
+      <div><span id="locationLabel">Θέση: προεπιλογή</span><span id="timeLabel">--:--</span></div>
+      <div class="time-travel"><input id="timeSlider" type="range" min="-12" max="24" step=".5" value="0"><span id="timeOffset">Τώρα</span></div><button id="nowBtn" type="button">◎ Τώρα</button>
+    </footer>
+  </main>
+  <script type="module" src="js/sky/sky-app.js"></script>
+</body>
+</html>
