@@ -16,11 +16,11 @@ export async function startSensors(onUpdate){
  }
  stopSensors();listener=e=>{
   if(e.beta==null||e.gamma==null)return;
-  const screen=(screen.orientation?.angle||window.orientation||0);
+  const screenAngle=(window.screen?.orientation?.angle ?? window.orientation ?? 0);
   // W3C intrinsic Z-X'-Y'' device orientation, corrected to portrait screen coordinates.
   const alpha=(typeof e.alpha==="number")?e.alpha:0;
   let device=mul(mul(rotZ(alpha),rotX(e.beta)),rotY(e.gamma));
-  device=mul(device,rotZ(-screen));
+  device=mul(device,rotZ(-screenAngle));
   // Camera looks through the back of the phone: camera basis in world coordinates.
   const cameraToWorld=mul(device,rotX(-90));
   const worldToCamera=transpose(cameraToWorld);
