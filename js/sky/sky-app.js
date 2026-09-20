@@ -1,5 +1,6 @@
 import {getObserver} from "./location.js";
 import {calculateSky} from "./astronomy.js";
+import {startSensors,stopSensors,sensorState} from "./sensors.js";
 const canvas=document.getElementById("skyCanvas"),ctx=canvas.getContext("2d"),statusEl=document.getElementById("status"),locationEl=document.getElementById("locationLabel"),timeEl=document.getElementById("timeLabel");
 let observer={lat:40.6401,lon:22.9444,source:"fallback"},date=new Date(),viewAz=180,viewAlt=35,fov=100,drag=null,lastObjects=[],pinch=null;
 
@@ -29,8 +30,9 @@ canvas.addEventListener("touchstart",e=>{if(e.touches.length===2){pinch={d:Math.
 canvas.addEventListener("touchmove",e=>{if(e.touches.length===2&&pinch){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);fov=Math.max(25,Math.min(150,pinch.f*pinch.d/d));render()}},{passive:true});
 canvas.addEventListener("touchend",()=>pinch=null,{passive:true});
 canvas.addEventListener("click",e=>{const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let hit=null,best=24;for(const o of lastObjects){const p=project(o,canvas.clientWidth,canvas.clientHeight);if(!p)continue;const d=Math.hypot(p.x-x,p.y-y);if(d<best){best=d;hit=o}}if(hit)showObject(hit)});
-function showObject(o){document.getElementById("objectPanel").hidden=false;document.getElementById("objectName").textContent=o.name;document.getElementById("objectType").textContent=o.type==="star"?"ΑΣΤΕΡΑΣ":"ΟΥΡΑΝΙΟ ΣΩΜΑ";document.getElementById("objectAlt").textContent=o.altitude.toFixed(1)+"°";document.getElementById("objectAz").textContent=o.azimuth.toFixed(1)+"°"}
+function showObject(o){const labels={star:"ΑΣΤΕΡΑΣ",planet:"ΠΛΑΝΗΤΗΣ",dwarf:"ΠΛΑΝΗΤΗΣ ΝΑΝΟΣ",asteroid:"ΑΣΤΕΡΟΕΙΔΗΣ",moon:"ΔΟΡΥΦΟΡΟΣ",sun:"ΑΣΤΕΡΑΣ"};document.getElementById("objectPanel").hidden=false;document.getElementById("objectName").textContent=o.name;document.getElementById("objectType").textContent=labels[o.type]||"ΟΥΡΑΝΙΟ ΣΩΜΑ";document.getElementById("objectAlt").textContent=o.altitude.toFixed(1)+"°";document.getElementById("objectAz").textContent=o.azimuth.toFixed(1)+"°"}
 document.getElementById("closePanel").addEventListener("click",()=>document.getElementById("objectPanel").hidden=true);
 canvas.addEventListener("wheel",e=>{e.preventDefault();fov=Math.max(25,Math.min(150,fov+Math.sign(e.deltaY)*10));render()},{passive:false});
 async function locate(){statusEl.textContent="Εντοπισμός θέσης…";observer=await getObserver();locationEl.textContent=observer.source==="gps"?`GPS • ${observer.lat.toFixed(3)}, ${observer.lon.toFixed(3)}`:"Θέση: προεπιλογή";render()}
+document.getElementById("sensorBtn").addEventListener("click",async()=>{const btn=document.getElementById("sensorBtn");if(sensorState.active){stopSensors();btn.textContent="🧭";return}try{await startSensors(s=>{viewAz=s.heading;viewAlt=Math.max(-10,Math.min(90,s.pitch));render()});btn.textContent="🧭 ON"}catch(e){statusEl.textContent=e.message}});
 document.getElementById("locateBtn").addEventListener("click",locate);document.getElementById("nowBtn").addEventListener("click",()=>{date=new Date();render()});window.addEventListener("resize",resize);setInterval(()=>{date=new Date();render()},1000);resize();
