@@ -1094,9 +1094,14 @@
         </button>
 
         <div class="dropdown-menu" id="appDropdownMenu">
-          <a href="planets.html" class="dropdown-item">Πλανήτες</a>
-          <a href="nebulae.html" class="dropdown-item">Νεφελώματα</a>
-          <a href="calendar.html" class="dropdown-item">Αστρονομικό Ημερολόγιο</a><a href="sky.html" class="dropdown-item">Ζωντανός Ουρανός</a>
+          <div class="menu-section-label">ΕΞΕΡΕΥΝΗΣΗ</div>
+          <a href="planets.html" class="dropdown-item">🪐 Πλανήτες & Δορυφόροι</a>
+          <a href="nebulae.html" class="dropdown-item">🌌 Νεφελώματα</a>
+          <a href="calendar.html" class="dropdown-item">📅 Αστρονομικό Ημερολόγιο</a>
+          <a href="sky.html" class="dropdown-item">✨ Ζωντανός Ουρανός</a>
+          <div class="menu-section-label">ΕΡΓΑΛΕΙΑ</div>
+          <button type="button" class="dropdown-item menu-action" id="menuNightVision">🔴 Νυχτερινή Όραση</button>
+          <button type="button" class="dropdown-item menu-action" id="menuNotify">🔔 Ειδοποιήσεις</button>
         </div>
       </div>
 
@@ -1109,27 +1114,6 @@
           Επόμενη Ισημερία: --<br/>Επόμενο Ηλιοστάσιο: --
         </p>
       </header>
-
-      <!-- Ρυθμίσεις (Δεξιά) -->
-      <div class="settings-btn-wrap">
-        <button type="button" class="btn-icon-top" id="settingsToggleBtn" title="Ρυθμίσεις" style="font-size: 0.75rem; font-family: 'Orbitron';">SET</button>
-
-        <div class="settings-menu" id="appSettingsMenu">
-          <div class="settings-title">ΡΥΘΜΙΣΕΙΣ</div>
-          
-          <div class="setting-toggle-row">
-            <span>Νυχτερινή Όραση (Red Shift)</span>
-            <label class="switch-wrap">
-              <input type="checkbox" id="nightVisionToggle" />
-              <span class="switch-slider"></span>
-            </label>
-          </div>
-
-          <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px;">
-            <button type="button" class="btn-notify" id="btnNotify">Ειδοποιήσεις</button>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="controls-panel" style="margin-top: 20px;">
@@ -2529,6 +2513,10 @@
     } else {
       startApplication();
     }
-  </script>
+  <script>
+document.getElementById("menuNightVision")?.addEventListener("click",()=>{const t=document.getElementById("nightVisionToggle");if(t){t.click()}else document.documentElement.classList.toggle("night-vision")});
+document.getElementById("menuNotify")?.addEventListener("click",()=>document.getElementById("btnNotify")?.click());
+</script>
+</script>
 </body>
 </html>
