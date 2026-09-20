@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050711">
+  <title>APLANUS Sky</title>
+  <link rel="stylesheet" href="css/sky.css">
+  <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+</head>
+<body>
+  <main class="sky-app">
+    <header class="sky-header">
+      <a class="back" href="index.html" aria-label="Επιστροφή">‹</a>
+      <div><strong>APLANUS</strong><span>SKY</span></div>
+      <button id="locateBtn" type="button">GPS</button>
+    </header>
+    <section class="viewport">
+      <canvas id="skyCanvas"></canvas>
+      <div id="status" class="status">Προετοιμασία ουρανού…</div>
+      <div class="crosshair" aria-hidden="true"></div>
+    </section>
+    <footer class="sky-controls">
+      <div><span id="locationLabel">Θέση: προεπιλογή</span><span id="timeLabel">--:--</span></div>
+      <button id="nowBtn" type="button">◎ Τώρα</button>
+    </footer>
+  </main>
+  <script type="module" src="js/sky/sky-app.js"></script>
+</body>
+</html>
