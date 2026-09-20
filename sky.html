@@ -13,10 +13,10 @@
     <header class="sky-header">
       <a class="back" href="index.html" aria-label="Επιστροφή">‹</a>
       <div><strong>APLANUS</strong><span>SKY</span></div>
-      <div class="header-actions"><button id="sensorBtn" type="button">🧭</button><button id="locateBtn" type="button">GPS</button></div>
+      <div class="header-actions"><button id="arBtn" type="button">📷 AR</button><button id="sensorBtn" type="button">🧭</button><button id="locateBtn" type="button">GPS</button></div>
     </header>
     <section class="viewport">
-      <canvas id="skyCanvas"></canvas>
+      <video id="arVideo" class="ar-video" playsinline muted></video><canvas id="skyCanvas"></canvas>
       <div id="status" class="status">Προετοιμασία ουρανού…</div>
       <div class="crosshair" aria-hidden="true"></div><aside id="objectPanel" class="object-panel" hidden><button id="closePanel" aria-label="Κλείσιμο">×</button><strong id="objectName">—</strong><span id="objectType">—</span><div><b id="objectAlt">—</b><small>Ύψος</small></div><div><b id="objectAz">—</b><small>Αζιμούθιο</small></div></aside>
     </section>
