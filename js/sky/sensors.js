@@ -30,6 +30,8 @@ export async function startSensors(onUpdate){
   sensorState.supported=true;sensorState.active=true;sensorState.heading=heading;sensorState.pitch=pitch;sensorState.roll=e.gamma;
   onUpdate?.({...sensorState});
  };
- eventName=("ondeviceorientationabsolute" in window)?"deviceorientationabsolute":"deviceorientation";window.addEventListener(eventName,listener,true);return sensorState;
+ // "deviceorientationabsolute" exists inconsistently on mobile browsers and may never emit.
+ // deviceorientation is the reliable event; iOS supplies webkitCompassHeading when available.
+ eventName="deviceorientation";window.addEventListener(eventName,listener,true);return sensorState;
 }
 export function stopSensors(){if(listener&&eventName)window.removeEventListener(eventName,listener,true);listener=null;eventName=null;sensorState.active=false;sensorState.matrix=null}
