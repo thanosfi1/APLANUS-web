@@ -9,7 +9,11 @@ function transpose(m){return[m[0],m[3],m[6],m[1],m[4],m[7],m[2],m[5],m[8]]}
 export function applyMatrix(m,v){return{x:m[0]*v.x+m[1]*v.y+m[2]*v.z,y:m[3]*v.x+m[4]*v.y+m[5]*v.z,z:m[6]*v.x+m[7]*v.y+m[8]*v.z}}
 export async function startSensors(onUpdate){
  if(!("DeviceOrientationEvent" in window))throw new Error("Η συσκευή δεν υποστηρίζει αισθητήρες προσανατολισμού.");
- if(typeof DeviceOrientationEvent.requestPermission==="function"){const r=await DeviceOrientationEvent.requestPermission();if(r!=="granted")throw new Error("Δεν δόθηκε άδεια για πυξίδα/γυροσκόπιο.");}
+ if(typeof DeviceOrientationEvent.requestPermission==="function"){
+  let r;
+  try{r=await DeviceOrientationEvent.requestPermission()}catch(err){throw new Error("iPhone: ενεργοποίησε Πρόσβαση σε κίνηση και προσανατολισμό για το Safari και ξαναπάτησε 🧭.")}
+  if(r!=="granted")throw new Error("iPhone: δεν δόθηκε άδεια Κίνησης & Προσανατολισμού.");
+ }
  stopSensors();listener=e=>{
   if(e.beta==null||e.gamma==null)return;
   const screen=(screen.orientation?.angle||window.orientation||0);
@@ -23,10 +27,10 @@ export async function startSensors(onUpdate){
   const forward=applyMatrix(cameraToWorld,{x:0,y:0,z:-1});
   let heading=norm(Math.atan2(forward.x,forward.y)/R),pitch=Math.asin(Math.max(-1,Math.min(1,forward.z)))/R;
   if(typeof e.webkitCompassHeading==="number"){
+    // iOS Safari gives the compass heading explicitly; use it as north reference.
     const delta=((e.webkitCompassHeading-heading+540)%360)-180;
-    heading=norm(heading+delta);
-    // Rotate world-to-camera around world vertical by magnetic correction.
-    const corr=rotZ(-delta); sensorState.matrix=mul(worldToCamera,corr);
+    heading=norm(e.webkitCompassHeading);
+    const corr=rotZ(-delta);sensorState.matrix=mul(worldToCamera,corr);
   }else sensorState.matrix=worldToCamera;
   sensorState.supported=true;sensorState.active=true;sensorState.heading=heading;sensorState.pitch=pitch;sensorState.roll=e.gamma;
   onUpdate?.({...sensorState});
