@@ -1,12 +1,24 @@
 import {getObserver} from "./location.js";
 import {calculateSky} from "./astronomy.js";
-import {startSensors,stopSensors,sensorState} from "./sensors.js";
+import {startSensors,stopSensors,sensorState,applyMatrix} from "./sensors.js";
 import {startAR,stopAR} from "../ar/ar.js";
 const canvas=document.getElementById("skyCanvas"),ctx=canvas.getContext("2d"),statusEl=document.getElementById("status"),locationEl=document.getElementById("locationLabel"),timeEl=document.getElementById("timeLabel");
 let observer={lat:40.6401,lon:22.9444,source:"fallback"},date=new Date(),viewAz=180,viewAlt=35,fov=65,drag=null,lastObjects=[],pinch=null,arActive=false,rawAz=180,rawAlt=35,calAz=Number(localStorage.getItem("aplanusCalAz")||0),calAlt=Number(localStorage.getItem("aplanusCalAlt")||0);
 
 const wrap=a=>((a+540)%360)-180;
-function project(o,w,h){const dx=wrap(o.azimuth-viewAz),dy=o.altitude-viewAlt,scale=w/fov;if(Math.abs(dx)>fov*.65)return null;return{x:w/2+dx*scale,y:h/2-dy*scale};}
+function project(o,w,h){
+ if(arActive&&sensorState.matrix){
+  const az=o.azimuth*Math.PI/180,alt=o.altitude*Math.PI/180;
+  const world={x:Math.cos(alt)*Math.sin(az),y:Math.cos(alt)*Math.cos(az),z:Math.sin(alt)};
+  const v=applyMatrix(sensorState.matrix,world);
+  if(v.z>=-.02)return null;
+  const vfov=fov*Math.PI/180,hfov=2*Math.atan(Math.tan(vfov/2)*(w/h));
+  const x=w/2+(v.x/-v.z)*(w/(2*Math.tan(hfov/2)));
+  const y=h/2-(v.y/-v.z)*(h/(2*Math.tan(vfov/2)));
+  return{x,y};
+ }
+ const dx=wrap(o.azimuth-viewAz),dy=o.altitude-viewAlt,scale=w/fov;if(Math.abs(dx)>fov*.65)return null;return{x:w/2+dx*scale,y:h/2-dy*scale};
+}
 function render(){
  const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;
  if(!arActive){const g=ctx.createRadialGradient(w*.5,h*.45,10,w*.5,h*.45,Math.max(w,h));g.addColorStop(0,"#111b3c");g.addColorStop(1,"#02040d");ctx.fillStyle=g;ctx.fillRect(0,0,w,h);}else ctx.clearRect(0,0,w,h);
