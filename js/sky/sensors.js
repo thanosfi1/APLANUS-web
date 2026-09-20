@@ -11,10 +11,11 @@ export async function startSensors(onUpdate){
  if(!("DeviceOrientationEvent" in window))throw new Error("Η συσκευή δεν υποστηρίζει αισθητήρες προσανατολισμού.");
  if(typeof DeviceOrientationEvent.requestPermission==="function"){const r=await DeviceOrientationEvent.requestPermission();if(r!=="granted")throw new Error("Δεν δόθηκε άδεια για πυξίδα/γυροσκόπιο.");}
  stopSensors();listener=e=>{
-  if(e.alpha==null||e.beta==null||e.gamma==null)return;
+  if(e.beta==null||e.gamma==null)return;
   const screen=(screen.orientation?.angle||window.orientation||0);
   // W3C intrinsic Z-X'-Y'' device orientation, corrected to portrait screen coordinates.
-  let device=mul(mul(rotZ(e.alpha),rotX(e.beta)),rotY(e.gamma));
+  const alpha=(typeof e.alpha==="number")?e.alpha:0;
+  let device=mul(mul(rotZ(alpha),rotX(e.beta)),rotY(e.gamma));
   device=mul(device,rotZ(-screen));
   // Camera looks through the back of the phone: camera basis in world coordinates.
   const cameraToWorld=mul(device,rotX(-90));
@@ -32,6 +33,8 @@ export async function startSensors(onUpdate){
  };
  // "deviceorientationabsolute" exists inconsistently on mobile browsers and may never emit.
  // deviceorientation is the reliable event; iOS supplies webkitCompassHeading when available.
- eventName="deviceorientation";window.addEventListener(eventName,listener,true);return sensorState;
+ eventName="deviceorientation";window.addEventListener(eventName,listener,true);
+ // Mark active only after the first real sensor event; caller can detect a silent sensor.
+ return sensorState;
 }
 export function stopSensors(){if(listener&&eventName)window.removeEventListener(eventName,listener,true);listener=null;eventName=null;sensorState.active=false;sensorState.matrix=null}
