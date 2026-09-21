@@ -8,6 +8,8 @@ For each of the 88 IAU constellations:
 - display only the two brightest HYG catalogue entries by apparent magnitude;
 - display distance and spectral type;
 - display verified stellar-system multiplicity when available;
+- remove the system-type filter from the page;
+- explicitly represent Alpha Centauri as a triple system: Rigil Kentaurus, Toliman, and Proxima Centauri;
 - render one colored star for a single/unverified object, and the verified number of colored stellar components for multiple systems;
 - show component spectral types when the source provides them.
 
