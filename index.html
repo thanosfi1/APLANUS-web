@@ -532,7 +532,7 @@
       transform: scale(0.48);
       z-index: 2;
       opacity: 0.6;
-      filter: drop-shadow(0 0 18px rgba(245, 158, 11, 0.65));
+      filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.55));
     }
 
     .hero-wrapper.sun-active #moonNode {
@@ -547,7 +547,7 @@
       transform: scale(1);
       z-index: 5;
       opacity: 1;
-      filter: drop-shadow(0 0 32px rgba(245, 158, 11, 0.9));
+      filter: drop-shadow(0 0 32px rgba(255, 255, 255, 0.9));
     }
 
     .sun-svg {
@@ -1187,18 +1187,18 @@
               <defs>
                 <radialGradient id="sunGradient" cx="50%" cy="50%" r="50%">
                   <stop offset="0%" stop-color="#fffbeb" />
-                  <stop offset="35%" stop-color="#fef08a" />
-                  <stop offset="70%" stop-color="#f59e0b" />
-                  <stop offset="100%" stop-color="#d97706" />
+                  <stop offset="35%" stop-color="#ffffff" />
+                  <stop offset="70%" stop-color="#e5e7eb" />
+                  <stop offset="100%" stop-color="#cbd5e1" />
                 </radialGradient>
                 <radialGradient id="coronaGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="40%" stop-color="rgba(245,158,11,0.8)" />
-                  <stop offset="85%" stop-color="rgba(217,119,6,0.2)" />
+                  <stop offset="40%" stop-color="rgba(255,255,255,0.8)" />
+                  <stop offset="85%" stop-color="rgba(255,255,255,0.2)" />
                   <stop offset="100%" stop-color="transparent" />
                 </radialGradient>
               </defs>
               <circle cx="60" cy="60" r="54" fill="url(#coronaGlow)" />
-              <circle cx="60" cy="60" r="34" fill="url(#sunGradient)" stroke="#fde68a" stroke-width="1.5" />
+              <circle cx="60" cy="60" r="34" fill="url(#sunGradient)" stroke="#ffffff" stroke-width="1.5" />
             </svg>
           </div>
         </div>
