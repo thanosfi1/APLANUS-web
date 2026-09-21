@@ -1429,19 +1429,19 @@
     };
 
     const BRIGHT_STARS_CATALOG = [
-      { name: "Σείριος (Sirius)", const: "Μέγας Κύων", ra: 6.7525, dec: -16.7161, mag: -1.46, ly: "8.6", grad: "radial-gradient(circle at 35% 35%, #ffffff, #7dd3fc, #0284c7)" },
-      { name: "Αρκτούρος (Arcturus)", const: "Βοώτης", ra: 14.261, dec: 19.182, mag: -0.05, ly: "37", grad: "radial-gradient(circle at 35% 35%, #ffedd5, #f97316, #c2410c)" },
-      { name: "Βέγας (Vega)", const: "Λύρα", ra: 18.6156, dec: 38.7836, mag: 0.03, ly: "25", grad: "radial-gradient(circle at 35% 35%, #ffffff, #38bdf8, #0284c7)" },
-      { name: "Αιγοκέρως / Καπέλλα (Capella)", const: "Ηνίοχος", ra: 5.278, dec: 45.998, mag: 0.08, ly: "43", grad: "radial-gradient(circle at 35% 35%, #fffbeb, #fef08a, #ca8a04)" },
-      { name: "Ρίγκελ (Rigel)", const: "Ωρίων", ra: 5.242, dec: -8.201, mag: 0.18, ly: "860", grad: "radial-gradient(circle at 35% 35%, #ffffff, #93c5fd, #1d4ed8)" },
-      { name: "Προκύων (Procyon)", const: "Μικρός Κύων", ra: 7.655, dec: 5.225, mag: 0.38, ly: "11.4", grad: "radial-gradient(circle at 35% 35%, #ffffff, #fef08a, #d97706)" },
-      { name: "Μπετελγκέζ (Betelgeuse)", const: "Ωρίων", ra: 5.919, dec: 7.407, mag: 0.50, ly: "642", grad: "radial-gradient(circle at 35% 35%, #ffedd5, #ef4444, #991b1b)" },
-      { name: "Αλτάιρ (Altair)", const: "Αετός", ra: 19.846, dec: 8.868, mag: 0.77, ly: "17", grad: "radial-gradient(circle at 35% 35%, #ffffff, #e2e8f0, #94a3b8)" },
-      { name: "Άλντεμπαραν (Aldebaran)", const: "Ταύρος", ra: 4.598, dec: 16.509, mag: 0.85, ly: "65", grad: "radial-gradient(circle at 35% 35%, #ffedd5, #ea580c, #9a3412)" },
-      { name: "Στάχυς (Spica)", const: "Παρθένος", ra: 13.419, dec: -11.161, mag: 0.98, ly: "250", grad: "radial-gradient(circle at 35% 35%, #ffffff, #60a5fa, #1d4ed8)" },
-      { name: "Αντάρης (Antares)", const: "Σκορπιός", ra: 16.490, dec: -26.432, mag: 1.06, ly: "550", grad: "radial-gradient(circle at 35% 35%, #fee2e2, #dc2626, #7f1d1d)" },
-      { name: "Πολλύδευκης (Pollux)", const: "Δίδυμοι", ra: 7.755, dec: 28.026, mag: 1.14, ly: "34", grad: "radial-gradient(circle at 35% 35%, #fff7ed, #fb923c, #c2410c)" },
-      { name: "Φομαλώ (Fomalhaut)", const: "Νότιος Ιχθύς", ra: 22.960, dec: -29.622, mag: 1.17, ly: "25", grad: "radial-gradient(circle at 35% 35%, #ffffff, #cbd5e1, #64748b)" },
+      { name: "Σείριος (Sirius)", const: "Μέγας Κύων", ra: 6.7525, dec: -16.7161, mag: -1.46, ly: "8.6", spectral: "A0mA1Va", system: "Διπλό σύστημα", grad: "radial-gradient(circle at 35% 35%, #ffffff, #7dd3fc, #0284c7)" },
+      { name: "Αρκτούρος (Arcturus)", const: "Βοώτης", ra: 14.261, dec: 19.182, mag: -0.05, ly: "37", spectral: "K1.5IIIFe-0.5", system: "Μεμονωμένος αστέρας", grad: "radial-gradient(circle at 35% 35%, #ffedd5, #f97316, #c2410c)" },
+      { name: "Βέγας (Vega)", const: "Λύρα", ra: 18.6156, dec: 38.7836, mag: 0.03, ly: "25", spectral: "A0V", system: "Μεμονωμένος αστέρας", grad: "radial-gradient(circle at 35% 35%, #ffffff, #38bdf8, #0284c7)" },
+      { name: "Αίγα / Δίφρος (Capella)", const: "Ηνίοχος", ra: 5.278, dec: 45.998, mag: 0.08, ly: "43", spectral: "G3III:", system: "Πολλαπλό σύστημα", grad: "radial-gradient(circle at 35% 35%, #fffbeb, #fef08a, #ca8a04)" },
+      { name: "Ρίγκελ (Rigel)", const: "Ωρίων", ra: 5.242, dec: -8.201, mag: 0.18, ly: "860", spectral: "B8Ia", system: "Πολλαπλό σύστημα", grad: "radial-gradient(circle at 35% 35%, #ffffff, #93c5fd, #1d4ed8)" },
+      { name: "Προκύων (Procyon)", const: "Μικρός Κύων", ra: 7.655, dec: 5.225, mag: 0.38, ly: "11.4", spectral: "F5IV-V+DQZ", system: "Διπλό σύστημα", grad: "radial-gradient(circle at 35% 35%, #ffffff, #fef08a, #d97706)" },
+      { name: "Μπετελγκέζ (Betelgeuse)", const: "Ωρίων", ra: 5.919, dec: 7.407, mag: 0.50, ly: "642", spectral: "M1-M2Ia-Iab", system: "Μεμονωμένος αστέρας", grad: "radial-gradient(circle at 35% 35%, #ffedd5, #ef4444, #991b1b)" },
+      { name: "Αλτάιρ (Altair)", const: "Αετός", ra: 19.846, dec: 8.868, mag: 0.77, ly: "17", spectral: "A7Vn", system: "Μεμονωμένος αστέρας", grad: "radial-gradient(circle at 35% 35%, #ffffff, #e2e8f0, #94a3b8)" },
+      { name: "Άλντεμπαραν (Aldebaran)", const: "Ταύρος", ra: 4.598, dec: 16.509, mag: 0.85, ly: "65", spectral: "K5+III", system: "Μεμονωμένος αστέρας", grad: "radial-gradient(circle at 35% 35%, #ffedd5, #ea580c, #9a3412)" },
+      { name: "Στάχυς (Spica)", const: "Παρθένος", ra: 13.419, dec: -11.161, mag: 0.98, ly: "250", spectral: "B1V", system: "Διπλό σύστημα", grad: "radial-gradient(circle at 35% 35%, #ffffff, #60a5fa, #1d4ed8)" },
+      { name: "Αντάρης (Antares)", const: "Σκορπιός", ra: 16.490, dec: -26.432, mag: 1.06, ly: "550", spectral: "M1.5Iab+B2Vn", system: "Διπλό σύστημα", grad: "radial-gradient(circle at 35% 35%, #fee2e2, #dc2626, #7f1d1d)" },
+      { name: "Πολλύδευκης (Pollux)", const: "Δίδυμοι", ra: 7.755, dec: 28.026, mag: 1.14, ly: "34", spectral: "K0IIIb", system: "Μεμονωμένος αστέρας", grad: "radial-gradient(circle at 35% 35%, #fff7ed, #fb923c, #c2410c)" },
+      { name: "Φομαλώ (Fomalhaut)", const: "Νότιος Ιχθύς", ra: 22.960, dec: -29.622, mag: 1.17, ly: "25", spectral: "A4V", system: "Πολλαπλό σύστημα", grad: "radial-gradient(circle at 35% 35%, #ffffff, #cbd5e1, #64748b)" },
       { name: "Ντενέμπ (Deneb)", const: "Κύκνος", ra: 20.690, dec: 45.280, mag: 1.25, ly: "2615", grad: "radial-gradient(circle at 35% 35%, #ffffff, #bae6fd, #0284c7)" },
       { name: "Βασιλίσκος (Regulus)", const: "Λέων", ra: 10.139, dec: 11.967, mag: 1.36, ly: "79", grad: "radial-gradient(circle at 35% 35%, #ffffff, #93c5fd, #2563eb)" }
     ];
@@ -2133,7 +2133,7 @@
             <div class="star-info">
               <span class="star-name">${star.name}</span>
               <span class="star-const">${star.const}</span>
-              <span class="star-meta">Μέγεθος: ${star.mag >= 0 ? '+' + star.mag : star.mag} mag • ${star.ly} ly${altText}</span>
+              <span class="star-meta">Μέγεθος: ${star.mag >= 0 ? '+' + star.mag : star.mag} mag • ${star.ly} ly${altText}<br>Φασματικός τύπος: ${star.spectral} • ${star.system}</span>
             </div>
           `;
           starsContainer.appendChild(starEl);
