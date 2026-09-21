@@ -1,0 +1,41 @@
+# APLANUS Agent Rules
+
+These instructions apply to every AI coding session in this repository.
+
+## Startup protocol — mandatory
+Before changing code:
+1. Read `APLANUS_CONTEXT.md`.
+2. Read `CURRENT_TASK.md`.
+3. Inspect current `main`, recent commits/PRs, and only the files relevant to the request.
+4. Treat repository state as truth. Never rely on memory from another chat.
+5. Briefly state: current task, relevant files, intended minimal change.
+6. If CURRENT_TASK conflicts with the user's newest explicit instruction, the newest instruction wins and CURRENT_TASK must be updated accordingly.
+
+## Anti-drift / anti-hallucination rules
+- Do not invent requirements, astronomy facts, APIs, files, functions, dependencies, or completed work.
+- Do not perform "helpful" unrelated refactors, redesigns, cleanup, renames, dependency changes or architecture changes.
+- Do not delete or replace working functionality unless explicitly requested.
+- Never rewrite a large working file merely to make a small change.
+- Inspect definitions/call sites before changing shared JavaScript, CSS, APIs, service-worker or navigation behavior.
+- For astronomical facts/data: verify against traceable reliable sources. If uncertain or conflicting, mark it unresolved rather than guessing.
+- Never claim a test/check passed unless it was actually run or verifiably checked.
+- Never expose or commit secrets/tokens/passwords.
+- Do not push experimental changes directly to `main`.
+
+## Change protocol
+Default workflow:
+`main -> feature/fix branch -> scoped edits -> checks -> commit -> Pull Request -> review -> merge`.
+
+One requested feature/fix should remain one coherent change. If a request unexpectedly requires broad architectural work, stop and explain why before doing it.
+
+## Completion protocol — mandatory
+Before saying a task is finished:
+1. Review the diff for unrelated changes.
+2. Run/perform the checks available for the affected area.
+3. Confirm existing related behavior was preserved.
+4. Commit/push the work and open/update a PR when appropriate.
+5. Update `CURRENT_TASK.md` so another fresh chat can continue without old conversation history.
+6. Report exactly what changed, what was checked, what remains, branch/PR, and any uncertainty.
+
+## New-chat recovery
+A fresh chat should need only this repository. It must read `AGENTS.md`, `APLANUS_CONTEXT.md`, and `CURRENT_TASK.md` before editing.
