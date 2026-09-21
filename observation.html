@@ -9,9 +9,25 @@ const PLANETS=[["Mercury","Ερμής"],["Venus","Αφροδίτη"],["Mars","Ά
 function horBody(body,d,o){const e=Astronomy.Equator(body,d,o,true,true);return Astronomy.Horizon(d,o,e.ra,e.dec,"normal")}
 function visibleTargets(d,o){
  const out=[];
- const moon=horBody("Moon",d,o);if(moon.altitude>0)out.push({kind:"Σελήνη",name:"Σελήνη",alt:moon.altitude,az:moon.azimuth});
- for(const [id,name] of PLANETS){const h=horBody(id,d,o);if(h.altitude>0)out.push({kind:"Πλανήτης",name,alt:h.altitude,az:h.azimuth})}
- for(const [id,name,ra,dec] of DS){const h=Astronomy.Horizon(d,o,ra,dec,"normal");if(h.altitude>10)out.push({kind:"Deep Sky",name:name+" ("+id+")",alt:h.altitude,az:h.azimuth})}
+ const sun=horBody("Sun",d,o);
+ const isNight=sun.altitude<-12;
+
+ const moon=horBody("Moon",d,o);
+ if(moon.altitude>0)out.push({kind:"Σελήνη",name:"Σελήνη",alt:moon.altitude,az:moon.azimuth});
+
+ for(const [id,name] of PLANETS){
+  const h=horBody(id,d,o);
+  const visibleInDay=id==="Venus";
+  if(h.altitude>0&&(isNight||visibleInDay))out.push({kind:"Πλανήτης",name,alt:h.altitude,az:h.azimuth});
+ }
+
+ if(isNight){
+  for(const [id,name,ra,dec] of DS){
+   const h=Astronomy.Horizon(d,o,ra,dec,"normal");
+   if(h.altitude>10)out.push({kind:"Deep Sky",name:name+" ("+id+")",alt:h.altitude,az:h.azimuth});
+  }
+ }
+
  out.sort((a,b)=>b.alt-a.alt);return out
 }
 function renderTargets(d,o){const el=document.querySelector("#targets"),arr=visibleTargets(d,o);if(!arr.length){el.innerHTML='<div class="none">Δεν υπάρχουν στόχοι πάνω από τον ορίζοντα αυτή την ώρα.</div>';return}el.innerHTML=arr.map(x=>'<article class="target"><div class="kind">'+x.kind+'</div><b>'+x.name+'</b><small><span class="vis">Ορατό</span><br>Ύψος: '+Math.round(x.alt)+'° · Αζιμούθιο: '+Math.round(x.az)+'°</small></article>').join("")}
