@@ -17,7 +17,8 @@ function visibleTargets(d,o){
 
  for(const [id,name] of PLANETS){
   const h=horBody(id,d,o);
-  if(h.altitude>0)out.push({kind:"Πλανήτης",name,alt:h.altitude,az:h.azimuth});
+  const visibleInDay=id==="Venus";
+  if(h.altitude>0&&(isNight||visibleInDay))out.push({kind:"Πλανήτης",name,alt:h.altitude,az:h.azimuth});
  }
 
  if(isNight){
