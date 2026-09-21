@@ -15,7 +15,7 @@ None. Wait for the owner's next explicit request.
 No active preview awaiting approval.
 
 For every future user-visible task, record:
-- Vercel preview URL;
+- exact Vercel preview URL automatically retrieved for the current branch/PR and given directly in chat;
 - whether preview was actually checked;
 - owner approval: PENDING / APPROVED;
 - merge status.
@@ -30,7 +30,7 @@ Never merge to `main` while approval is PENDING.
 - Astronomy accuracy and traceable source attribution are important.
 - Stellar-system/component counts must not be guessed.
 - Live Sky / AR is intentionally not a current priority unless explicitly requested.
-- Preview every user-visible change on Vercel before merging to main.
+- Preview every user-visible change on Vercel before merging to main, automatically retrieve the newest matching preview URL, and give it directly in chat so the owner/friend never has to search the Vercel dashboard.
 - Merge only after explicit owner approval.
 
 ## Before starting the next task
