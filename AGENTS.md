@@ -22,9 +22,22 @@ Before changing code:
 - Never expose or commit secrets/tokens/passwords.
 - Do not push experimental changes directly to `main`.
 
+## Mandatory preview-before-production workflow
+For every user-visible feature/fix:
+1. Start from current `main` and work on a dedicated feature/fix branch.
+2. Make only the scoped requested change.
+3. Create/use a Vercel Preview Deployment for that branch/PR.
+4. Give the owner the preview URL and summarize exactly what changed and what was checked.
+5. DO NOT merge to `main` merely because the implementation is complete or the preview builds successfully.
+6. Wait for explicit owner approval such as "βάλ' το", "merge", or equivalent.
+7. Only after that approval may the PR be merged into `main`/production.
+8. If the preview is unavailable or broken, treat the task as not approved and do not merge.
+
+Known APLANUS preview/development deployment: `https://aplanus-sky-dev.vercel.app`. Verify the actual branch/PR preview URL for each task rather than assuming this stable URL always represents the current branch.
+
 ## Change protocol
 Default workflow:
-`main -> feature/fix branch -> scoped edits -> checks -> commit -> Pull Request -> review -> merge`.
+`main -> feature/fix branch -> scoped edits -> checks -> Vercel Preview -> owner review/approval -> Pull Request merge -> main/production`.
 
 One requested feature/fix should remain one coherent change. If a request unexpectedly requires broad architectural work, stop and explain why before doing it.
 
@@ -34,8 +47,9 @@ Before saying a task is finished:
 2. Run/perform the checks available for the affected area.
 3. Confirm existing related behavior was preserved.
 4. Commit/push the work and open/update a PR when appropriate.
-5. Update `CURRENT_TASK.md` so another fresh chat can continue without old conversation history.
-6. Report exactly what changed, what was checked, what remains, branch/PR, and any uncertainty.
+5. Provide the Vercel preview URL and wait for explicit owner approval before merge.
+6. Update `CURRENT_TASK.md` so another fresh chat can continue without old conversation history.
+7. Report exactly what changed, what was checked, what remains, branch/PR/preview, and any uncertainty.
 
 ## New-chat recovery
 A fresh chat should need only this repository. It must read `AGENTS.md`, `APLANUS_CONTEXT.md`, and `CURRENT_TASK.md` before editing.
