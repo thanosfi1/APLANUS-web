@@ -6,16 +6,18 @@ This file is the short, continuously updated handoff between development session
 IN PROGRESS — observation visibility rules are implemented and awaiting owner approval.
 
 ## Active task
-Correct the `Παρατήρηση` section so Moon/planets are marked visible whenever they are above the horizon, including daytime, while Deep-Sky targets are shown as visible only during astronomical night and only when above the horizon.
+Correct the `Παρατήρηση` section so the Moon is marked visible whenever it is above the horizon, Venus is visible above the horizon even during daytime, other planets are visible only during astronomical night and above the horizon, and Deep-Sky targets are shown as visible only during astronomical night and only when above the horizon.
 
 ## Working branch
 `fix/observation-visibility-rules` (PR #5)
 
 ## Preview / approval state
 Vercel Preview: https://aplanus-sky-dev-git-fix-observation-vi-5f0754-thanosfotis3-1320.vercel.app
-Preview status: READY / SUCCESS for commit `200dcf5e1759009d5eaced28c4e4ccddada3e2b5`.
+Preview status: NEEDS REDEPLOY / CHECK for latest commit `a9c34e71f83676b02afe1aed393c1ddfdf3b85b0`.
 Owner approval: PENDING.
 Merge status: NOT MERGED.
+
+Checks: source-level review performed for the requested visibility rule; Vercel preview must be rechecked for latest commit before approval.
 
 For every future user-visible task, record:
 - Vercel preview URL;
@@ -27,6 +29,11 @@ Never merge to `main` while approval is PENDING.
 
 ## Last known handoff
 2026-09-21
+
+## Latest requested adjustment
+- Venus remains eligible above the horizon during daytime.
+- Mercury, Mars, Jupiter, Saturn, Uranus and Neptune require astronomical night (`Sun altitude < -12°`) and altitude above the horizon.
+- Deep-Sky visibility rule remains unchanged.
 
 ## Important current priorities
 - Preserve existing working APLANUS behavior and design.
