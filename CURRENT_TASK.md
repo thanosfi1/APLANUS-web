@@ -3,16 +3,19 @@
 This file is the short, continuously updated handoff between development sessions.
 
 ## Status
-READY — no unfinished task is currently recorded.
+IN PROGRESS — observation visibility rules are implemented and awaiting owner approval.
 
 ## Active task
-None. Wait for the owner's next explicit request.
+Correct the `Παρατήρηση` section so Moon/planets are marked visible whenever they are above the horizon, including daytime, while Deep-Sky targets are shown as visible only during astronomical night and only when above the horizon.
 
 ## Working branch
-`main` is the stable/production baseline. Create a new feature/fix branch for the next task.
+`fix/observation-visibility-rules` (PR #5)
 
 ## Preview / approval state
-No active preview awaiting approval.
+Vercel Preview: https://aplanus-sky-dev-git-fix-observation-vi-5f0754-thanosfotis3-1320.vercel.app
+Preview status: READY / SUCCESS for commit `200dcf5e1759009d5eaced28c4e4ccddada3e2b5`.
+Owner approval: PENDING.
+Merge status: NOT MERGED.
 
 For every future user-visible task, record:
 - Vercel preview URL;
