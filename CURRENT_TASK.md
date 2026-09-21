@@ -1,42 +1,30 @@
 # APLANUS — Current Development State
 
 ## Status
-IN PROGRESS — updating the homepage title for the visible planets / minor bodies section.
+IN PROGRESS — enriching «Φωτεινότερα Αστέρια Βραδιάς» with spectral and stellar-system information.
 
 ## Active task
-Change the homepage section title from «Πλανήτες & Ουράνια Σώματα» to «Πλανήτες, Πλανήτες Νάνοι και Αστεροειδείς — Ορατοί Απόψε».
+On the homepage bright-stars cards:
+- show each star's spectral type;
+- show whether it is a single star or belongs to a stellar system;
+- correct Capella's displayed Greek name to «Αίγα / Δίφρος (Capella)».
 
 ## Working branch
-`fix/home-visible-planets-dwarfs-asteroids-title`
+`feature/bright-stars-spectral-system-info`
 
 ## Preview / approval state
-Vercel Preview: PENDING — Vercel status currently pending; dashboard: https://vercel.com/thanosfotis3-1320/aplanus-sky-dev/nRiMrGb51kBkTdye3vBVQDaov4LP
+Vercel Preview: PENDING
 Preview status: PENDING
 Owner approval: PENDING.
 Merge status: NOT MERGED.
-PR: #7 — https://github.com/thanosfi1/APLANUS-web/pull/7
 
-Checks: source-level review confirms the requested title exists in index.html and only that heading text was changed there.
+## Checks
+- Astronomy metadata was checked against SIMBAD/CDS before being added.
+- Existing visibility calculation, magnitude, distance, altitude and star-card selection logic were left unchanged.
+- PR #7 (previous homepage title change) was explicitly approved by the owner and merged to main as commit a8e8154b00980e53358d6d9c3243f1820048af73.
 
 ## Last known handoff
 2026-09-22
 
-## Important current priorities
-- Preserve existing working APLANUS behavior and design.
-- Astronomy accuracy and traceable source attribution are important.
-- Stellar-system/component counts must not be guessed.
-- Live Sky / AR is intentionally not a current priority unless explicitly requested.
-- Preview every user-visible change on Vercel before merging to main.
-- Merge only after explicit owner approval.
-
-## Before ending this task
-Update this file with:
-- exact status;
-- what was completed;
-- working branch;
-- PR number/link;
-- Vercel preview URL and check result;
-- owner approval;
-- checks actually performed;
-- unresolved questions/known issues;
-- exact next action.
+## Next action
+Open a PR, verify its Vercel Preview, give the owner the preview URL, and wait for explicit approval before merge.
