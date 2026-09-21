@@ -27,7 +27,11 @@ For every user-visible feature/fix:
 1. Start from current `main` and work on a dedicated feature/fix branch.
 2. Make only the scoped requested change.
 3. Create/use a Vercel Preview Deployment for that branch/PR.
-4. Give the owner the preview URL and summarize exactly what changed and what was checked.
+4. Automatically locate the newest Vercel Preview URL created for the active branch/PR and give that clickable URL directly to the owner in ChatGPT, together with exactly what changed and what was checked. The owner/friend must not be required to open the Vercel dashboard just to find the preview.
+   - Prefer the deployment/status/check associated with the current branch/commit/PR.
+   - Verify that the URL corresponds to the current change before presenting it.
+   - If Vercel has not finished deploying yet, check its deployment/status rather than inventing or reusing an older URL.
+   - Never present the stable `aplanus-sky-dev.vercel.app` URL as the new change's preview unless it has been verified to represent that exact current deployment.
 5. DO NOT merge to `main` merely because the implementation is complete or the preview builds successfully.
 6. Wait for explicit owner approval such as "βάλ' το", "merge", or equivalent.
 7. Only after that approval may the PR be merged into `main`/production.
@@ -47,7 +51,7 @@ Before saying a task is finished:
 2. Run/perform the checks available for the affected area.
 3. Confirm existing related behavior was preserved.
 4. Commit/push the work and open/update a PR when appropriate.
-5. Provide the Vercel preview URL and wait for explicit owner approval before merge.
+5. Automatically retrieve and provide the current branch/PR's clickable Vercel preview URL in the chat; do not make the owner search the Vercel dashboard. Then wait for explicit owner approval before merge.
 6. Update `CURRENT_TASK.md` so another fresh chat can continue without old conversation history.
 7. Report exactly what changed, what was checked, what remains, branch/PR/preview, and any uncertainty.
 
