@@ -7,6 +7,8 @@ This file is the persistent context for development of APLANUS. It is intended t
 - Repository: thanosfi1/APLANUS-web
 - Production/default branch: main
 - The repository is public.
+- Known Vercel development/preview URL: https://aplanus-sky-dev.vercel.app
+- The GitHub repository homepage points to that Vercel URL.
 - Always inspect the current repository before making changes. The repository is the source of truth; this document is guidance and may lag behind code.
 
 ## Current project structure
@@ -49,47 +51,44 @@ Live Sky / AR and problematic iPhone sensor/AR work were intentionally depriorit
 6. Do not silently remove features, data, links, calculations or UI.
 7. Keep changes small and reviewable.
 8. Before considering a task complete, check for broken references, obvious JS errors, missing files and unintended regressions in affected pages.
-9. Do not push experimental work directly into main. Use a feature branch and a Pull Request unless the owner explicitly instructs otherwise.
-10. Never commit passwords, tokens, API keys, private credentials or secrets.
-11. If the requested change conflicts with existing behavior or requires a large architectural rewrite, explain the conflict before implementing it.
-12. Do not assume previous ChatGPT messages are correct when they conflict with the repository. Current code wins.
+9. Do not push experimental work directly into main.
+10. Every user-visible change must be shown through a Vercel preview before it is merged into main.
+11. A successful build/preview is NOT approval. Wait for explicit owner approval before merge.
+12. Never commit passwords, tokens, API keys, private credentials or secrets.
+13. If the requested change conflicts with existing behavior or requires a large architectural rewrite, explain the conflict before implementing it.
+14. Do not assume previous ChatGPT messages are correct when they conflict with the repository. Current code wins.
 
-## Git workflow
+## Git + Vercel workflow
 For each development task:
 1. Sync/read current main.
 2. Create a dedicated branch, e.g. feature/<short-name> or fix/<short-name>.
 3. Make only the requested change.
 4. Test/review the affected pages.
 5. Commit with a descriptive message.
-6. Open a Pull Request into main.
-7. In the PR description record:
-   - what changed;
-   - files changed;
-   - tests/checks performed;
-   - known limitations or remaining work.
-8. Merge only after review/approval.
+6. Open/update a Pull Request into main.
+7. Obtain/verify the Vercel Preview Deployment for that branch/PR.
+8. Give the owner the preview URL and record what was checked.
+9. WAIT for explicit owner approval.
+10. Only after approval, merge the PR into main/production.
+11. In the PR description record what changed, files changed, checks performed, preview URL, and known limitations.
+
+Historical confirmation: PR #1 ("Publish latest APLANUS updates") explicitly recorded that changes tested in `aplanus-sky-dev` were then transferred to the central version. Preserve this preview-first workflow.
 
 ## Continuity across ChatGPT chats
-A new ChatGPT conversation MUST NOT depend on the previous conversation.
+A new ChatGPT conversation MUST NOT depend on the previous conversation. It must recover state from `AGENTS.md`, this file, `CURRENT_TASK.md`, current branches/PRs/commits, and the repository code.
 
-At the beginning of every new chat, give the assistant the repository and say:
-
-"Continue development of APLANUS from the current repository state. First read APLANUS_CONTEXT.md and inspect the current main branch and relevant files. Treat the repository as the source of truth. Do not change code yet. Summarize the current state, then wait for my requested change."
-
-Before ending a development session, the developer should ensure that all completed work is committed/pushed and that unfinished work is represented by a branch/PR or clearly recorded below.
+Before ending a development session, ensure completed work is committed/pushed and unfinished work is represented by a branch/PR and accurately recorded in CURRENT_TASK.md.
 
 ## SESSION STATE
-This section is the lightweight handoff between sessions.
-
 Last handover baseline: 2026-09-21
 
 Current principle:
-- main is the stable baseline.
-- New development should happen through branches + PRs.
+- main is the stable/production baseline.
+- New development happens through branches + PRs.
+- User-visible changes are previewed on Vercel before merge.
+- Merge requires explicit owner approval after preview.
 - Live Sky / AR is not the current priority.
 - Accuracy of star/system data and source traceability is important.
-
-When a task is completed, update this section only when there is important context that cannot be understood from commits/PRs.
 
 ### In progress
 - None recorded in this handover file.
@@ -101,21 +100,4 @@ When a task is completed, update this section only when there is important conte
 - Re-check stellar-system/component counts against reliable astronomical sources before presenting them as verified.
 - Do not revive old assumptions from chat history if the current repository has newer code/data.
 - PWA assets/service-worker behavior should be verified before relying on offline/install behavior.
-
-## Prompt for each new ChatGPT chat
-Copy/paste:
-
-You are continuing development of the APLANUS web application.
-Repository: thanosfi1/APLANUS-web
-
-FIRST:
-1. Read APLANUS_CONTEXT.md from the current main branch.
-2. Inspect the current repository state and the files relevant to my request.
-3. Treat current repository code + merged commits as the source of truth, not memories from an older chat.
-4. Do not make unrelated improvements.
-5. Do not remove working functionality.
-6. For astronomy data, never guess; use traceable reliable sources and preserve source attribution.
-7. Work on a dedicated branch and propose changes through a Pull Request unless I explicitly tell you otherwise.
-8. Keep each change small enough to review and roll back.
-
-Before editing, briefly tell me what you found and which files you expect to touch. Then perform only the change I request.
+- Verify the actual preview URL for the active branch/PR; do not assume the stable aplanus-sky-dev URL is always the branch-specific preview.
