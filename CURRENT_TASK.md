@@ -10,10 +10,11 @@ Change the homepage section title from «Πλανήτες & Ουράνια Σώ�
 `fix/home-visible-planets-dwarfs-asteroids-title`
 
 ## Preview / approval state
-Vercel Preview: PENDING
+Vercel Preview: PENDING — Vercel status currently pending; dashboard: https://vercel.com/thanosfotis3-1320/aplanus-sky-dev/nRiMrGb51kBkTdye3vBVQDaov4LP
 Preview status: PENDING
 Owner approval: PENDING.
 Merge status: NOT MERGED.
+PR: #7 — https://github.com/thanosfi1/APLANUS-web/pull/7
 
 Checks: source-level review confirms the requested title exists in index.html and only that heading text was changed there.
 
