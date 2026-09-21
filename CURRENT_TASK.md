@@ -9,7 +9,18 @@ READY — no unfinished task is currently recorded.
 None. Wait for the owner's next explicit request.
 
 ## Working branch
-`main` is the stable baseline. Create a new feature/fix branch for the next task.
+`main` is the stable/production baseline. Create a new feature/fix branch for the next task.
+
+## Preview / approval state
+No active preview awaiting approval.
+
+For every future user-visible task, record:
+- Vercel preview URL;
+- whether preview was actually checked;
+- owner approval: PENDING / APPROVED;
+- merge status.
+
+Never merge to `main` while approval is PENDING.
 
 ## Last known handoff
 2026-09-21
@@ -19,6 +30,8 @@ None. Wait for the owner's next explicit request.
 - Astronomy accuracy and traceable source attribution are important.
 - Stellar-system/component counts must not be guessed.
 - Live Sky / AR is intentionally not a current priority unless explicitly requested.
+- Preview every user-visible change on Vercel before merging to main.
+- Merge only after explicit owner approval.
 
 ## Before starting the next task
 Read:
@@ -36,6 +49,9 @@ Update this file with:
 - what remains;
 - working branch;
 - PR number/link if one exists;
+- Vercel preview URL;
+- preview check result;
+- owner approval: PENDING / APPROVED;
 - checks actually performed;
 - unresolved questions/known issues;
 - exact next action.
