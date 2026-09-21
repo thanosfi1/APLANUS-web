@@ -1,13 +1,13 @@
 # APLANUS — Current Development State
 
 ## Status
-IN PROGRESS — removing a stray literal `/n` from the top-left navigation menu.
+IN PROGRESS — updating the homepage title for the visible planets / minor bodies section.
 
 ## Active task
-Remove the stray `/n` displayed between «Παρατήρηση» and «Αστέρια & Αστερισμοί» in the three-line navigation menu.
+Change the homepage section title from «Πλανήτες & Ουράνια Σώματα» to «Πλανήτες, Πλανήτες Νάνοι και Αστεροειδείς — Ορατοί Απόψε».
 
 ## Working branch
-`fix/menu-stray-newline`
+`fix/home-visible-planets-dwarfs-asteroids-title`
 
 ## Preview / approval state
 Vercel Preview: PENDING
@@ -15,7 +15,7 @@ Preview status: PENDING
 Owner approval: PENDING.
 Merge status: NOT MERGED.
 
-Checks: source-level review confirms the stray literal `\n` was present in `index.html` and was removed without changing the surrounding menu items.
+Checks: source-level review confirms the requested title exists in index.html and only that heading text was changed there.
 
 ## Last known handoff
 2026-09-22
@@ -28,27 +28,14 @@ Checks: source-level review confirms the stray literal `\n` was present in `inde
 - Preview every user-visible change on Vercel before merging to main.
 - Merge only after explicit owner approval.
 
-## Before starting the next task
-Read:
-1. `AGENTS.md`
-2. `APLANUS_CONTEXT.md`
-3. this file
-4. current relevant code and recent repository changes
-
-Then replace the Active task section with the exact requested task and record the branch being used.
-
-## Before ending every session
+## Before ending this task
 Update this file with:
-- exact status: IN PROGRESS / BLOCKED / READY;
+- exact status;
 - what was completed;
-- what remains;
 - working branch;
-- PR number/link if one exists;
-- Vercel preview URL;
-- preview check result;
-- owner approval: PENDING / APPROVED;
+- PR number/link;
+- Vercel preview URL and check result;
+- owner approval;
 - checks actually performed;
 - unresolved questions/known issues;
 - exact next action.
-
-Do not write vague notes such as "continue later." The purpose is for a completely new ChatGPT conversation to recover the work accurately.
