@@ -66,8 +66,8 @@ const MOON_IMAGES={
 'MK 2':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Makemake_and_its_moon.png',
 'Δυσνομία':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Eris_and_Dysnomia.png'
 };
-const bodyImg=p=>'<img class="body-photo" src="'+BODY_IMAGES[p.cls]+'" alt="'+p.name+'" loading="lazy" decoding="async">';
-const moonImg=m=>'<img class="moon-photo" src="'+MOON_IMAGES[m]+'" alt="'+m+'" loading="lazy" decoding="async">';
+const bodyImg=p=>'<img class="body-photo" src="'+BODY_IMAGES[p.cls]+'" alt="'+p.name+'" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'https://commons.wikimedia.org/wiki/Special:Redirect/file/FullMoon2010.jpg\'">';
+const moonImg=m=>'<img class="moon-photo" src="'+MOON_IMAGES[m]+'" alt="'+m+'" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'https://commons.wikimedia.org/wiki/Special:Redirect/file/FullMoon2010.jpg\'">';
 const REAL_DIAM={sun:1392700,mercury:4879,venus:12104,earth:12756,mars:6792,jupiter:142984,saturn:120536,uranus:51118,neptune:49528};
 const realSize=k=>Math.max(3,Math.round(REAL_DIAM[k]/REAL_DIAM.sun*360));
 const system=document.querySelector("#system"),cards=document.querySelector("#cards");
