@@ -1,27 +1,33 @@
 # APLANUS — Current Development State
 
 ## Status
-IN PROGRESS — homepage starry background.
+APPROVED — homepage brightest-visible-planet card ready to merge.
 
 ## Active task
-- Replace the plain dark-blue homepage background with a dark starry-sky background.
-- Keep the existing homepage layout, content, controls, cards, and behavior unchanged.
-- Implement the background in CSS without adding a separate generated image asset.
+- Remove the «Κυρίαρχος Αστερισμός Εποχής» card from the homepage.
+- Replace it with a «Φωτεινότερος ορατός πλανήτης» card.
+- Select the brightest major planet currently above the horizon for the selected location/date/time.
+- Show apparent magnitude, altitude, date/time, and realistic planet imagery.
+- Use the same realistic planet imagery in the planet cards, including minor-body presentation without visible black image backgrounds.
 
 ## Working branch
-\`feature/home-starry-background\`
+`feature/realtime-earth-day-night`
 
 ## Preview / approval state
-Vercel Preview: PENDING
-Preview status: PENDING
-Owner approval: PENDING
-Merge status: NOT MERGED
+Vercel Preview: https://aplanus-sky-dev-git-feature-realtime-e-ba99d9-thanosfotis3-1320.vercel.app
+Preview status: READY
+Owner approval: APPROVED
+Merge status: PENDING MERGE
 
 ## Checks
-- Change is scoped to the homepage background CSS plus this handoff file.
+- Scoped to `index.html` plus this handoff file.
+- Astronomy Engine provides apparent magnitudes and horizon positions for the selected/current time.
+- External Wikimedia Commons planet imagery is used by the homepage.
+- Vercel check succeeded for approved preview head `ff7d395595795dadbb0f4e84932791f6b55ba71e`.
+- PR is mergeable and was 11 commits ahead / 0 behind main before this handoff update.
 
 ## Last known handoff
 2026-09-22
 
 ## Next action
-Open PR, verify Vercel Preview, send preview to owner, and wait for explicit approval before merge.
+Merge PR #13 after this handoff update passes the required preview check.

@@ -772,41 +772,49 @@
       font-family: 'Orbitron', monospace;
     }
 
-    .constellation-card {
-      background: linear-gradient(135deg, rgba(16, 23, 42, 0.85), rgba(30, 41, 59, 0.5));
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 20px;
-      padding: 22px 24px;
-      margin-bottom: 28px;
+    .brightest-planet-card {
+      margin: 0 auto 28px;
+      max-width: 560px;
+      background: linear-gradient(145deg, rgba(15,23,42,.92), rgba(8,15,30,.82));
+      border: 1px solid rgba(56,189,248,.25);
+      border-radius: 22px;
+      padding: 22px;
+      text-align: center;
+      box-shadow: 0 18px 50px rgba(0,0,0,.28), inset 0 0 35px rgba(56,189,248,.04);
     }
-    .constellation-title {
+    .brightest-planet-kicker {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.1rem;
-      color: #fff;
-      margin-bottom: 6px;
-    }
-    .constellation-desc {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      line-height: 1.45;
-    }
-    .telescope-targets {
-      margin-top: 10px;
-      font-size: 0.82rem;
-      color: #cbd5e1;
-    }
-    .target-tag {
-      display: inline-block;
-      background: rgba(99, 102, 241, 0.18);
-      border: 1px solid rgba(99, 102, 241, 0.35);
       color: var(--accent-cyan);
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      margin-right: 4px;
-      margin-top: 4px;
-      font-family: 'Orbitron', monospace;
+      font-size: .68rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
     }
+    .brightest-planet-name {
+      margin-top: 6px;
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .brightest-planet-visual {
+      width: 190px;
+      height: 150px;
+      margin: 6px auto 0;
+      display: grid;
+      place-items: center;
+      position: relative;
+      z-index: 0;
+    }
+    .brightest-planet-visual img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,.5)); position: relative; z-index: 0; }
+    .brightest-planet-name, .brightest-planet-meta, .brightest-planet-kicker { position: relative; z-index: 2; }
+    .minor-body-photo { border-radius: 50%; mix-blend-mode: screen; }
+    .planet-photo { width: 62px; height: 62px; object-fit: contain; flex: 0 0 auto; filter: drop-shadow(0 5px 10px rgba(0,0,0,.45)); }
+    .brightest-planet-meta {
+      color: var(--text-main);
+      font-size: .86rem;
+      line-height: 1.6;
+    }
+    .brightest-planet-meta strong { color: var(--accent-gold); font-family: 'Orbitron', monospace; }
 
     .skydome-section {
       background: var(--card-bg);
@@ -1290,13 +1298,11 @@
       </div>
     </section>
 
-    <section class="constellation-card">
-      <div>
-        <div style="font-size: 0.72rem; color: var(--accent-cyan); font-family: 'Orbitron'; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Κυριαρχος Αστερισμος Εποχης</div>
-        <h3 class="constellation-title" id="constName">--</h3>
-        <p class="constellation-desc" id="constDesc">--</p>
-        <div class="telescope-targets" id="constTargets"></div>
-      </div>
+    <section class="brightest-planet-card" aria-live="polite">
+      <div class="brightest-planet-kicker">Φωτεινότερος ορατός πλανήτης</div>
+      <div class="brightest-planet-name" id="brightestPlanetName">Υπολογισμός…</div>
+      <div class="brightest-planet-visual" id="brightestPlanetVisual"></div>
+      <div class="brightest-planet-meta" id="brightestPlanetMeta"></div>
     </section>
 
     <h3 class="section-title">Πλανήτες, Πλανήτες Νάνοι και Αστεροειδείς — Ορατοί Απόψε</h3>
@@ -2051,6 +2057,62 @@
       }
     }
 
+    const PLANET_IMAGES = {
+      Mercury: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Mercury.png',
+      Venus: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Venus.png',
+      Mars: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/OSIRIS_Mars_true_color_transparent_background.png',
+      Jupiter: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Jupiter.png',
+      Saturn: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Saturn.png',
+      Uranus: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Uranus.png',
+      Neptune: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Neptune.png',
+      Pluto: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Pluto-01_Stern_03_Pluto_Color_TXT.jpg',
+      Ceres: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Ceres_-_RC3_-_Haulani_Crater_(22381131691).jpg',
+      Vesta: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Vesta_full_mosaic.jpg'
+    };
+
+    function planetImageMarkup(planet, className = '') {
+      const src = PLANET_IMAGES[planet.id];
+      if (!src) return '';
+      const minorClass = planet.isMinor ? ' minor-body-photo' : '';
+      return `<img class="${className}${minorClass}" src="${src}" alt="${planet.name}" loading="lazy" decoding="async">`;
+    }
+
+    function updateBrightestPlanet(time) {
+      const observer = new Astronomy.Observer(currentCoords.lat, currentCoords.lon, 0);
+      let brightest = null;
+
+      PLANETS.filter(p => !p.isMinor).forEach(planet => {
+        try {
+          const body = Astronomy.Body[planet.id];
+          const eq = Astronomy.Equator(body, time, observer, true, true);
+          const hor = Astronomy.Horizon(time, observer, eq.ra, eq.dec, 'normal');
+          if (hor.altitude <= 0) return;
+
+          const illum = Astronomy.Illumination(body, time);
+          if (Number.isFinite(illum.mag) && (!brightest || illum.mag < brightest.mag)) {
+            brightest = { ...planet, mag: illum.mag, altitude: hor.altitude };
+          }
+        } catch (e) {}
+      });
+
+      const name = document.getElementById('brightestPlanetName');
+      const visual = document.getElementById('brightestPlanetVisual');
+      const meta = document.getElementById('brightestPlanetMeta');
+      if (!name || !visual || !meta) return;
+
+      if (!brightest) {
+        name.textContent = 'Κανένας πλανήτης πάνω από τον ορίζοντα';
+        visual.innerHTML = '';
+        meta.textContent = time.toLocaleString('el-GR', { dateStyle:'medium', timeStyle:'short' });
+        return;
+      }
+
+      name.textContent = brightest.name;
+      visual.innerHTML = planetImageMarkup(brightest);
+      const mag = (brightest.mag >= 0 ? '+' : '') + brightest.mag.toFixed(2);
+      meta.innerHTML = `Φαινόμενο μέγεθος: <strong>${mag} mag</strong> • Ύψος: ${brightest.altitude.toFixed(1)}°<br>Για ${time.toLocaleString('el-GR', { dateStyle:'medium', timeStyle:'short' })}`;
+    }
+
     function calculateSky() {
       if (typeof Astronomy === "undefined") return;
 
@@ -2150,15 +2212,7 @@
         });
       }
 
-      const constNameEl = document.getElementById('constName');
-      const constDescEl = document.getElementById('constDesc');
-      const constTargetsEl = document.getElementById('constTargets');
-      if (constNameEl) constNameEl.textContent = seasonInfo.constellation.name;
-      if (constDescEl) constDescEl.textContent = seasonInfo.constellation.desc;
-      if (constTargetsEl) {
-        constTargetsEl.innerHTML = '<strong>Στόχοι για Τηλεσκόπιο:</strong><br/>' + 
-          seasonInfo.constellation.targets.map(t => `<span class="target-tag">${t}</span>`).join('');
-      }
+      updateBrightestPlanet(evaluationTime);
 
       const domeTimeStatusEl = document.getElementById('domeTimeStatus');
       if (domeTimeStatusEl) {
@@ -2359,7 +2413,7 @@
           card.innerHTML = `
             <div class="planet-header">
               <div class="planet-title-group">
-                <div class="planet-dot"></div>
+                ${planetImageMarkup(planet, 'planet-photo')}
                 <div class="planet-name-wrap">
                   <span class="planet-name">${planet.name}</span>
                   <span class="planet-meta-line">${magFormatted} • ${distMillionKm} εκ. χλμ</span>
