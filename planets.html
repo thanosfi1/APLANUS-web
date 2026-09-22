@@ -33,7 +33,7 @@ neptune:'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Neptune.png
 ceres:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Ceres_-_RC3_-_Haulani_Crater_(22381131691).jpg',
 pluto:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Pluto-transparent.png',
 haumea:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Haumea_Hubble.png',
-makemake:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Dwarf_Planet_Makemake_and_Its_Moon.jpg',
+makemake:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Makemake%20and%20its%20moon.jpg',
 eris:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Eris_without_Dysnomia.png'
 };
 const MOON_IMAGES={
@@ -63,11 +63,11 @@ const MOON_IMAGES={
 'Στύγα':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Styx_(moon).jpg',
 'Hiʻiaka':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Haumea_Hubble.png',
 'Namaka':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Haumea_Hubble.png',
-'MK 2':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Dwarf_Planet_Makemake_and_Its_Moon.jpg',
+'MK 2':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Makemake%20with%20moon.png',
 'Δυσνομία':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Eris_and_Dysnomia.png'
 };
-const bodyImg=p=>'<img class="body-photo" src="'+BODY_IMAGES[p.cls]+'" alt="'+p.name+'" loading="lazy" decoding="async" onerror="this.style.display='none'">';
-const moonImg=m=>'<img class="moon-photo" src="'+MOON_IMAGES[m]+'" alt="'+m+'" loading="lazy" decoding="async" onerror="this.style.display='none'">';
+const bodyImg=p=>'<img class="body-photo" src="'+BODY_IMAGES[p.cls]+'" alt="'+p.name+'" loading="lazy" decoding="async">';
+const moonImg=m=>'<img class="moon-photo" src="'+MOON_IMAGES[m]+'" alt="'+m+'" loading="lazy" decoding="async">';
 const REAL_DIAM={sun:1392700,mercury:4879,venus:12104,earth:12756,mars:6792,jupiter:142984,saturn:120536,uranus:51118,neptune:49528};
 const realSize=k=>Math.max(3,Math.round(REAL_DIAM[k]/REAL_DIAM.sun*360));
 const system=document.querySelector("#system"),cards=document.querySelector("#cards");
