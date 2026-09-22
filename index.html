@@ -2099,9 +2099,10 @@
       );
       globe.add(atmosphere);
 
-      const ambient = new THREE.AmbientLight(0x07101f, 0.09);
+      // Keep the night hemisphere faintly visible while direct sunlight defines day/night.
+      const ambient = new THREE.AmbientLight(0x6f8fb0, 0.42);
       scene.add(ambient);
-      const sunlight = new THREE.DirectionalLight(0xffffff, 3.25);
+      const sunlight = new THREE.DirectionalLight(0xffffff, 3.0);
       scene.add(sunlight);
 
       earth3d = { renderer, scene, camera, globe, surface, cloudLayer, sunlight, canvas };
@@ -2137,7 +2138,15 @@
       // Sun direction is computed but the Sun itself is intentionally not drawn.
       const lat = subsolarLat * Math.PI / 180;
       const lon = subsolarLon * Math.PI / 180;
-      sunlight.position.set(5 * Math.cos(lat) * Math.sin(lon), 5 * Math.sin(lat), 5 * Math.cos(lat) * Math.cos(lon));
+      // The globe texture is already rotated by sidereal time, so use the
+      // subsolar direction in the globe's current coordinate frame.
+      sunlight.position.set(
+        5 * Math.cos(lat) * Math.sin(lon),
+        5 * Math.sin(lat),
+        5 * Math.cos(lat) * Math.cos(lon)
+      );
+      sunlight.target.position.set(0, 0, 0);
+      scene.add(sunlight.target);
 
       renderer.render(scene, camera);
 
