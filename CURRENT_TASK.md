@@ -1,15 +1,17 @@
 # APLANUS — Current Development State
 
 ## Status
-IN PROGRESS — correcting Auriga's second-brightest star.
+IN PROGRESS — expanding the Deep Sky section.
 
 ## Active task
-In «Αστέρια & Αστερισμοί», keep all existing constellation behavior unchanged except Auriga:
-- first star remains Capella (α Aur);
-- second star is explicitly Menkalinan / β Aur.
+- Rename «Deep Sky & Νεφελώματα» to «Deep Sky».
+- Preserve the existing nebulae.
+- Add bright/easy telescope galaxies.
+- Add bright/easy star clusters.
+- Keep the existing card interaction and visual style.
 
 ## Working branch
-`fix/auriga-second-brightest-menkalinan`
+`feature/deep-sky-galaxies-clusters`
 
 ## Preview / approval state
 Vercel Preview: PENDING
@@ -18,11 +20,12 @@ Owner approval: PENDING
 Merge status: NOT MERGED
 
 ## Checks
-- SIMBAD identifies Menkalinan as β Aurigae.
-- The fix is scoped to Auriga's two-star selection; all other constellations and card behavior are unchanged.
+- Galaxy and cluster choices and core observing facts were checked against NASA's Hubble Messier observing material.
+- Existing nebula cards were not removed.
+- Change is scoped to the Deep Sky navigation/page plus this handoff file.
 
 ## Last known handoff
 2026-09-22
 
 ## Next action
-Open PR, verify Vercel Preview, send it to owner, and wait for explicit approval before merge.
+Open PR, verify Vercel Preview, send preview to owner, and wait for explicit approval before merge.
