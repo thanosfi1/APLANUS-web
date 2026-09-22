@@ -561,15 +561,11 @@
     }
 
     .sun-svg {
+      object-fit: contain;
+      display: block;
       width: 100%;
       height: 100%;
-      animation: spinSun 28s linear infinite;
     }
-    @keyframes spinSun {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
     .hero-content-slider {
       width: 100%;
       min-height: 120px;
@@ -1189,37 +1185,16 @@
       <div class="hero-inner">
         <div class="celestial-stage">
           <div class="celestial-body-node" id="moonNode" title="Πατήστε για Σελήνη">
-            <svg id="moonSvg" viewBox="0 0 100 100" width="100%" height="100%">
-              <defs>
-                <radialGradient id="moonGlow" cx="45%" cy="45%" r="55%">
-                  <stop offset="0%" stop-color="#ffffff" />
-                  <stop offset="65%" stop-color="#cbd5e1" />
-                  <stop offset="100%" stop-color="#94a3b8" />
-                </radialGradient>
-              </defs>
-              <circle cx="50" cy="50" r="46" fill="#090d1a" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" />
-              <path id="moonIllumPath" fill="url(#moonGlow)" />
+            <svg id="moonSvg" viewBox="0 0 100 100" width="100%" height="100%" aria-label="Φωτογραφία Σελήνης με την τρέχουσα φάση">
+              <defs><clipPath id="moonDiskClip"><circle cx="50" cy="50" r="46" /></clipPath></defs>
+              <circle cx="50" cy="50" r="46" fill="#050505" />
+              <image href="https://commons.wikimedia.org/wiki/Special:Redirect/file/FullMoon2010.jpg?width=512" x="-5" y="-5" width="110" height="110" preserveAspectRatio="xMidYMid slice" clip-path="url(#moonDiskClip)" />
+              <path id="moonIllumPath" fill="#000" fill-opacity=".86" clip-path="url(#moonDiskClip)" />
             </svg>
           </div>
 
           <div class="celestial-body-node" id="sunNode" title="Πατήστε για Ήλιο">
-            <svg class="sun-svg" viewBox="0 0 120 120">
-              <defs>
-                <radialGradient id="sunGradient" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="#fffbeb" />
-                  <stop offset="35%" stop-color="#ffffff" />
-                  <stop offset="70%" stop-color="#e5e7eb" />
-                  <stop offset="100%" stop-color="#cbd5e1" />
-                </radialGradient>
-                <radialGradient id="coronaGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="40%" stop-color="rgba(255,255,255,0.8)" />
-                  <stop offset="85%" stop-color="rgba(255,255,255,0.2)" />
-                  <stop offset="100%" stop-color="transparent" />
-                </radialGradient>
-              </defs>
-              <circle cx="60" cy="60" r="54" fill="url(#coronaGlow)" />
-              <circle cx="60" cy="60" r="34" fill="url(#sunGradient)" stroke="#ffffff" stroke-width="1.5" />
-            </svg>
+            <img class="sun-svg" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Sun_in_February_%28transparent%29.png?width=500" alt="Πραγματική φωτογραφία Ήλιου" style="filter:grayscale(1) brightness(2.15) contrast(.72);" decoding="async" fetchpriority="high">
           </div>
         </div>
 
@@ -1711,21 +1686,20 @@
     }
 
     function renderRealisticMoon(phaseAngle, illumFraction) {
-      const path = document.getElementById('moonIllumPath');
-      if (!path) return;
-      const r = 46; 
-      const cx = 50, cy = 50;
-      const isWaxing = phaseAngle < 180;
+      const shadow = document.getElementById('moonIllumPath');
+      if (!shadow) return;
+      const r = 46, cx = 50, cy = 50;
+      const waxing = phaseAngle < 180;
       const k = 2 * illumFraction - 1;
       const rx = Math.max(0.001, Math.abs(k) * r);
-
-      let d = "";
-      if (isWaxing) {
-        d = `M ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx} ${cy + r} A ${rx} ${r} 0 0 ${k <= 0 ? 0 : 1} ${cx} ${cy - r} Z`;
+      let lit;
+      if (waxing) {
+        lit = `M ${cx} ${cy-r} A ${r} ${r} 0 0 1 ${cx} ${cy+r} A ${rx} ${r} 0 0 ${k<=0?0:1} ${cx} ${cy-r} Z`;
       } else {
-        d = `M ${cx} ${cy - r} A ${r} ${r} 0 0 0 ${cx} ${cy + r} A ${rx} ${r} 0 0 ${k <= 0 ? 1 : 0} ${cx} ${cy - r} Z`;
+        lit = `M ${cx} ${cy-r} A ${r} ${r} 0 0 0 ${cx} ${cy+r} A ${rx} ${r} 0 0 ${k<=0?1:0} ${cx} ${cy-r} Z`;
       }
-      path.setAttribute('d', d);
+      shadow.setAttribute('d', `M 4 4 H 96 V 96 H 4 Z ${lit}`);
+      shadow.setAttribute('fill-rule', 'evenodd');
     }
 
     function calculateSolarUV(sunAltitude, distAU) {
