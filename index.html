@@ -772,40 +772,34 @@
       font-family: 'Orbitron', monospace;
     }
 
-    .constellation-card {
-      background: linear-gradient(135deg, rgba(16, 23, 42, 0.85), rgba(30, 41, 59, 0.5));
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 20px;
-      padding: 22px 24px;
+    .earth-live-section {
       margin-bottom: 28px;
+      text-align: center;
     }
-    .constellation-title {
+    .earth-live-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
+      letter-spacing: 1.2px;
       color: #fff;
       margin-bottom: 6px;
     }
-    .constellation-desc {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      line-height: 1.45;
-    }
-    .telescope-targets {
-      margin-top: 10px;
-      font-size: 0.82rem;
-      color: #cbd5e1;
-    }
-    .target-tag {
-      display: inline-block;
-      background: rgba(99, 102, 241, 0.18);
-      border: 1px solid rgba(99, 102, 241, 0.35);
+    .earth-live-meta {
       color: var(--accent-cyan);
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      margin-right: 4px;
-      margin-top: 4px;
       font-family: 'Orbitron', monospace;
+      font-size: 0.72rem;
+      margin-bottom: 12px;
+    }
+    .earth-live-wrap {
+      width: min(100%, 560px);
+      aspect-ratio: 16 / 10;
+      margin: 0 auto;
+      position: relative;
+    }
+    #earthCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: drop-shadow(0 0 28px rgba(56,189,248,.16));
     }
 
     .skydome-section {
@@ -1290,12 +1284,11 @@
       </div>
     </section>
 
-    <section class="constellation-card">
-      <div>
-        <div style="font-size: 0.72rem; color: var(--accent-cyan); font-family: 'Orbitron'; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Κυριαρχος Αστερισμος Εποχης</div>
-        <h3 class="constellation-title" id="constName">--</h3>
-        <p class="constellation-desc" id="constDesc">--</p>
-        <div class="telescope-targets" id="constTargets"></div>
+    <section class="earth-live-section">
+      <div class="earth-live-title">Γη σε Πραγματικό Χρόνο — Ημέρα / Νύχτα</div>
+      <div class="earth-live-meta" id="earthLiveMeta">Υπολογισμός φωτισμού από τον Ήλιο…</div>
+      <div class="earth-live-wrap">
+        <canvas id="earthCanvas" width="1120" height="700" aria-label="Τρισδιάστατη αναπαράσταση της Γης με ζώνη ημέρας και νύχτας"></canvas>
       </div>
     </section>
 
@@ -2150,15 +2143,7 @@
         });
       }
 
-      const constNameEl = document.getElementById('constName');
-      const constDescEl = document.getElementById('constDesc');
-      const constTargetsEl = document.getElementById('constTargets');
-      if (constNameEl) constNameEl.textContent = seasonInfo.constellation.name;
-      if (constDescEl) constDescEl.textContent = seasonInfo.constellation.desc;
-      if (constTargetsEl) {
-        constTargetsEl.innerHTML = '<strong>Στόχοι για Τηλεσκόπιο:</strong><br/>' + 
-          seasonInfo.constellation.targets.map(t => `<span class="target-tag">${t}</span>`).join('');
-      }
+      drawRealtimeEarth(evaluationTime);
 
       const domeTimeStatusEl = document.getElementById('domeTimeStatus');
       if (domeTimeStatusEl) {
