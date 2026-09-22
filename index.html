@@ -803,7 +803,8 @@
       display: grid;
       place-items: center;
     }
-    .brightest-planet-visual svg { width: 100%; height: 100%; overflow: visible; }
+    .brightest-planet-visual img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,.5)); }
+    .planet-photo { width: 62px; height: 62px; object-fit: contain; flex: 0 0 auto; filter: drop-shadow(0 5px 10px rgba(0,0,0,.45)); }
     .brightest-planet-meta {
       color: var(--text-main);
       font-size: .86rem;
@@ -2052,13 +2053,23 @@
       }
     }
 
-    function planetPortraitSvg(id) {
-      const common = 'viewBox="0 0 220 170" role="img" aria-label="Ρεαλιστική σχηματική απεικόνιση πλανήτη"';
-      if (id === 'Saturn') return `<svg ${common}><defs><radialGradient id="sat" cx="35%" cy="28%"><stop offset="0" stop-color="#fff8d6"/><stop offset=".55" stop-color="#d9bd79"/><stop offset="1" stop-color="#8b7040"/></radialGradient><linearGradient id="ring"><stop stop-color="#8f7950"/><stop offset=".5" stop-color="#f2ddb0"/><stop offset="1" stop-color="#77623e"/></linearGradient></defs><ellipse cx="110" cy="88" rx="88" ry="22" fill="none" stroke="url(#ring)" stroke-width="10" opacity=".85" transform="rotate(-12 110 88)"/><circle cx="110" cy="82" r="50" fill="url(#sat)"/><path d="M62 78 Q110 88 158 72" fill="none" stroke="#9e824c" stroke-width="4" opacity=".55"/><path d="M28 105 Q110 80 192 72" fill="none" stroke="#e8d4a6" stroke-width="7" opacity=".7"/></svg>`;
-      if (id === 'Jupiter') return `<svg ${common}><defs><radialGradient id="jup" cx="34%" cy="28%"><stop stop-color="#fff0d2"/><stop offset=".7" stop-color="#c88f61"/><stop offset="1" stop-color="#69412e"/></radialGradient><clipPath id="jc"><circle cx="110" cy="85" r="62"/></clipPath></defs><circle cx="110" cy="85" r="62" fill="url(#jup)"/><g clip-path="url(#jc)" opacity=".75"><path d="M45 58 Q110 69 175 56" stroke="#9d6749" stroke-width="9" fill="none"/><path d="M44 79 Q110 69 176 82" stroke="#f1d0a7" stroke-width="10" fill="none"/><path d="M47 105 Q110 94 173 108" stroke="#9d6749" stroke-width="8" fill="none"/><ellipse cx="142" cy="103" rx="16" ry="8" fill="#a84e34"/></g></svg>`;
-      const palettes={Mercury:['#d8d2c9','#77736e','#343331'],Venus:['#fff1b8','#dca74f','#8f5d24'],Mars:['#ffb07c','#c64d2d','#652519'],Uranus:['#d8ffff','#73d8df','#327d91'],Neptune:['#8ab8ff','#315bd7','#172c86']};
-      const p=palettes[id]||['#ddd','#888','#333'];
-      return `<svg ${common}><defs><radialGradient id="p" cx="32%" cy="27%"><stop offset="0" stop-color="${p[0]}"/><stop offset=".62" stop-color="${p[1]}"/><stop offset="1" stop-color="${p[2]}"/></radialGradient></defs><circle cx="110" cy="85" r="62" fill="url(#p)"/>${id==='Mars'?'<path d="M72 64q25-14 46-3t29 0M68 102q34 13 72 0" fill="none" stroke="#7d2d20" stroke-width="5" opacity=".45"/>':''}${id==='Venus'?'<path d="M65 70q45-25 90 0M61 95q48-20 98 2" fill="none" stroke="#fff1c2" stroke-width="8" opacity=".35"/>':''}</svg>`;
+    const PLANET_IMAGES = {
+      Mercury: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Mercury.png',
+      Venus: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Venus.png',
+      Mars: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/OSIRIS_Mars_true_color_transparent_background.png',
+      Jupiter: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Jupiter.png',
+      Saturn: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Saturn.png',
+      Uranus: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Uranus.png',
+      Neptune: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Neptune.png',
+      Pluto: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Pluto_in_True_Color_-_High-Res.jpg',
+      Ceres: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Ceres_-_RC3_-_Haulani_Crater_(22381131691).jpg',
+      Vesta: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Vesta_full_mosaic.jpg'
+    };
+
+    function planetImageMarkup(planet, className = '') {
+      const src = PLANET_IMAGES[planet.id];
+      if (!src) return '';
+      return `<img class="${className}" src="${src}" alt="${planet.name}" loading="lazy" decoding="async">`;
     }
 
     function updateBrightestPlanet(time) {
@@ -2075,7 +2086,7 @@
       const visual = document.getElementById('brightestPlanetVisual');
       const meta = document.getElementById('brightestPlanetMeta');
       if (name) name.textContent = brightest.name;
-      if (visual) visual.innerHTML = planetPortraitSvg(brightest.id);
+      if (visual) visual.innerHTML = planetImageMarkup(brightest);
       if (meta) {
         const mag = (brightest.mag >= 0 ? '+' : '') + brightest.mag.toFixed(2);
         meta.innerHTML = `Φαινόμενο μέγεθος: <strong>${mag} mag</strong><br>Για ${time.toLocaleDateString('el-GR', { day:'numeric', month:'long', year:'numeric' })}`;
@@ -2382,7 +2393,7 @@
           card.innerHTML = `
             <div class="planet-header">
               <div class="planet-title-group">
-                <div class="planet-dot"></div>
+                ${planetImageMarkup(planet, 'planet-photo')}
                 <div class="planet-name-wrap">
                   <span class="planet-name">${planet.name}</span>
                   <span class="planet-meta-line">${magFormatted} • ${distMillionKm} εκ. χλμ</span>
