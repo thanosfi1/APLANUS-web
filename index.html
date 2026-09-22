@@ -2071,6 +2071,14 @@
       Vesta: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Vesta_full_mosaic.jpg'
     };
 
+    // Warm the browser cache early so the brightest-planet card does not wait for
+    // a remote Wikimedia redirect after the astronomy calculation completes.
+    Object.values(PLANET_IMAGES).forEach(src => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = src;
+    });
+
     function planetImageMarkup(planet, className = '') {
       const src = PLANET_IMAGES[planet.id];
       if (!src) return '';
