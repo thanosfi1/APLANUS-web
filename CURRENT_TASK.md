@@ -1,31 +1,29 @@
 # APLANUS — Current Development State
 
 ## Status
-APPROVED — brightest-planet preload optimization ready to merge.
+APPROVED — homepage real Sun/Moon hero ready to merge.
 
 ## Active task
-- Replace the CSS/SVG-style body illustrations inside the planet/dwarf-planet cards in `planets.html` with real spacecraft/astronomical image assets.
-- Replace the generic moon circles under each card with real image assets for the named satellites.
-- Do not generate imagery; use external Wikimedia/NASA-derived image files.
-- Preserve existing planet/moon text, counts, layout, and the top scale comparison.
+- Use photographic Sun/Moon imagery in the homepage celestial hero.
+- Keep the existing Sun ↔ Moon interaction and Moon phase calculation.
+- Use a photographic Moon and crop its surrounding black image border from the visible lunar disk.
 
 ## Working branch
-`perf/brightest-planet-preload`
+`feature/hero-real-sun-moon`
 
 ## Preview / approval state
-Vercel Preview: https://aplanus-sky-dev-git-perf-brightest-pla-60ef18-thanosfotis3-1320.vercel.app
+Vercel Preview: https://aplanus-sky-dev-git-feature-hero-real-7c1bfb-thanosfotis3-1320.vercel.app
 Preview status: READY
 Owner approval: APPROVED
 Merge status: PENDING MERGE
 
 ## Checks
-- Scoped to `planets.html` plus this handoff file.
-- No astronomy calculations or displayed object counts changed.
-- Planet imagery uses Wikimedia Commons real-image assets; moon imagery uses named spacecraft/astronomical image assets where available.
-- No generated images.
+- Vercel deployment for the approved head reported success.
+- Moon phase calculation and Sun/Moon swap remain in place.
+- Change is scoped to the homepage hero imagery plus this handoff file.
 
 ## Last known handoff
 2026-09-22
 
 ## Next action
-Merge PR #16 after this handoff update.
+Merge PR #21 after this handoff update.
