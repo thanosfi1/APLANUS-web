@@ -2044,6 +2044,66 @@
       }
     }
 
+    function drawRealtimeEarth(time = new Date()) {
+      const canvas = document.getElementById('earthCanvas');
+      if (!canvas || typeof Astronomy === "undefined") return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const cx = w / 2, cy = h / 2 + 10, R = Math.min(w, h) * 0.36;
+      const tilt = -23.43928 * Math.PI / 180;
+      const sunEq = Astronomy.Equator(Astronomy.Body.Sun, time, null, true, true);
+      const gst = Astronomy.SiderealTime(time);
+      const subsolarLat = sunEq.dec * Math.PI / 180;
+      let subsolarLon = (sunEq.ra - gst) * 15;
+      subsolarLon = ((subsolarLon + 540) % 360) - 180;
+      const lightAngle = Math.atan2(-Math.sin(subsolarLat), Math.cos(subsolarLat));
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(tilt);
+
+      const ocean = ctx.createRadialGradient(-R*.32,-R*.34,R*.06,0,0,R);
+      ocean.addColorStop(0,'#6ec8ff');
+      ocean.addColorStop(.38,'#147ac1');
+      ocean.addColorStop(.78,'#07345f');
+      ocean.addColorStop(1,'#011326');
+      ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fillStyle=ocean; ctx.fill();
+
+      ctx.save();
+      ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.clip();
+      ctx.strokeStyle='rgba(160,220,255,.24)'; ctx.lineWidth=2;
+      [-60,-30,0,30,60].forEach(lat=>{
+        const y=-R*Math.sin(lat*Math.PI/180), rx=R*Math.cos(lat*Math.PI/180);
+        ctx.beginPath(); ctx.ellipse(0,y,rx,Math.max(2,rx*.13),0,0,Math.PI*2); ctx.stroke();
+      });
+      for(let lon=-60;lon<=60;lon+=30){
+        ctx.beginPath(); ctx.ellipse(0,0,R*Math.cos(lon*Math.PI/180),R,0,0,Math.PI*2); ctx.stroke();
+      }
+
+      const gx=Math.cos(lightAngle), gy=Math.sin(lightAngle);
+      const shade=ctx.createLinearGradient(gx*R,gy*R,-gx*R,-gy*R);
+      shade.addColorStop(0,'rgba(255,225,135,.05)');
+      shade.addColorStop(.46,'rgba(4,10,24,.08)');
+      shade.addColorStop(.53,'rgba(1,5,16,.72)');
+      shade.addColorStop(1,'rgba(0,2,9,.97)');
+      ctx.fillStyle=shade; ctx.fillRect(-R,-R,R*2,R*2);
+      ctx.restore();
+
+      ctx.strokeStyle='rgba(125,211,252,.6)'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.stroke();
+      ctx.strokeStyle='rgba(255,255,255,.7)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(0,-R*1.18); ctx.lineTo(0,R*1.18); ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle='#fbbf24'; ctx.shadowColor='#f59e0b'; ctx.shadowBlur=30;
+      ctx.beginPath(); ctx.arc(w*.89,h*.20,22,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+
+      const meta=document.getElementById('earthLiveMeta');
+      if(meta) meta.textContent=`Κλίση άξονα: 23,44° • Υποηλιακό πλάτος: ${Math.abs(sunEq.dec).toFixed(1)}° ${sunEq.dec>=0?'Β':'Ν'} • Υποηλιακό μήκος: ${Math.abs(subsolarLon).toFixed(1)}° ${subsolarLon>=0?'Α':'Δ'} • UTC ${time.toISOString().slice(11,19)}`;
+    }
+
     function calculateSky() {
       if (typeof Astronomy === "undefined") return;
 
