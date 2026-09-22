@@ -20,6 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
   <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
   <style>
     :root {
@@ -801,6 +802,11 @@
       display: block;
       filter: drop-shadow(0 0 28px rgba(56,189,248,.16));
     }
+    .earth-live-note {
+      margin-top: 8px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
 
     .skydome-section {
       background: var(--card-bg);
@@ -1288,7 +1294,8 @@
       <div class="earth-live-title">Γη σε Πραγματικό Χρόνο — Ημέρα / Νύχτα</div>
       <div class="earth-live-meta" id="earthLiveMeta">Υπολογισμός φωτισμού από τον Ήλιο…</div>
       <div class="earth-live-wrap">
-        <canvas id="earthCanvas" width="1120" height="700" aria-label="Τρισδιάστατη αναπαράσταση της Γης με ζώνη ημέρας και νύχτας"></canvas>
+        <canvas id="earthCanvas" width="1120" height="700" aria-label="Τρισδιάστατη φωτορεαλιστική αναπαράσταση της Γης με ζώνη ημέρας και νύχτας"></canvas>
+        <div class="earth-live-note">Η φωτεινή και σκοτεινή πλευρά υπολογίζονται από τη θέση του Ήλιου για την επιλεγμένη ημερομηνία και ώρα.</div>
       </div>
     </section>
 
@@ -2044,65 +2051,101 @@
       }
     }
 
-    function drawRealtimeEarth(time = new Date()) {
+    let earth3d = null;
+
+    function initRealtimeEarth() {
       const canvas = document.getElementById('earthCanvas');
-      if (!canvas || typeof Astronomy === "undefined") return;
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width, h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
+      if (!canvas || typeof THREE === "undefined") return null;
 
-      const cx = w / 2, cy = h / 2 + 10, R = Math.min(w, h) * 0.36;
-      const tilt = -23.43928 * Math.PI / 180;
-      const earthCenterObserver = new Astronomy.Observer(0, 0, 0);
-      const sunEq = Astronomy.Equator(Astronomy.Body.Sun, time, earthCenterObserver, true, true);
-      const gst = Astronomy.SiderealTime(time);
-      const subsolarLat = sunEq.dec * Math.PI / 180;
-      let subsolarLon = (sunEq.ra - gst) * 15;
-      subsolarLon = ((subsolarLon + 540) % 360) - 180;
-      const lightAngle = Math.atan2(-Math.sin(subsolarLat), Math.cos(subsolarLat));
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(tilt);
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(28, 1.6, 0.1, 100);
+      camera.position.set(0, 0, 4.6);
 
-      const ocean = ctx.createRadialGradient(-R*.32,-R*.34,R*.06,0,0,R);
-      ocean.addColorStop(0,'#6ec8ff');
-      ocean.addColorStop(.38,'#147ac1');
-      ocean.addColorStop(.78,'#07345f');
-      ocean.addColorStop(1,'#011326');
-      ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fillStyle=ocean; ctx.fill();
+      const globe = new THREE.Group();
+      globe.rotation.z = -23.43928 * Math.PI / 180;
+      scene.add(globe);
 
-      ctx.save();
-      ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.clip();
-      ctx.strokeStyle='rgba(160,220,255,.24)'; ctx.lineWidth=2;
-      [-60,-30,0,30,60].forEach(lat=>{
-        const y=-R*Math.sin(lat*Math.PI/180), rx=R*Math.cos(lat*Math.PI/180);
-        ctx.beginPath(); ctx.ellipse(0,y,rx,Math.max(2,rx*.13),0,0,Math.PI*2); ctx.stroke();
-      });
-      for(let lon=-60;lon<=60;lon+=30){
-        ctx.beginPath(); ctx.ellipse(0,0,R*Math.cos(lon*Math.PI/180),R,0,0,Math.PI*2); ctx.stroke();
+      const loader = new THREE.TextureLoader();
+      const earthTexture = loader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+      earthTexture.colorSpace = THREE.SRGBColorSpace;
+      const earthSpec = loader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
+      const earthNormal = loader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
+      const clouds = loader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
+      clouds.colorSpace = THREE.SRGBColorSpace;
+
+      const geometry = new THREE.SphereGeometry(1, 96, 96);
+      const surface = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
+        map: earthTexture,
+        specularMap: earthSpec,
+        normalMap: earthNormal,
+        normalScale: new THREE.Vector2(0.65, 0.65),
+        shininess: 18
+      }));
+      globe.add(surface);
+
+      const cloudLayer = new THREE.Mesh(
+        new THREE.SphereGeometry(1.008, 96, 96),
+        new THREE.MeshPhongMaterial({ map: clouds, transparent: true, opacity: 0.62, depthWrite: false })
+      );
+      globe.add(cloudLayer);
+
+      const atmosphere = new THREE.Mesh(
+        new THREE.SphereGeometry(1.025, 96, 96),
+        new THREE.MeshBasicMaterial({ color: 0x58bfff, transparent: true, opacity: 0.09, side: THREE.BackSide })
+      );
+      globe.add(atmosphere);
+
+      const ambient = new THREE.AmbientLight(0x07101f, 0.09);
+      scene.add(ambient);
+      const sunlight = new THREE.DirectionalLight(0xffffff, 3.25);
+      scene.add(sunlight);
+
+      earth3d = { renderer, scene, camera, globe, surface, cloudLayer, sunlight, canvas };
+      return earth3d;
+    }
+
+    function drawRealtimeEarth(time = new Date()) {
+      if (typeof Astronomy === "undefined") return;
+      const view = earth3d || initRealtimeEarth();
+      if (!view) return;
+
+      const { renderer, scene, camera, globe, surface, cloudLayer, sunlight, canvas } = view;
+      const rect = canvas.getBoundingClientRect();
+      const width = Math.max(1, Math.round(rect.width * Math.min(window.devicePixelRatio || 1, 2)));
+      const height = Math.max(1, Math.round(rect.height * Math.min(window.devicePixelRatio || 1, 2)));
+      if (canvas.width !== width || canvas.height !== height) {
+        renderer.setSize(rect.width, rect.height, false);
+        camera.aspect = rect.width / rect.height;
+        camera.updateProjectionMatrix();
       }
 
-      const gx=Math.cos(lightAngle), gy=Math.sin(lightAngle);
-      const shade=ctx.createLinearGradient(gx*R,gy*R,-gx*R,-gy*R);
-      shade.addColorStop(0,'rgba(255,225,135,.05)');
-      shade.addColorStop(.46,'rgba(4,10,24,.08)');
-      shade.addColorStop(.53,'rgba(1,5,16,.72)');
-      shade.addColorStop(1,'rgba(0,2,9,.97)');
-      ctx.fillStyle=shade; ctx.fillRect(-R,-R,R*2,R*2);
-      ctx.restore();
+      const observer0 = new Astronomy.Observer(0, 0, 0);
+      const sunEq = Astronomy.Equator(Astronomy.Body.Sun, time, observer0, true, true);
+      const gst = Astronomy.SiderealTime(time);
+      let subsolarLon = (sunEq.ra - gst) * 15;
+      subsolarLon = ((subsolarLon + 540) % 360) - 180;
+      const subsolarLat = sunEq.dec;
 
-      ctx.strokeStyle='rgba(125,211,252,.6)'; ctx.lineWidth=3;
-      ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.stroke();
-      ctx.strokeStyle='rgba(255,255,255,.7)'; ctx.lineWidth=2;
-      ctx.beginPath(); ctx.moveTo(0,-R*1.18); ctx.lineTo(0,R*1.18); ctx.stroke();
-      ctx.restore();
+      // Rotate Earth by Greenwich sidereal time so continents follow real Earth rotation.
+      surface.rotation.y = -gst * 15 * Math.PI / 180;
+      cloudLayer.rotation.y = surface.rotation.y + 0.012;
 
-      ctx.fillStyle='#fbbf24'; ctx.shadowColor='#f59e0b'; ctx.shadowBlur=30;
-      ctx.beginPath(); ctx.arc(w*.89,h*.20,22,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+      // Sun direction is computed but the Sun itself is intentionally not drawn.
+      const lat = subsolarLat * Math.PI / 180;
+      const lon = subsolarLon * Math.PI / 180;
+      sunlight.position.set(5 * Math.cos(lat) * Math.sin(lon), 5 * Math.sin(lat), 5 * Math.cos(lat) * Math.cos(lon));
 
-      const meta=document.getElementById('earthLiveMeta');
-      if(meta) meta.textContent=`Κλίση άξονα: 23,44° • Υποηλιακό πλάτος: ${Math.abs(sunEq.dec).toFixed(1)}° ${sunEq.dec>=0?'Β':'Ν'} • Υποηλιακό μήκος: ${Math.abs(subsolarLon).toFixed(1)}° ${subsolarLon>=0?'Α':'Δ'} • UTC ${time.toISOString().slice(11,19)}`;
+      renderer.render(scene, camera);
+
+      const meta = document.getElementById('earthLiveMeta');
+      if (meta) {
+        const local = time.toLocaleString('el-GR', { dateStyle: 'medium', timeStyle: 'medium' });
+        meta.textContent = `Κλίση άξονα: 23,44° • ${local} • Υποηλιακό σημείο: ${Math.abs(subsolarLat).toFixed(1)}° ${subsolarLat >= 0 ? 'Β' : 'Ν'}, ${Math.abs(subsolarLon).toFixed(1)}° ${subsolarLon >= 0 ? 'Α' : 'Δ'}`;
+      }
     }
 
     function calculateSky() {
