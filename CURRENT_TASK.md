@@ -1,7 +1,7 @@
 # APLANUS — Current Development State
 
 ## Status
-APPROVED — real planet and moon imagery ready to merge.
+APPROVED — brightest-planet preload optimization ready to merge.
 
 ## Active task
 - Replace the CSS/SVG-style body illustrations inside the planet/dwarf-planet cards in `planets.html` with real spacecraft/astronomical image assets.
@@ -10,10 +10,10 @@ APPROVED — real planet and moon imagery ready to merge.
 - Preserve existing planet/moon text, counts, layout, and the top scale comparison.
 
 ## Working branch
-`feature/planet-moon-real-png`
+`perf/brightest-planet-preload`
 
 ## Preview / approval state
-Vercel Preview: https://aplanus-sky-dev-git-feature-planet-moo-f7168d-thanosfotis3-1320.vercel.app
+Vercel Preview: https://aplanus-sky-dev-git-perf-brightest-pla-60ef18-thanosfotis3-1320.vercel.app
 Preview status: READY
 Owner approval: APPROVED
 Merge status: PENDING MERGE
@@ -28,4 +28,4 @@ Merge status: PENDING MERGE
 2026-09-22
 
 ## Next action
-Merge PR #15 after this handoff update.
+Merge PR #16 after this handoff update.
