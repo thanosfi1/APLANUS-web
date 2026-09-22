@@ -1,7 +1,7 @@
 # APLANUS — Current Development State
 
 ## Status
-IN PROGRESS — real planet and moon imagery on the Planets & Satellites page.
+APPROVED — real planet and moon imagery ready to merge.
 
 ## Active task
 - Replace the CSS/SVG-style body illustrations inside the planet/dwarf-planet cards in `planets.html` with real spacecraft/astronomical image assets.
@@ -13,10 +13,10 @@ IN PROGRESS — real planet and moon imagery on the Planets & Satellites page.
 `feature/planet-moon-real-png`
 
 ## Preview / approval state
-Vercel Preview: PENDING
-Preview status: PENDING
-Owner approval: PENDING
-Merge status: NOT MERGED
+Vercel Preview: https://aplanus-sky-dev-git-feature-planet-moo-f7168d-thanosfotis3-1320.vercel.app
+Preview status: READY
+Owner approval: APPROVED
+Merge status: PENDING MERGE
 
 ## Checks
 - Scoped to `planets.html` plus this handoff file.
@@ -28,4 +28,4 @@ Merge status: NOT MERGED
 2026-09-22
 
 ## Next action
-Open PR, verify Vercel Preview, send it to owner, and wait for explicit approval before merge.
+Merge PR #15 after this handoff update.
