@@ -1,15 +1,17 @@
 # APLANUS — Current Development State
 
 ## Status
-IN PROGRESS — homepage starry background.
+IN PROGRESS — realtime Earth day/night visualization on homepage.
 
 ## Active task
-- Replace the plain dark-blue homepage background with a dark starry-sky background.
-- Keep the existing homepage layout, content, controls, cards, and behavior unchanged.
-- Implement the background in CSS without adding a separate generated image asset.
+- Remove the «Κυρίαρχος Αστερισμός Εποχής» card from the homepage.
+- Replace it with a full-globe realtime Earth illumination visualization.
+- Show Earth's 23.44° axial tilt and the day/night division from the Sun.
+- Use Astronomy Engine solar coordinates already loaded by the homepage.
+- Keep the rest of the homepage unchanged.
 
 ## Working branch
-\`feature/home-starry-background\`
+`feature/realtime-earth-day-night`
 
 ## Preview / approval state
 Vercel Preview: PENDING
@@ -18,10 +20,12 @@ Owner approval: PENDING
 Merge status: NOT MERGED
 
 ## Checks
-- Change is scoped to the homepage background CSS plus this handoff file.
+- Scoped to index.html plus this handoff file.
+- Earth lighting uses the Sun's equatorial coordinates and sidereal time for the selected/current time.
+- No external map/image dependency was added.
 
 ## Last known handoff
 2026-09-22
 
 ## Next action
-Open PR, verify Vercel Preview, send preview to owner, and wait for explicit approval before merge.
+Verify Vercel Preview, send preview to owner, and wait for explicit approval before merge.
