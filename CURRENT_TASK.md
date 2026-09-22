@@ -9,6 +9,10 @@ IN PROGRESS — expanding the Deep Sky section.
 - Add bright/easy telescope galaxies.
 - Add bright/easy star clusters.
 - Keep the existing card interaction and visual style.
+- Remove the subtitle under Deep Sky.
+- Add the Pleiades (M45).
+- Show Earth distance and practical telescope visibility directly on every object card.
+- Keep real astronomical imagery for each object.
 
 ## Working branch
 `feature/deep-sky-galaxies-clusters`
