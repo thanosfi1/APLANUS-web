@@ -1299,7 +1299,7 @@
     </section>
 
     <section class="brightest-planet-card" aria-live="polite">
-      <div class="brightest-planet-kicker">Φωτεινότερος πλανήτης της περιόδου</div>
+      <div class="brightest-planet-kicker">Φωτεινότερος ορατός πλανήτης</div>
       <div class="brightest-planet-name" id="brightestPlanetName">Υπολογισμός…</div>
       <div class="brightest-planet-visual" id="brightestPlanetVisual"></div>
       <div class="brightest-planet-meta" id="brightestPlanetMeta"></div>
@@ -2078,24 +2078,39 @@
     }
 
     function updateBrightestPlanet(time) {
-      const candidates = PLANETS.filter(p => !p.isMinor);
+      const observer = new Astronomy.Observer(currentCoords.lat, currentCoords.lon, 0);
       let brightest = null;
-      candidates.forEach(planet => {
+
+      PLANETS.filter(p => !p.isMinor).forEach(planet => {
         try {
-          const illum = Astronomy.Illumination(Astronomy.Body[planet.id], time);
-          if (Number.isFinite(illum.mag) && (!brightest || illum.mag < brightest.mag)) brightest = { ...planet, mag: illum.mag };
+          const body = Astronomy.Body[planet.id];
+          const eq = Astronomy.Equator(body, time, observer, true, true);
+          const hor = Astronomy.Horizon(time, observer, eq.ra, eq.dec, 'normal');
+          if (hor.altitude <= 0) return;
+
+          const illum = Astronomy.Illumination(body, time);
+          if (Number.isFinite(illum.mag) && (!brightest || illum.mag < brightest.mag)) {
+            brightest = { ...planet, mag: illum.mag, altitude: hor.altitude };
+          }
         } catch (e) {}
       });
-      if (!brightest) return;
+
       const name = document.getElementById('brightestPlanetName');
       const visual = document.getElementById('brightestPlanetVisual');
       const meta = document.getElementById('brightestPlanetMeta');
-      if (name) name.textContent = brightest.name;
-      if (visual) visual.innerHTML = planetImageMarkup(brightest);
-      if (meta) {
-        const mag = (brightest.mag >= 0 ? '+' : '') + brightest.mag.toFixed(2);
-        meta.innerHTML = `Φαινόμενο μέγεθος: <strong>${mag} mag</strong><br>Για ${time.toLocaleDateString('el-GR', { day:'numeric', month:'long', year:'numeric' })}`;
+      if (!name || !visual || !meta) return;
+
+      if (!brightest) {
+        name.textContent = 'Κανένας πλανήτης πάνω από τον ορίζοντα';
+        visual.innerHTML = '';
+        meta.textContent = time.toLocaleString('el-GR', { dateStyle:'medium', timeStyle:'short' });
+        return;
       }
+
+      name.textContent = brightest.name;
+      visual.innerHTML = planetImageMarkup(brightest);
+      const mag = (brightest.mag >= 0 ? '+' : '') + brightest.mag.toFixed(2);
+      meta.innerHTML = `Φαινόμενο μέγεθος: <strong>${mag} mag</strong> • Ύψος: ${brightest.altitude.toFixed(1)}°<br>Για ${time.toLocaleString('el-GR', { dateStyle:'medium', timeStyle:'short' })}`;
     }
 
     function calculateSky() {
