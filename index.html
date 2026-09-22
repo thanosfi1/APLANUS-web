@@ -2078,12 +2078,9 @@
       clouds.colorSpace = THREE.SRGBColorSpace;
 
       const geometry = new THREE.SphereGeometry(1, 96, 96);
-      const surface = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
+      const surface = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
         map: earthTexture,
-        specularMap: earthSpec,
-        normalMap: earthNormal,
-        normalScale: new THREE.Vector2(0.65, 0.65),
-        shininess: 18
+        color: 0xffffff
       }));
       globe.add(surface);
 
@@ -2099,13 +2096,31 @@
       );
       globe.add(atmosphere);
 
-      // Keep the night hemisphere faintly visible while direct sunlight defines day/night.
-      const ambient = new THREE.AmbientLight(0x6f8fb0, 0.42);
-      scene.add(ambient);
-      const sunlight = new THREE.DirectionalLight(0xffffff, 3.0);
-      scene.add(sunlight);
+      // Day/night is drawn as a transparent terminator overlay. The Earth
+      // texture itself stays visible, avoiding device-dependent black rendering.
+      const nightMaterial = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        uniforms: { sunDirection: { value: new THREE.Vector3(0, 0, 1) } },
+        vertexShader: `
+          varying vec3 vNormalWorld;
+          void main() {
+            vNormalWorld = normalize(mat3(modelMatrix) * normal);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }`,
+        fragmentShader: `
+          uniform vec3 sunDirection;
+          varying vec3 vNormalWorld;
+          void main() {
+            float daylight = dot(normalize(vNormalWorld), normalize(sunDirection));
+            float night = 1.0 - smoothstep(-0.10, 0.10, daylight);
+            gl_FragColor = vec4(0.005, 0.012, 0.035, night * 0.76);
+          }`
+      });
+      const nightLayer = new THREE.Mesh(new THREE.SphereGeometry(1.012, 96, 96), nightMaterial);
+      globe.add(nightLayer);
 
-      earth3d = { renderer, scene, camera, globe, surface, cloudLayer, sunlight, canvas };
+      earth3d = { renderer, scene, camera, globe, surface, cloudLayer, nightMaterial, canvas };
       return earth3d;
     }
 
@@ -2114,7 +2129,7 @@
       const view = earth3d || initRealtimeEarth();
       if (!view) return;
 
-      const { renderer, scene, camera, globe, surface, cloudLayer, sunlight, canvas } = view;
+      const { renderer, scene, camera, globe, surface, cloudLayer, nightMaterial, canvas } = view;
       const rect = canvas.getBoundingClientRect();
       const width = Math.max(1, Math.round(rect.width * Math.min(window.devicePixelRatio || 1, 2)));
       const height = Math.max(1, Math.round(rect.height * Math.min(window.devicePixelRatio || 1, 2)));
@@ -2138,15 +2153,11 @@
       // Sun direction is computed but the Sun itself is intentionally not drawn.
       const lat = subsolarLat * Math.PI / 180;
       const lon = subsolarLon * Math.PI / 180;
-      // The globe texture is already rotated by sidereal time, so use the
-      // subsolar direction in the globe's current coordinate frame.
-      sunlight.position.set(
-        5 * Math.cos(lat) * Math.sin(lon),
-        5 * Math.sin(lat),
-        5 * Math.cos(lat) * Math.cos(lon)
-      );
-      sunlight.target.position.set(0, 0, 0);
-      scene.add(sunlight.target);
+      nightMaterial.uniforms.sunDirection.value.set(
+        Math.cos(lat) * Math.sin(lon),
+        Math.sin(lat),
+        Math.cos(lat) * Math.cos(lon)
+      ).normalize();
 
       renderer.render(scene, camera);
 
