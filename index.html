@@ -2122,7 +2122,7 @@
       meta.innerHTML = `Φαινόμενο μέγεθος: <strong>${mag} mag</strong> • Ύψος: ${brightest.altitude.toFixed(1)}°<br>Για ${time.toLocaleString('el-GR', { dateStyle:'medium', timeStyle:'short' })}`;
     }
 
-    function calculateSky() {
+    async function calculateSky() {
       if (typeof Astronomy === "undefined") return;
 
       if (!userManualTime) {
@@ -2329,7 +2329,7 @@
       if (planetsContainer) {
         planetsContainer.innerHTML = '';
 
-        PLANETS.forEach(planet => {
+        for (const planet of PLANETS) {
           let distMillionKm = "--";
           let magFormatted = "-- mag";
           let hor = { altitude: -90, azimuth: 0 };
@@ -2458,7 +2458,9 @@
             </div>
           `;
           planetsContainer.appendChild(card);
-        });
+          // Let the browser paint each completed card before calculating the next one.
+          await new Promise(resolve => requestAnimationFrame(resolve));
+        }
 
         if (!userManualTime && scheduleToSync.length > 0) {
           syncPlanetsWithServer(scheduleToSync);
