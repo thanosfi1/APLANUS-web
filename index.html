@@ -2053,7 +2053,8 @@
 
       const cx = w / 2, cy = h / 2 + 10, R = Math.min(w, h) * 0.36;
       const tilt = -23.43928 * Math.PI / 180;
-      const sunEq = Astronomy.Equator(Astronomy.Body.Sun, time, null, true, true);
+      const earthCenterObserver = new Astronomy.Observer(0, 0, 0);
+      const sunEq = Astronomy.Equator(Astronomy.Body.Sun, time, earthCenterObserver, true, true);
       const gst = Astronomy.SiderealTime(time);
       const subsolarLat = sunEq.dec * Math.PI / 180;
       let subsolarLon = (sunEq.ra - gst) * 15;
