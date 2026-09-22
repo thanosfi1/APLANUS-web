@@ -1,7 +1,7 @@
 # APLANUS — Current Development State
 
 ## Status
-IN PROGRESS — refine brightest-visible-planet artwork and Pluto loading.
+APPROVED — brightest-visible-planet artwork and Pluto loading fix ready to merge.
 
 ## Active task
 - Keep Saturn at its current large size in the «Φωτεινότερος ορατός πλανήτης» card.
@@ -13,10 +13,10 @@ IN PROGRESS — refine brightest-visible-planet artwork and Pluto loading.
 `fix/brightest-planet-layout-pluto`
 
 ## Preview / approval state
-Vercel Preview: PENDING
-Preview status: PENDING
-Owner approval: PENDING
-Merge status: NOT MERGED
+Vercel Preview: https://aplanus-sky-dev-git-fix-brightest-plan-f80241-thanosfotis3-1320.vercel.app
+Preview status: READY
+Owner approval: APPROVED
+Merge status: PENDING MERGE
 
 ## Checks
 - Scoped to `index.html` plus this handoff file.
@@ -27,4 +27,4 @@ Merge status: NOT MERGED
 2026-09-22
 
 ## Next action
-Verify Vercel Preview, send it to owner, and wait for explicit approval before merge.
+Merge PR #14 after this handoff update.
