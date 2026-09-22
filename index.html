@@ -20,7 +20,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
   <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
   <style>
     :root {
@@ -773,40 +772,44 @@
       font-family: 'Orbitron', monospace;
     }
 
-    .earth-live-section {
-      margin-bottom: 28px;
+    .brightest-planet-card {
+      margin: 0 auto 28px;
+      max-width: 560px;
+      background: linear-gradient(145deg, rgba(15,23,42,.92), rgba(8,15,30,.82));
+      border: 1px solid rgba(56,189,248,.25);
+      border-radius: 22px;
+      padding: 22px;
       text-align: center;
+      box-shadow: 0 18px 50px rgba(0,0,0,.28), inset 0 0 35px rgba(56,189,248,.04);
     }
-    .earth-live-title {
+    .brightest-planet-kicker {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.05rem;
-      letter-spacing: 1.2px;
-      color: #fff;
-      margin-bottom: 6px;
-    }
-    .earth-live-meta {
       color: var(--accent-cyan);
-      font-family: 'Orbitron', monospace;
-      font-size: 0.72rem;
-      margin-bottom: 12px;
+      font-size: .68rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
     }
-    .earth-live-wrap {
-      width: min(100%, 560px);
-      aspect-ratio: 16 / 10;
-      margin: 0 auto;
-      position: relative;
+    .brightest-planet-name {
+      margin-top: 6px;
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      font-size: 1.3rem;
+      font-weight: 700;
     }
-    #earthCanvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      filter: drop-shadow(0 0 28px rgba(56,189,248,.16));
+    .brightest-planet-visual {
+      width: 190px;
+      height: 150px;
+      margin: 6px auto 0;
+      display: grid;
+      place-items: center;
     }
-    .earth-live-note {
-      margin-top: 8px;
-      font-size: 0.72rem;
-      color: var(--text-muted);
+    .brightest-planet-visual svg { width: 100%; height: 100%; overflow: visible; }
+    .brightest-planet-meta {
+      color: var(--text-main);
+      font-size: .86rem;
+      line-height: 1.6;
     }
+    .brightest-planet-meta strong { color: var(--accent-gold); font-family: 'Orbitron', monospace; }
 
     .skydome-section {
       background: var(--card-bg);
@@ -1290,13 +1293,11 @@
       </div>
     </section>
 
-    <section class="earth-live-section">
-      <div class="earth-live-title">Γη σε Πραγματικό Χρόνο — Ημέρα / Νύχτα</div>
-      <div class="earth-live-meta" id="earthLiveMeta">Υπολογισμός φωτισμού από τον Ήλιο…</div>
-      <div class="earth-live-wrap">
-        <canvas id="earthCanvas" width="1120" height="700" aria-label="Τρισδιάστατη φωτορεαλιστική αναπαράσταση της Γης με ζώνη ημέρας και νύχτας"></canvas>
-        <div class="earth-live-note">Η φωτεινή και σκοτεινή πλευρά υπολογίζονται από τη θέση του Ήλιου για την επιλεγμένη ημερομηνία και ώρα.</div>
-      </div>
+    <section class="brightest-planet-card" aria-live="polite">
+      <div class="brightest-planet-kicker">Φωτεινότερος πλανήτης της περιόδου</div>
+      <div class="brightest-planet-name" id="brightestPlanetName">Υπολογισμός…</div>
+      <div class="brightest-planet-visual" id="brightestPlanetVisual"></div>
+      <div class="brightest-planet-meta" id="brightestPlanetMeta"></div>
     </section>
 
     <h3 class="section-title">Πλανήτες, Πλανήτες Νάνοι και Αστεροειδείς — Ορατοί Απόψε</h3>
@@ -2051,120 +2052,33 @@
       }
     }
 
-    let earth3d = null;
-
-    function initRealtimeEarth() {
-      const canvas = document.getElementById('earthCanvas');
-      if (!canvas || typeof THREE === "undefined") return null;
-
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(28, 1.6, 0.1, 100);
-      camera.position.set(0, 0, 4.6);
-
-      const globe = new THREE.Group();
-      globe.rotation.z = -23.43928 * Math.PI / 180;
-      scene.add(globe);
-
-      const loader = new THREE.TextureLoader();
-      const earthTexture = loader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
-      earthTexture.colorSpace = THREE.SRGBColorSpace;
-      const earthSpec = loader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
-      const earthNormal = loader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
-      const clouds = loader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
-      clouds.colorSpace = THREE.SRGBColorSpace;
-
-      const geometry = new THREE.SphereGeometry(1, 96, 96);
-      const surface = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
-        map: earthTexture,
-        color: 0xffffff
-      }));
-      globe.add(surface);
-
-      const cloudLayer = new THREE.Mesh(
-        new THREE.SphereGeometry(1.008, 96, 96),
-        new THREE.MeshPhongMaterial({ map: clouds, transparent: true, opacity: 0.62, depthWrite: false })
-      );
-      globe.add(cloudLayer);
-
-      const atmosphere = new THREE.Mesh(
-        new THREE.SphereGeometry(1.025, 96, 96),
-        new THREE.MeshBasicMaterial({ color: 0x58bfff, transparent: true, opacity: 0.09, side: THREE.BackSide })
-      );
-      globe.add(atmosphere);
-
-      // Day/night is drawn as a transparent terminator overlay. The Earth
-      // texture itself stays visible, avoiding device-dependent black rendering.
-      const nightMaterial = new THREE.ShaderMaterial({
-        transparent: true,
-        depthWrite: false,
-        uniforms: { sunDirection: { value: new THREE.Vector3(0, 0, 1) } },
-        vertexShader: `
-          varying vec3 vNormalWorld;
-          void main() {
-            vNormalWorld = normalize(mat3(modelMatrix) * normal);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }`,
-        fragmentShader: `
-          uniform vec3 sunDirection;
-          varying vec3 vNormalWorld;
-          void main() {
-            float daylight = dot(normalize(vNormalWorld), normalize(sunDirection));
-            float night = 1.0 - smoothstep(-0.10, 0.10, daylight);
-            gl_FragColor = vec4(0.005, 0.012, 0.035, night * 0.76);
-          }`
-      });
-      const nightLayer = new THREE.Mesh(new THREE.SphereGeometry(1.012, 96, 96), nightMaterial);
-      globe.add(nightLayer);
-
-      earth3d = { renderer, scene, camera, globe, surface, cloudLayer, nightMaterial, canvas };
-      return earth3d;
+    function planetPortraitSvg(id) {
+      const common = 'viewBox="0 0 220 170" role="img" aria-label="Ρεαλιστική σχηματική απεικόνιση πλανήτη"';
+      if (id === 'Saturn') return `<svg ${common}><defs><radialGradient id="sat" cx="35%" cy="28%"><stop offset="0" stop-color="#fff8d6"/><stop offset=".55" stop-color="#d9bd79"/><stop offset="1" stop-color="#8b7040"/></radialGradient><linearGradient id="ring"><stop stop-color="#8f7950"/><stop offset=".5" stop-color="#f2ddb0"/><stop offset="1" stop-color="#77623e"/></linearGradient></defs><ellipse cx="110" cy="88" rx="88" ry="22" fill="none" stroke="url(#ring)" stroke-width="10" opacity=".85" transform="rotate(-12 110 88)"/><circle cx="110" cy="82" r="50" fill="url(#sat)"/><path d="M62 78 Q110 88 158 72" fill="none" stroke="#9e824c" stroke-width="4" opacity=".55"/><path d="M28 105 Q110 80 192 72" fill="none" stroke="#e8d4a6" stroke-width="7" opacity=".7"/></svg>`;
+      if (id === 'Jupiter') return `<svg ${common}><defs><radialGradient id="jup" cx="34%" cy="28%"><stop stop-color="#fff0d2"/><stop offset=".7" stop-color="#c88f61"/><stop offset="1" stop-color="#69412e"/></radialGradient><clipPath id="jc"><circle cx="110" cy="85" r="62"/></clipPath></defs><circle cx="110" cy="85" r="62" fill="url(#jup)"/><g clip-path="url(#jc)" opacity=".75"><path d="M45 58 Q110 69 175 56" stroke="#9d6749" stroke-width="9" fill="none"/><path d="M44 79 Q110 69 176 82" stroke="#f1d0a7" stroke-width="10" fill="none"/><path d="M47 105 Q110 94 173 108" stroke="#9d6749" stroke-width="8" fill="none"/><ellipse cx="142" cy="103" rx="16" ry="8" fill="#a84e34"/></g></svg>`;
+      const palettes={Mercury:['#d8d2c9','#77736e','#343331'],Venus:['#fff1b8','#dca74f','#8f5d24'],Mars:['#ffb07c','#c64d2d','#652519'],Uranus:['#d8ffff','#73d8df','#327d91'],Neptune:['#8ab8ff','#315bd7','#172c86']};
+      const p=palettes[id]||['#ddd','#888','#333'];
+      return `<svg ${common}><defs><radialGradient id="p" cx="32%" cy="27%"><stop offset="0" stop-color="${p[0]}"/><stop offset=".62" stop-color="${p[1]}"/><stop offset="1" stop-color="${p[2]}"/></radialGradient></defs><circle cx="110" cy="85" r="62" fill="url(#p)"/>${id==='Mars'?'<path d="M72 64q25-14 46-3t29 0M68 102q34 13 72 0" fill="none" stroke="#7d2d20" stroke-width="5" opacity=".45"/>':''}${id==='Venus'?'<path d="M65 70q45-25 90 0M61 95q48-20 98 2" fill="none" stroke="#fff1c2" stroke-width="8" opacity=".35"/>':''}</svg>`;
     }
 
-    function drawRealtimeEarth(time = new Date()) {
-      if (typeof Astronomy === "undefined") return;
-      const view = earth3d || initRealtimeEarth();
-      if (!view) return;
-
-      const { renderer, scene, camera, globe, surface, cloudLayer, nightMaterial, canvas } = view;
-      const rect = canvas.getBoundingClientRect();
-      const width = Math.max(1, Math.round(rect.width * Math.min(window.devicePixelRatio || 1, 2)));
-      const height = Math.max(1, Math.round(rect.height * Math.min(window.devicePixelRatio || 1, 2)));
-      if (canvas.width !== width || canvas.height !== height) {
-        renderer.setSize(rect.width, rect.height, false);
-        camera.aspect = rect.width / rect.height;
-        camera.updateProjectionMatrix();
-      }
-
-      const observer0 = new Astronomy.Observer(0, 0, 0);
-      const sunEq = Astronomy.Equator(Astronomy.Body.Sun, time, observer0, true, true);
-      const gst = Astronomy.SiderealTime(time);
-      let subsolarLon = (sunEq.ra - gst) * 15;
-      subsolarLon = ((subsolarLon + 540) % 360) - 180;
-      const subsolarLat = sunEq.dec;
-
-      // Rotate Earth by Greenwich sidereal time so continents follow real Earth rotation.
-      surface.rotation.y = -gst * 15 * Math.PI / 180;
-      cloudLayer.rotation.y = surface.rotation.y + 0.012;
-
-      // Sun direction is computed but the Sun itself is intentionally not drawn.
-      const lat = subsolarLat * Math.PI / 180;
-      const lon = subsolarLon * Math.PI / 180;
-      nightMaterial.uniforms.sunDirection.value.set(
-        Math.cos(lat) * Math.sin(lon),
-        Math.sin(lat),
-        Math.cos(lat) * Math.cos(lon)
-      ).normalize();
-
-      renderer.render(scene, camera);
-
-      const meta = document.getElementById('earthLiveMeta');
+    function updateBrightestPlanet(time) {
+      const candidates = PLANETS.filter(p => !p.isMinor);
+      let brightest = null;
+      candidates.forEach(planet => {
+        try {
+          const illum = Astronomy.Illumination(Astronomy.Body[planet.id], time);
+          if (Number.isFinite(illum.mag) && (!brightest || illum.mag < brightest.mag)) brightest = { ...planet, mag: illum.mag };
+        } catch (e) {}
+      });
+      if (!brightest) return;
+      const name = document.getElementById('brightestPlanetName');
+      const visual = document.getElementById('brightestPlanetVisual');
+      const meta = document.getElementById('brightestPlanetMeta');
+      if (name) name.textContent = brightest.name;
+      if (visual) visual.innerHTML = planetPortraitSvg(brightest.id);
       if (meta) {
-        const local = time.toLocaleString('el-GR', { dateStyle: 'medium', timeStyle: 'medium' });
-        meta.textContent = `Κλίση άξονα: 23,44° • ${local} • Υποηλιακό σημείο: ${Math.abs(subsolarLat).toFixed(1)}° ${subsolarLat >= 0 ? 'Β' : 'Ν'}, ${Math.abs(subsolarLon).toFixed(1)}° ${subsolarLon >= 0 ? 'Α' : 'Δ'}`;
+        const mag = (brightest.mag >= 0 ? '+' : '') + brightest.mag.toFixed(2);
+        meta.innerHTML = `Φαινόμενο μέγεθος: <strong>${mag} mag</strong><br>Για ${time.toLocaleDateString('el-GR', { day:'numeric', month:'long', year:'numeric' })}`;
       }
     }
 
@@ -2267,7 +2181,7 @@
         });
       }
 
-      drawRealtimeEarth(evaluationTime);
+      updateBrightestPlanet(evaluationTime);
 
       const domeTimeStatusEl = document.getElementById('domeTimeStatus');
       if (domeTimeStatusEl) {
