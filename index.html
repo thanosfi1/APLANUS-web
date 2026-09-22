@@ -805,7 +805,8 @@
       position: relative;
       z-index: 0;
     }
-    .brightest-planet-visual img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,.5)); position: relative; z-index: 0; }
+    .brightest-planet-visual img { width: 76%; height: 76%; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,.5)); position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 0; }
+    .brightest-planet-visual img.brightest-saturn { width: 100%; height: 100%; bottom: 0; }
     .brightest-planet-name, .brightest-planet-meta, .brightest-planet-kicker { position: relative; z-index: 2; }
     .minor-body-photo { border-radius: 50%; mix-blend-mode: screen; }
     .planet-photo { width: 62px; height: 62px; object-fit: contain; flex: 0 0 auto; filter: drop-shadow(0 5px 10px rgba(0,0,0,.45)); }
@@ -2065,7 +2066,7 @@
       Saturn: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Saturn.png',
       Uranus: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Uranus.png',
       Neptune: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/3D_Neptune.png',
-      Pluto: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Pluto-01_Stern_03_Pluto_Color_TXT.jpg',
+      Pluto: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Pluto-transparent.png',
       Ceres: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Ceres_-_RC3_-_Haulani_Crater_(22381131691).jpg',
       Vesta: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Vesta_full_mosaic.jpg'
     };
@@ -2108,7 +2109,7 @@
       }
 
       name.textContent = brightest.name;
-      visual.innerHTML = planetImageMarkup(brightest);
+      visual.innerHTML = planetImageMarkup(brightest, brightest.id === 'Saturn' ? 'brightest-saturn' : '');
       const mag = (brightest.mag >= 0 ? '+' : '') + brightest.mag.toFixed(2);
       meta.innerHTML = `Φαινόμενο μέγεθος: <strong>${mag} mag</strong> • Ύψος: ${brightest.altitude.toFixed(1)}°<br>Για ${time.toLocaleString('el-GR', { dateStyle:'medium', timeStyle:'short' })}`;
     }
