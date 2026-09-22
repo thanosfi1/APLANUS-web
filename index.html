@@ -561,6 +561,8 @@
     }
 
     .sun-svg {
+      object-fit: contain;
+      display: block;
       width: 100%;
       height: 100%;
       animation: spinSun 28s linear infinite;
@@ -1189,37 +1191,14 @@
       <div class="hero-inner">
         <div class="celestial-stage">
           <div class="celestial-body-node" id="moonNode" title="Πατήστε για Σελήνη">
-            <svg id="moonSvg" viewBox="0 0 100 100" width="100%" height="100%">
-              <defs>
-                <radialGradient id="moonGlow" cx="45%" cy="45%" r="55%">
-                  <stop offset="0%" stop-color="#ffffff" />
-                  <stop offset="65%" stop-color="#cbd5e1" />
-                  <stop offset="100%" stop-color="#94a3b8" />
-                </radialGradient>
-              </defs>
-              <circle cx="50" cy="50" r="46" fill="#090d1a" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" />
-              <path id="moonIllumPath" fill="url(#moonGlow)" />
+            <svg id="moonSvg" viewBox="0 0 100 100" width="100%" height="100%" aria-label="Φωτογραφία Σελήνης με την τρέχουσα φάση">
+              <defs><clipPath id="moonPhaseClip"><path id="moonIllumPath" /></clipPath></defs>
+              <image href="https://commons.wikimedia.org/wiki/Special:Redirect/file/Full_moon.png?width=500" x="4" y="4" width="92" height="92" preserveAspectRatio="xMidYMid slice" clip-path="url(#moonPhaseClip)" />
             </svg>
           </div>
 
           <div class="celestial-body-node" id="sunNode" title="Πατήστε για Ήλιο">
-            <svg class="sun-svg" viewBox="0 0 120 120">
-              <defs>
-                <radialGradient id="sunGradient" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="#fffbeb" />
-                  <stop offset="35%" stop-color="#ffffff" />
-                  <stop offset="70%" stop-color="#e5e7eb" />
-                  <stop offset="100%" stop-color="#cbd5e1" />
-                </radialGradient>
-                <radialGradient id="coronaGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="40%" stop-color="rgba(255,255,255,0.8)" />
-                  <stop offset="85%" stop-color="rgba(255,255,255,0.2)" />
-                  <stop offset="100%" stop-color="transparent" />
-                </radialGradient>
-              </defs>
-              <circle cx="60" cy="60" r="54" fill="url(#coronaGlow)" />
-              <circle cx="60" cy="60" r="34" fill="url(#sunGradient)" stroke="#ffffff" stroke-width="1.5" />
-            </svg>
+            <img class="sun-svg" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Sun_in_February_%28transparent%29.png?width=500" alt="Πραγματική φωτογραφία Ήλιου" decoding="async" fetchpriority="high">
           </div>
         </div>
 
