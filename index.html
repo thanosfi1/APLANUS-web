@@ -560,6 +560,14 @@
       filter: none;
     }
 
+
+    /* Prevent mobile long-press image preview without disabling parent controls. */
+    .sun-svg, .celestial-body-node img, .brightest-planet-visual img, .planet-photo {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
     .sun-svg {
       object-fit: contain;
       display: block;
