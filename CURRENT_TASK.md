@@ -1,28 +1,26 @@
 # APLANUS — Current Development State
 
 ## Status
-APPROVED — hero Sun/Moon frame-glow fix ready to merge.
+IN PROGRESS — PR #23 updated with Sun/Moon long-press and hero swap fixes; awaiting mobile/Vercel Preview review and owner approval.
 
 ## Active task
-- Remove the faint rectangular frame/glow around the Sun and Moon in the homepage swap.
-- Preserve imagery, sizing, positions, Moon phase calculation, and swap behavior.
+- Prevent native long-press previews and dragging on homepage/Planets images, including Sun and SVG Moon.
+- Keep the smaller Moon visible when Sun is active.
+- Prevent touch-swipe synthetic clicks from switching the selected Sun/Moon slide back.
+- Preserve astronomy calculations, image sources, lunar phase and ordinary tap/swipe controls.
 
 ## Working branch
-`fix/hero-swap-image-frame`
+`fix/disable-image-long-press`
 
 ## Preview / approval state
-Vercel Preview: https://aplanus-sky-dev-git-fix-hero-swap-image-frame-thanosfotis3-1320.vercel.app
-Preview status: READY
-Owner approval: APPROVED
-Merge status: PENDING MERGE
+Vercel Preview: branch-specific URL still needs verification.
+Owner approval: PENDING.
+Merge status: DO NOT MERGE before mobile preview review and explicit approval.
 
 ## Checks
-- Vercel deployment for the approved code head reported success.
-- Change is scoped to removing the hero node drop-shadow filters.
-- No astronomy calculations or swap behavior changed.
+- Inspected homepage hero CSS, markup and swipe/tap handlers.
+- Changes scoped to homepage hero CSS/JS, existing image protection and this handoff.
+- Live iPhone long-press, swap and Vercel deployment checks remain pending.
 
-## Last known handoff
-2026-09-22
-
-## Next action
-Merge PR #22 after this handoff update.
+## Previous task
+PR #22 hero Sun/Moon frame fix merged into main on 2026-09-22.
