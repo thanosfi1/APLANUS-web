@@ -1921,35 +1921,57 @@
     dotSun.addEventListener('click', () => setHeroMode('sun'));
     dotMoon.addEventListener('click', () => setHeroMode('moon'));
 
+    // Keep Moon/Sun swapping deterministic. A tap on either body/dot must
+    // never be interpreted as a swipe on the parent hero container.
     let touchStartX = 0;
     let touchEndX = 0;
+    let swipeTracking = false;
+    let swipeStartedOnControl = false;
 
     heroWrapper.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
+      const touch = e.changedTouches[0];
+      touchStartX = touch.screenX;
+      touchEndX = touch.screenX;
+      swipeTracking = true;
+      swipeStartedOnControl = !!e.target.closest('#moonNode, #sunNode, #dotMoon, #dotSun');
     }, { passive: true });
 
     heroWrapper.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
+      if (!swipeTracking) return;
+      const touch = e.changedTouches[0];
+      touchEndX = touch.screenX;
+      const shouldSwipe = !swipeStartedOnControl;
+      swipeTracking = false;
+      if (shouldSwipe) handleSwipe();
+    }, { passive: true });
+
+    heroWrapper.addEventListener('touchcancel', () => {
+      swipeTracking = false;
+      swipeStartedOnControl = false;
     }, { passive: true });
 
     heroWrapper.addEventListener('mousedown', (e) => {
       touchStartX = e.screenX;
-    });
-    heroWrapper.addEventListener('mouseup', (e) => {
       touchEndX = e.screenX;
-      handleSwipe();
+      swipeTracking = true;
+      swipeStartedOnControl = !!e.target.closest('#moonNode, #sunNode, #dotMoon, #dotSun');
+    });
+
+    heroWrapper.addEventListener('mouseup', (e) => {
+      if (!swipeTracking) return;
+      touchEndX = e.screenX;
+      const shouldSwipe = !swipeStartedOnControl;
+      swipeTracking = false;
+      if (shouldSwipe) handleSwipe();
     });
 
     function handleSwipe() {
       const diff = touchEndX - touchStartX;
-      if (Math.abs(diff) > 40) {
-        if (diff < 0) {
-          setHeroMode('sun');
-        } else {
-          setHeroMode('moon');
-        }
-      }
+      if (Math.abs(diff) <= 40) return;
+
+      // Always derive the destination from the gesture direction.
+      // This prevents a stale touch/click event from immediately swapping back.
+      setHeroMode(diff < 0 ? 'sun' : 'moon');
     }
 
     function updateNotificationButtonUI(isSubscribed) {
