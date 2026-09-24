@@ -1087,6 +1087,18 @@
       margin-top: auto;
       padding-top: 20px;
     }
+  
+    /* Οι εικόνες ουράνιων σωμάτων δεν ανοίγουν/σύρονται με παρατεταμένο πάτημα */
+    img,
+    #moonNode,
+    #sunNode {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-user-drag: none;
+      user-drag: none;
+    }
+    img { pointer-events: none; }
   </style>
 </head>
 <body>
@@ -2567,6 +2579,17 @@
     } else {
       startApplication();
     }
+  
+    // Prevent browser image preview/save/drag on long-press or right-click.
+    document.addEventListener('contextmenu', (event) => {
+      if (event.target.closest('img, #moonNode, #sunNode')) event.preventDefault();
+    });
+    document.addEventListener('dragstart', (event) => {
+      if (event.target.closest('img, #moonNode, #sunNode')) event.preventDefault();
+    });
+    document.addEventListener('selectstart', (event) => {
+      if (event.target.closest('img, #moonNode, #sunNode')) event.preventDefault();
+    });
   </script>
 </body>
 </html>
