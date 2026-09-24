@@ -60,6 +60,16 @@
       padding: 0;
     }
 
+    /* Prevent long-press image preview/save on mobile for planet photos. */
+    .planet-photo {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-user-drag: none;
+      user-drag: none;
+      pointer-events: none;
+    }
+
     body {
       background-color: var(--bg-dark);
       background-image:
