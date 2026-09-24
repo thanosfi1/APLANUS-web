@@ -22,6 +22,9 @@
   <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
 
   <style>
+/* Prevent mobile long-press image previews without affecting normal taps. */
+img, svg image { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; }
+
     :root {
       --bg-dark: #070913;
       --card-bg: rgba(16, 23, 42, 0.72);
@@ -2576,5 +2579,15 @@
       startApplication();
     }
   </script>
+
+<script>
+// Suppress native image context menus and drag previews; keep ordinary taps intact.
+document.addEventListener('contextmenu', event => {
+  if (event.target.closest('img, svg image')) event.preventDefault();
+});
+document.addEventListener('dragstart', event => {
+  if (event.target.closest('img, svg image')) event.preventDefault();
+});
+</script>
 </body>
 </html>
