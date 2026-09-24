@@ -549,14 +549,14 @@ img, svg image { -webkit-touch-callout: none; -webkit-user-select: none; user-se
     }
 
     .hero-wrapper.sun-active #moonNode {
-      left: -5px;
+      left: -25px;
       transform: scale(0.48);
       z-index: 2;
       opacity: 0.55;
       filter: none;
     }
     .hero-wrapper.sun-active #sunNode {
-      left: 30px;
+      left: 65px;
       transform: scale(1);
       z-index: 5;
       opacity: 1;
@@ -565,7 +565,7 @@ img, svg image { -webkit-touch-callout: none; -webkit-user-select: none; user-se
 
 
     /* Prevent mobile long-press image preview without disabling parent controls. */
-    .sun-svg, .celestial-body-node img, .brightest-planet-visual img, .planet-photo {
+    .sun-svg, .celestial-body-node, .celestial-body-node svg, .celestial-body-node svg *, .celestial-body-node img, .brightest-planet-visual img, .planet-photo {
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       user-select: none;
@@ -1905,27 +1905,53 @@ img, svg image { -webkit-touch-callout: none; -webkit-user-select: none; user-se
       }
     }
 
-    sunNode.addEventListener('click', (e) => { e.stopPropagation(); setHeroMode('sun'); });
-    moonNode.addEventListener('click', (e) => { e.stopPropagation(); setHeroMode('moon'); });
+    // A touch swipe may generate a synthetic click on the image under the finger.
+    // Ignore that click so the selected slide does not immediately switch back.
+    let suppressHeroClick = false;
+    function selectHeroFromTap(mode, e) {
+      e.stopPropagation();
+      if (suppressHeroClick) { e.preventDefault(); return; }
+      setHeroMode(mode);
+    }
+    sunNode.addEventListener('click', (e) => selectHeroFromTap('sun', e));
+    moonNode.addEventListener('click', (e) => selectHeroFromTap('moon', e));
     dotSun.addEventListener('click', () => setHeroMode('sun'));
     dotMoon.addEventListener('click', () => setHeroMode('moon'));
 
     let touchStartX = 0;
     let touchEndX = 0;
+    let touchStartY = 0;
+    let touchEndY = 0;
+    let touchStartedOnHero = false;
 
     heroWrapper.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) { touchStartedOnHero = false; return; }
+      touchStartedOnHero = true;
+      suppressHeroClick = false;
       touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
     }, { passive: true });
 
     heroWrapper.addEventListener('touchend', (e) => {
+      if (!touchStartedOnHero) return;
+      touchStartedOnHero = false;
       touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
+      touchEndY = e.changedTouches[0].screenY;
+      if (Math.abs(touchEndY - touchStartY) < 45 && Math.abs(touchEndX - touchStartX) > 40) {
+        suppressHeroClick = true;
+        handleSwipe();
+      }
     }, { passive: true });
+    heroWrapper.addEventListener('touchcancel', () => { touchStartedOnHero = false; });
+    heroWrapper.addEventListener('click', (e) => {
+      if (suppressHeroClick) { e.preventDefault(); e.stopPropagation(); suppressHeroClick = false; }
+    }, true);
 
     heroWrapper.addEventListener('mousedown', (e) => {
       touchStartX = e.screenX;
     });
     heroWrapper.addEventListener('mouseup', (e) => {
+      if (e.sourceCapabilities?.firesTouchEvents) return;
       touchEndX = e.screenX;
       handleSwipe();
     });
@@ -2583,7 +2609,7 @@ img, svg image { -webkit-touch-callout: none; -webkit-user-select: none; user-se
 <script>
 // Suppress native image context menus and drag previews; keep ordinary taps intact.
 document.addEventListener('contextmenu', event => {
-  if (event.target.closest('img, svg image')) event.preventDefault();
+  if (event.target.closest('img, svg image, #moonNode, #sunNode')) event.preventDefault();
 });
 document.addEventListener('dragstart', event => {
   if (event.target.closest('img, svg image')) event.preventDefault();
