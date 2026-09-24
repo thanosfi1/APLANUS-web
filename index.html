@@ -538,7 +538,7 @@
     #sunNode {
       width: 124px;
       height: 124px;
-      left: 80px;
+      left: 115px;
       transform: scale(0.48);
       z-index: 2;
       opacity: 0.6;
@@ -553,13 +553,20 @@
       filter: none;
     }
     .hero-wrapper.sun-active #sunNode {
-      left: 30px;
+      left: 65px;
       transform: scale(1);
       z-index: 5;
       opacity: 1;
       filter: none;
     }
 
+    /* Keep long presses on the hero artwork from opening native image menus. */
+    #moonNode, #moonNode svg, #moonNode image, #sunNode, #sunNode img {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
     .sun-svg {
       object-fit: contain;
       display: block;
@@ -1894,6 +1901,7 @@
       }
     }
 
+    [moonNode, sunNode].forEach(node => node.addEventListener('contextmenu', e => e.preventDefault()));
     sunNode.addEventListener('click', (e) => { e.stopPropagation(); setHeroMode('sun'); });
     moonNode.addEventListener('click', (e) => { e.stopPropagation(); setHeroMode('moon'); });
     dotSun.addEventListener('click', () => setHeroMode('sun'));
@@ -1901,27 +1909,34 @@
 
     let touchStartX = 0;
     let touchEndX = 0;
+    let lastTouchEnd = 0;
+    let swipeHandled = false;
 
     heroWrapper.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].screenX;
+      swipeHandled = false;
     }, { passive: true });
 
     heroWrapper.addEventListener('touchend', (e) => {
       touchEndX = e.changedTouches[0].screenX;
+      lastTouchEnd = Date.now();
       handleSwipe();
     }, { passive: true });
 
     heroWrapper.addEventListener('mousedown', (e) => {
+      if (Date.now() - lastTouchEnd < 700) return;
       touchStartX = e.screenX;
     });
     heroWrapper.addEventListener('mouseup', (e) => {
+      if (Date.now() - lastTouchEnd < 700) return;
       touchEndX = e.screenX;
       handleSwipe();
     });
 
     function handleSwipe() {
       const diff = touchEndX - touchStartX;
-      if (Math.abs(diff) > 40) {
+      if (!swipeHandled && Math.abs(diff) > 40) {
+        swipeHandled = true;
         if (diff < 0) {
           setHeroMode('sun');
         } else {
