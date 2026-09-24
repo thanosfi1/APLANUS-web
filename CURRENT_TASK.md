@@ -1,23 +1,26 @@
 # APLANUS — Current Development State
 
 ## Status
-IN PROGRESS — mobile long-press image preview fix; awaiting Vercel Preview and owner approval.
+IN PROGRESS — PR #23 updated with Sun/Moon long-press and hero swap fixes; awaiting mobile/Vercel Preview review and owner approval.
 
 ## Active task
-- Disable long-press image preview/drag on planet and moon photographs in the homepage and Planets/Satellites page.
-- Preserve existing image sizing, sources, click/swipe behavior and astronomy calculations.
+- Prevent native long-press previews and dragging on homepage/Planets images, including Sun and SVG Moon.
+- Keep the smaller Moon visible when Sun is active.
+- Prevent touch-swipe synthetic clicks from switching the selected Sun/Moon slide back.
+- Preserve astronomy calculations, image sources, lunar phase and ordinary tap/swipe controls.
 
 ## Working branch
 `fix/disable-image-long-press`
 
 ## Preview / approval state
-Vercel Preview: pending verification from the branch/PR deployment.
-Owner approval: PENDING
-Merge status: DO NOT MERGE before owner reviews the actual preview and explicitly approves.
+Vercel Preview: branch-specific URL still needs verification.
+Owner approval: PENDING.
+Merge status: DO NOT MERGE before mobile preview review and explicit approval.
 
 ## Checks
-- Scoped CSS-only changes to index.html and planets.html.
-- Browser/iPhone long-press and Vercel Preview checks remain pending.
+- Inspected homepage hero CSS, markup and swipe/tap handlers.
+- Changes scoped to homepage hero CSS/JS, existing image protection and this handoff.
+- Live iPhone long-press, swap and Vercel deployment checks remain pending.
 
 ## Previous task
-PR #22 (hero Sun/Moon frame-glow fix) was merged into main on 2026-09-22. The previous CURRENT_TASK.md entry was stale.
+PR #22 hero Sun/Moon frame fix merged into main on 2026-09-22.
