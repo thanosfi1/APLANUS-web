@@ -2079,6 +2079,19 @@
 
     btnNotify.addEventListener('click', setupNotifications);
 
+    // Keep the Home Screen web app on the latest deployed service worker.
+    // This is silent: it does not request notification permission or create a push subscription.
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          const reg = await navigator.serviceWorker.register('sw.js');
+          await reg.update();
+        } catch (err) {
+          console.warn('Service worker update check failed:', err);
+        }
+      });
+    }
+
     async function syncPlanetsWithServer(scheduleList) {
       if (!navigator.onLine || !scheduleList || scheduleList.length === 0) return;
       try {
