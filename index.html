@@ -1933,7 +1933,8 @@
       touchStartX = touch.screenX;
       touchEndX = touch.screenX;
       swipeTracking = true;
-      swipeStartedOnControl = !!e.target.closest('#moonNode, #sunNode, #dotMoon, #dotSun');
+      // Body images participate in swipe gestures; only carousel dots remain tap-only controls.
+      swipeStartedOnControl = !!e.target.closest('#dotMoon, #dotSun');
     }, { passive: true });
 
     heroWrapper.addEventListener('touchend', (e) => {
@@ -1954,7 +1955,8 @@
       touchStartX = e.screenX;
       touchEndX = e.screenX;
       swipeTracking = true;
-      swipeStartedOnControl = !!e.target.closest('#moonNode, #sunNode, #dotMoon, #dotSun');
+      // Body images participate in swipe gestures; only carousel dots remain tap-only controls.
+      swipeStartedOnControl = !!e.target.closest('#dotMoon, #dotSun');
     });
 
     heroWrapper.addEventListener('mouseup', (e) => {
