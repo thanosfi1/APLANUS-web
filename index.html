@@ -545,10 +545,11 @@
       box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.22);
     }
     #sunNode::after {
-      inset: 13px;
+      inset: 5px;
+      background: #fff;
       box-shadow:
-        0 0 10px 4px rgba(255, 255, 255, 0.52),
-        0 0 22px 8px rgba(255, 255, 255, 0.24);
+        0 0 10px 4px rgba(255, 255, 255, 0.58),
+        0 0 24px 9px rgba(255, 255, 255, 0.26);
     }
 
     #moonNode {
@@ -1230,7 +1231,7 @@
           </div>
 
           <div class="celestial-body-node" id="sunNode" title="Πατήστε για Ήλιο">
-            <img class="sun-svg" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Sun_in_February_%28transparent%29.png?width=500" alt="Πραγματική φωτογραφία Ήλιου" style="filter:grayscale(1) brightness(2.15) contrast(.72);" decoding="async" fetchpriority="high">
+            <span class="sun-svg" role="img" aria-label="Ήλιος"></span>
           </div>
         </div>
 
