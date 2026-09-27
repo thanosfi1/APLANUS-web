@@ -72,7 +72,8 @@ const MOON_IMAGES={
 'Δυσνομία':'https://commons.wikimedia.org/wiki/Special:Redirect/file/Eris_and_Dysnomia.png'
 };
 const bodyImg=p=>'<img class="body-photo'+(['ceres','haumea','eris'].includes(p.cls)?' no-black-bg':'')+'" src="'+BODY_IMAGES[p.cls]+'" alt="'+p.name+'" loading="eager" fetchpriority="high" decoding="async">';
-const moonImg=m=>'<img class="moon-photo" src="'+MOON_IMAGES[m]+'" alt="'+m+'" loading="lazy" decoding="async">';
+const moonThumb=m=>MOON_IMAGES[m]+(MOON_IMAGES[m].includes('?')?'&':'?')+'width=120';
+const moonImg=m=>'<img class="moon-photo" src="'+moonThumb(m)+'" alt="'+m+'" loading="lazy" decoding="async">';
 const REAL_DIAM={sun:1392700,mercury:4879,venus:12104,earth:12756,mars:6792,jupiter:142984,saturn:120536,uranus:51118,neptune:49528};
 const realSize=k=>Math.max(3,Math.round(REAL_DIAM[k]/REAL_DIAM.sun*360));
 const system=document.querySelector("#system"),cards=document.querySelector("#cards");
