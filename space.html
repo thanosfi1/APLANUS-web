@@ -124,15 +124,15 @@ function render(){
  document.getElementById('southSeason').textContent=south;
  document.getElementById('declination').textContent=(sun.decl/RAD).toFixed(1)+'°';
  document.getElementById('subsolar').textContent=Math.abs(sun.decl/RAD).toFixed(1)+'° '+(sun.decl>=0?'Β':'Ν')+' · '+Math.abs(sun.lon).toFixed(1)+'° '+(sun.lon>=0?'Α':'Δ');
- document.getElementById('timeMode').textContent=selectedTime?(playing?'Ομαλή περιστροφή · +1 ώρα/δευτ.':'Επιλεγμένη στιγμή'):'Ζωντανά';if(document.activeElement!==timeInput)timeInput.value=localInput(date);
+ document.getElementById('timeMode').textContent=selectedTime?(playing?'Ομαλή κίνηση σκιάς · +1 ώρα/δευτ.':'Επιλεγμένη στιγμή'):'Ζωντανά';if(document.activeElement!==timeInput)timeInput.value=localInput(date);
  document.getElementById('clock').textContent=date.toLocaleString('el-GR',{timeZone:'UTC',dateStyle:'medium',timeStyle:'medium'})+' UTC';
  const w=420,cx=210,cy=210,r=155,scale=2;
  ctx.clearRect(0,0,w,w);
  const img=ctx.createImageData(w,w),data=img.data;
- // View from a fixed equatorial vantage point: the axis leans visibly on screen.
- // Fixed inertial camera: the globe rotates smoothly beneath it as time advances.
- const viewLon=normalize(-((date.getTime()-Date.UTC(2026,8,28,17,40))/86164090)*360)*RAD,viewLat=0*RAD;
- const roll=-Math.asin(Math.sin(TILT)*Math.sin(sun.lambda*RAD)); // northern pole points toward the Sun (left) in northern summer // side-on to the terminator: Sun is to the left
+ // Keep Africa facing the viewer and the globe/axis stationary. Only the
+ // solar illumination moves continuously as simulated time advances.
+ const viewLon=20*RAD,viewLat=0*RAD;
+ const roll=-TILT;
  const sl=Math.sin(viewLat),cl=Math.cos(viewLat),sd=Math.sin(sun.decl),cd=Math.cos(sun.decl),sunLon=sun.lon*RAD;
  for(let py=cy-r;py<cy+r;py++)for(let px=cx-r;px<cx+r;px++){
    let sx=(px-cx)/r,sy=(cy-py)/r,rr=sx*sx+sy*sy;if(rr>1)continue;
@@ -143,7 +143,8 @@ function render(){
    let tex=null;if(texture){
      // Bilinear sampling avoids blocky pixels and jagged coastlines when zoomed.
      const u=((lonD+180)/360*texture.w+texture.w)%texture.w;
-     const v=Math.max(0,Math.min(texture.h-1.001,(90-latD)/180*texture.h));
+     // Sample pixel centres and avoid the distorted last rows at the poles.
+     const v=Math.max(.5,Math.min(texture.h-1.5,(90-latD)/180*texture.h-.5));
      const x0=Math.floor(u),y0=Math.floor(v),x1=(x0+1)%texture.w,y1=Math.min(texture.h-1,y0+1);
      const fx=u-x0,fy=v-y0,p=texture.pixels,w=texture.w;
      const i00=(y0*w+x0)*4,i10=(y0*w+x1)*4,i01=(y1*w+x0)*4,i11=(y1*w+x1)*4;
@@ -153,7 +154,11 @@ function render(){
    const dot=Math.sin(lat)*sd+Math.cos(lat)*cd*Math.cos(lon-sunLon);
    const twilight=Math.max(0,Math.min(1,(dot+.035)/.07));
    const day=Math.max(0,dot),light=.04+.94*twilight*(.35+.65*day);
-   const base=tex|| (polar?[195,220,229]:land?[71,153,110]:[22,111,183]);
+   // At the Antarctic pole, the equirectangular texture converges to one
+   // point; blend its distorted edge into a consistent ice tone.
+   const antarcticBlend=Math.max(0,Math.min(1,(-latD-76)/12));
+   const ice=[203,218,224];
+   const base=tex?tex.map((v,ch)=>v*(1-antarcticBlend)+ice[ch]*antarcticBlend):(polar?[195,220,229]:land?[71,153,110]:[22,111,183]);
    const night=tex?tex.map(v=>v*.055):polar?[17,26,43]:land?[5,20,22]:[2,9,25];
    // Use the satellite texture's own natural cloud detail. The separate cloud
    // mask had an opaque white background that produced bright rendering artifacts.
