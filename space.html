@@ -105,7 +105,7 @@ function render(){
  const axX=Math.sin(roll)*Math.cos(viewLat),axY=Math.cos(roll)*Math.cos(viewLat);
  ctx.beginPath();ctx.moveTo(cx-axX*r*1.22,cy+axY*r*1.22);ctx.lineTo(cx+axX*r*1.22,cy-axY*r*1.22);ctx.stroke();ctx.setLineDash([]);
  ctx.fillStyle='#d3edff';ctx.font='13px system-ui';ctx.fillText('Β',cx+axX*r*1.2+7,cy-axY*r*1.2);ctx.fillText('Ν',cx-axX*r*1.2+7,cy+axY*r*1.2);
- ctx.fillStyle='#9edfff';ctx.font='12px system-ui';ctx.fillText('Κλίση 23,44°',14,392);
+ ctx.fillStyle='#9edfff';ctx.font='12px system-ui';
  // Side view: Sun is fixed to the left; northern tilt toward it is positive in northern summer.
  const towardSun=Math.sin(sun.lambda*RAD);const shift=-Math.sin(TILT)*towardSun*86,vertical=Math.sqrt(86*86-shift*shift);
  const axis=document.getElementById('orbitAxis');axis.setAttribute('x1',425+shift);axis.setAttribute('y1',110-vertical);axis.setAttribute('x2',425-shift);axis.setAttribute('y2',110+vertical);
