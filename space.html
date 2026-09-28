@@ -135,8 +135,8 @@ function render(){
  // Seasonal axis orientation is fixed for each date, independent of daily spin.
  // The large Earth's displayed axis is measured from screen vertical and
  // cannot exceed the physical 23.44° tilt at either solstice.
- const roll=-Math.max(-TILT,Math.min(TILT,TILT*Math.sin(sun.lambda*RAD)));
- const sl=Math.sin(viewLat),cl=Math.cos(viewLat),sd=Math.sin(sun.decl),cd=Math.cos(sun.decl),sunLon=sun.lon*RAD;
+ const roll=-Math.asin(Math.sin(TILT)*Math.sin(sun.lambda*RAD));
+ const sl=Math.sin(viewLat),cl=Math.cos(viewLat);
  for(let py=cy-r;py<cy+r;py++)for(let px=cx-r;px<cx+r;px++){
    let sx=(px-cx)/r,sy=(cy-py)/r,rr=sx*sx+sy*sy;if(rr>1)continue;
    let x=sx*Math.cos(roll)-sy*Math.sin(roll),y=sx*Math.sin(roll)+sy*Math.cos(roll);
@@ -154,10 +154,11 @@ function render(){
      tex=[0,1,2].map(ch=>(p[i00+ch]*(1-fx)+p[i10+ch]*fx)*(1-fy)+(p[i01+ch]*(1-fx)+p[i11+ch]*fx)*fy);
    }
    const polar=Math.abs(latD)>68;
-   // The Sun stays on the left of the large globe: half the disk is always
-   // visibly illuminated. Rotate the satellite texture underneath this fixed
-   // light, while the seasonal declination shifts the terminator north/south.
-   const dot=-sx*cd+sy*sd;
+   // Sunlight comes from a fixed direction on the left. The seasonal axis
+   // tilt already changes the angle between the axis and terminator; adding
+   // solar declination here would double-count the tilt (up to ~46.88°).
+   // Keep the terminator fixed while the textured Earth rotates smoothly.
+   const dot=-sx;
    const twilight=Math.max(0,Math.min(1,(dot+.035)/.07));
    const day=Math.max(0,dot),light=.11+.89*twilight*(.46+.54*day);
    // At the Antarctic pole, the equirectangular texture converges to one
