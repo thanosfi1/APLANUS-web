@@ -2,25 +2,98 @@
 <html lang="el">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#02040b">
-<title>APLANUS | Space</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050b19">
+<title>APLANUS | Γη, Εποχές & Ημέρα–Νύχτα</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040b;font-family:Inter,system-ui,sans-serif;color:#fff}
-header{height:calc(54px + env(safe-area-inset-top));padding:calc(8px + env(safe-area-inset-top)) 10px 7px;display:flex;align-items:center;gap:10px;background:#02040b;border-bottom:1px solid #14283a}
-a{color:#eef6ff;text-decoration:none}.back{width:38px;height:38px;display:grid;place-items:center;border:1px solid #38bdf855;border-radius:11px;font-size:24px}.title{flex:1;text-align:center;font-weight:800;letter-spacing:.15em}.title small{display:block;color:#38bdf8;font-size:.52rem;letter-spacing:.25em;margin-top:2px}.external{font-size:.68rem;border:1px solid #38bdf855;border-radius:10px;padding:9px 8px}
-main{height:calc(100% - 54px - env(safe-area-inset-top));position:relative}.loader{position:absolute;inset:0;display:grid;place-items:center;color:#94a3b8;font-size:.8rem;z-index:0}.sim{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;z-index:1}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 15%,#152a4a 0,#080e20 48%,#040712 100%);color:#eff8ff;font:16px Inter,system-ui,sans-serif;min-height:100vh}a{color:#8cdeff}header{display:flex;align-items:center;gap:15px;padding:16px max(18px,env(safe-area-inset-left));border-bottom:1px solid #ffffff20;background:#060c1caa}.back{font-size:28px;text-decoration:none;border:1px solid #ffffff44;border-radius:12px;width:43px;height:43px;display:grid;place-items:center}.brand{font-weight:800;letter-spacing:.16em}.brand small{display:block;color:#78d8ff;letter-spacing:.08em;font-size:.65rem;margin-top:4px}main{max-width:1050px;margin:auto;padding:25px 16px 48px}h1{text-align:center;font-size:clamp(1.45rem,4vw,2.2rem);margin:8px 0}p.intro{text-align:center;color:#b4cbe0;line-height:1.6;margin:0 auto 20px;max-width:680px}.panel{border:1px solid #8dcaff30;border-radius:22px;background:#09172bbb;box-shadow:0 16px 55px #0005}.stage{position:relative;display:grid;place-items:center;overflow:hidden;min-height:360px;background:radial-gradient(circle at 50% 50%,#19355c55,transparent 55%)}canvas{width:min(82vw,420px);height:min(82vw,420px);max-width:420px;max-height:420px;display:block;touch-action:pan-y}.sun-arrow{position:absolute;left:10px;top:16px;font-size:.78rem;color:#ffdf85;background:#241e1344;padding:9px;border-radius:9px}.sun-arrow span{font-size:1.3rem}.legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:0 12px 20px;color:#c3d7eb;font-size:.82rem}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}.card{padding:19px;border:1px solid #8dcaff30;border-radius:16px;background:#0b1b31}.card .label{color:#9fc5df;font-size:.77rem;text-transform:uppercase;letter-spacing:.08em}.card .value{font-size:1.4rem;font-weight:750;margin-top:8px}.card .detail{color:#b9cde0;font-size:.84rem;line-height:1.55;margin-top:8px}.note{color:#a9bfd4;line-height:1.65;font-size:.82rem;margin-top:17px}button{background:#143354;color:#e9f9ff;border:1px solid #6acfff77;padding:10px 15px;border-radius:10px;font:inherit;cursor:pointer}.controls{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin:12px 0 0}.controls label{font-size:.85rem;color:#bcd9ec}.controls input{accent-color:#5fd4ff;max-width:100%}@media(max-width:540px){.cards{grid-template-columns:1fr}.stage{min-height:300px}.card .value{font-size:1.2rem}}
 </style>
 </head>
 <body>
-<header>
-<a class="back" href="index.html" aria-label="Πίσω">‹</a>
-<div class="title">APLANUS<small>SPACE · WORLDWIDE TELESCOPE</small></div>
-<a class="external" href="https://worldwidetelescope.org/webclient/" target="_blank" rel="noopener">Πλήρης οθόνη ↗</a>
-</header>
+<header><a class="back" href="index.html" aria-label="Επιστροφή στην αρχική">‹</a><div class="brand">APLANUS<small>ΓΗ · ΕΠΟΧΕΣ · ΗΜΕΡΑ / ΝΥΧΤΑ</small></div></header>
 <main>
-<div class="loader">Φόρτωση 3D σύμπαντος…</div>
-<iframe class="sim" src="https://worldwidetelescope.org/webclient/" title="WorldWide Telescope Universe Explorer" allow="fullscreen; accelerometer; gyroscope" allowfullscreen></iframe>
+<h1>Η Γη αυτή τη στιγμή</h1>
+<p class="intro">Ζωντανή αναπαράσταση της κλίσης της Γης, του φωτισμού από τον Ήλιο και της εποχής στο Βόρειο και στο Νότιο Ημισφαίριο.</p>
+<section class="panel" aria-label="Δυναμική αναπαράσταση της Γης">
+<div class="stage"><div class="sun-arrow"><span>☀</span> Φωτισμός από τον Ήλιο →</div><canvas id="earth" width="420" height="420" role="img" aria-label="Σχηματική υδρόγειος με πραγματική κλίση άξονα και υπολογιζόμενο όριο ημέρας και νύχτας"></canvas></div>
+<div class="legend"><span><i class="dot" style="background:#fbd681"></i>Ημέρα</span><span><i class="dot" style="background:#18335c"></i>Νύχτα</span><span>↗ Κλίση άξονα 23,44°</span></div>
+</section>
+<div class="controls"><label for="date">Δες άλλη ημερομηνία:</label><input id="date" type="date"><button id="now" type="button">Σήμερα</button></div>
+<div class="cards">
+<div class="card"><div class="label">Βόρειο Ημισφαίριο · Ελλάδα</div><div class="value" id="north">—</div><div class="detail" id="northDetail"></div></div>
+<div class="card"><div class="label">Νότιο Ημισφαίριο</div><div class="value" id="south">—</div><div class="detail">Οι εποχές είναι αντίθετες από αυτές του Βόρειου Ημισφαιρίου.</div></div>
+<div class="card"><div class="label">Υποηλιακό γεωγραφικό πλάτος</div><div class="value" id="declination">—</div><div class="detail">Το σημείο όπου ο Ήλιος βρίσκεται κατακόρυφα πάνω από τη Γη.</div></div>
+<div class="card"><div class="label">Ώρα απεικόνισης (UTC)</div><div class="value" id="clock">—</div><div class="detail">Η Γη περιστρέφεται και το όριο ημέρας–νύχτας αλλάζει συνεχώς.</div></div>
+</div>
+<p class="note">Η υδρόγειος είναι σχεδιασμένη με κώδικα, όχι φωτογραφία. Οι ήπειροι αποδίδονται σχηματικά. Ο φωτισμός υπολογίζεται από την ημερομηνία και την ώρα UTC με προσεγγιστική ηλιακή απόκλιση και εξίσωση χρόνου· δεν αποτελεί δορυφορική λήψη ούτε ακριβή αστρονομική προσομοίωση. Οι εποχές είναι αστρονομικές, με προσεγγιστικές ημερομηνίες ισημεριών και ηλιοστασίων.</p>
 </main>
+<script>
+'use strict';
+const canvas=document.getElementById('earth'),ctx=canvas.getContext('2d');
+const dateInput=document.getElementById('date');
+let selectedDate=null;
+const rad=Math.PI/180, tilt=23.44*rad;
+const land=[
+[[-168,72],[-138,70],[-125,59],[-130,49],[-124,40],[-117,32],[-110,29],[-104,21],[-97,16],[-89,21],[-82,26],[-81,32],[-70,44],[-59,49],[-54,57],[-79,63],[-95,73],[-125,72]],
+[[-82,12],[-75,8],[-67,10],[-60,4],[-51,-1],[-48,-13],[-40,-22],[-48,-29],[-54,-37],[-70,-56],[-76,-42],[-72,-27],[-79,-11]],
+[[-12,36],[0,37],[11,37],[25,32],[34,30],[44,12],[51,10],[49,-12],[41,-23],[33,-34],[18,-35],[12,-22],[6,-5],[-2,5],[-17,16]],
+[[-11,36],[-9,44],[-25,59],[-8,72],[30,70],[42,61],[60,56],[83,58],[105,53],[129,50],[143,57],[164,62],[179,54],[155,43],[144,34],[135,34],[129,26],[120,20],[113,10],[104,1],[98,7],[92,20],[80,8],[73,9],[66,24],[56,27],[45,40],[34,42],[25,35],[14,36]],
+[[112,-11],[131,-12],[139,-17],[153,-25],[151,-36],[139,-39],[127,-33],[115,-25]],
+[[-52,59],[-42,60],[-39,73],[-44,83],[-59,82],[-61,72]],
+[[45,-13],[50,-17],[49,-25],[44,-26]],
+[[130,32],[136,35],[141,42],[145,44],[144,34]],
+[[-180,-68],[-125,-71],[-65,-69],[-10,-73],[50,-70],[110,-72],[170,-68],[180,-85],[-180,-85]]
+];
+function inside(lat,lon,poly){let yes=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>lat)!==(b[1]>lat)&&lon<(b[0]-a[0])*(lat-a[1])/(b[1]-a[1])+a[0])yes=!yes;}return yes;}
+function earthData(d){const yearStart=Date.UTC(d.getUTCFullYear(),0,0),day=(d.getTime()-yearStart)/86400000;
+const gamma=2*Math.PI/365*(day-1+(d.getUTCHours()-12)/24);
+const dec=(.006918-.399912*Math.cos(gamma)+.070257*Math.sin(gamma)-.006758*Math.cos(2*gamma)+.000907*Math.sin(2*gamma)-.002697*Math.cos(3*gamma)+.00148*Math.sin(3*gamma));
+const eot=229.18*(.000075+.001868*Math.cos(gamma)-.032077*Math.sin(gamma)-.014615*Math.cos(2*gamma)-.040849*Math.sin(2*gamma));
+const minutes=d.getUTCHours()*60+d.getUTCMinutes()+d.getUTCSeconds()/60;
+const sunLon=(720-minutes-eot)/4;
+return {dec,sunLon};}
+function season(d){const m=d.getUTCMonth()+1,day=d.getUTCDate(),md=m*100+day;
+const north=md>=1221||md<320?'Χειμώνας':md<621?'Άνοιξη':md<922?'Καλοκαίρι':'Φθινόπωρο';
+const south={Χειμώνας:'Καλοκαίρι',Άνοιξη:'Φθινόπωρο',Καλοκαίρι:'Χειμώνας',Φθινόπωρο:'Άνοιξη'}[north];
+return {north,south};}
+function draw(d){
+const {dec,sunLon}=earthData(d),w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,R=160;
+ctx.clearRect(0,0,w,h);
+const img=ctx.createImageData(w,h),data=img.data;
+const centerLon=sunLon-48; // show both day and night, while the globe turns with UTC
+const cosT=Math.cos(tilt),sinT=Math.sin(tilt);
+for(let y=Math.max(0,cy-R);y<cy+R;y++)for(let x=cx-R;x<cx+R;x++){
+const nx=(x-cx)/R,ny=(cy-y)/R,r2=nx*nx+ny*ny;if(r2>1)continue;
+const nz=Math.sqrt(1-r2);
+// Tilt Earth's north pole toward the upper-right of the diagram.
+const ex=nx*cosT+ny*sinT,ey=-nx*sinT+ny*cosT,ez=nz;
+const lat=Math.asin(ey),lon=Math.atan2(ex,ez)/rad+centerLon;
+const wrapped=((lon+180)%360+360)%360-180;
+const landHere=land.some(p=>inside(lat/rad,wrapped,p));
+const longitude=wrapped*rad;
+const sunDot=Math.sin(lat)*Math.sin(dec)+Math.cos(lat)*Math.cos(dec)*Math.cos((wrapped-sunLon)*rad);
+const daylight=Math.max(.10,Math.min(1,.14+Math.max(0,sunDot)*.92));
+const rim=.62+.38*Math.pow(nz,.48);
+let rgb=landHere?[49,139,93]:[23,105,174];
+if(lat/rad>72||lat/rad< -73)rgb=[211,224,229];
+const oceanLines=!landHere&&Math.abs((lat/rad)%30)<.55?.89:1;
+const i=(y*w+x)*4;for(let k=0;k<3;k++)data[i+k]=Math.round(rgb[k]*daylight*rim*oceanLines);data[i+3]=255;
+}
+ctx.putImageData(img,0,0);
+ctx.strokeStyle='#8acfff55';ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(cx,cy,R,0,2*Math.PI);ctx.stroke();
+// Axis projected on the display; its direction remains fixed throughout the year.
+const ax=sinT,ay=cosT;ctx.setLineDash([5,5]);ctx.strokeStyle='#c7e8ff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx-ax*205,cy+ay*205);ctx.lineTo(cx+ax*205,cy-ay*205);ctx.stroke();ctx.setLineDash([]);
+ctx.fillStyle='#c9edff';ctx.font='bold 13px system-ui';ctx.fillText('Β',cx+ax*207+4,cy-ay*207);ctx.fillText('Ν',cx-ax*207-15,cy+ay*207+5);
+const s=season(d);document.getElementById('north').textContent=s.north;document.getElementById('south').textContent=s.south;
+document.getElementById('northDetail').textContent='Ημερομηνία: '+d.toLocaleDateString('el-GR',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+document.getElementById('declination').textContent=(dec/rad>=0?'+':'')+(dec/rad).toFixed(1).replace('.',',')+'°';
+document.getElementById('clock').textContent=d.toLocaleTimeString('el-GR',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'});
+}
+function update(){const now=new Date();let d=now;if(selectedDate){d=new Date(selectedDate+'T12:00:00Z');}draw(d);}
+function today(){const n=new Date();dateInput.value=n.toISOString().slice(0,10);selectedDate=null;update();}
+dateInput.addEventListener('change',()=>{selectedDate=dateInput.value||null;update();});
+document.getElementById('now').addEventListener('click',today);
+today();setInterval(()=>{if(!selectedDate)update();},30000);
+</script>
 </body>
 </html>
