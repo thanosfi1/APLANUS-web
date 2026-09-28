@@ -12,20 +12,33 @@ main{max-width:1000px;margin:auto;padding:24px 18px 48px}.panel{border:1px solid
 h2{margin:0 0 8px;font-size:1.55rem}.sub{color:#adc7db;line-height:1.6;margin:0}.scene{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(220px,1fr);gap:24px;align-items:center}
 .globe-wrap{position:relative;min-height:370px;display:grid;place-items:center;overflow:hidden}canvas{width:min(100%,420px);height:auto;aspect-ratio:1;display:block;touch-action:pan-y}
 .sun-label{position:absolute;top:12px;left:12px;color:#ffd885;font-size:.8rem}.legend{display:flex;flex-wrap:wrap;gap:12px;color:#c2d6e5;font-size:.8rem}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
-.stat{padding:13px 0;border-bottom:1px solid #284159}.stat:last-child{border:0}.stat small{display:block;color:#93b6cf;margin-bottom:5px}.stat strong{font-size:1.05rem}.note{color:#a7c4d9;line-height:1.55;font-size:.85rem;margin-top:18px}.orbit{margin:14px 0 4px;padding:14px;border:1px solid #35506c;border-radius:15px;background:#071323}.orbit h3{margin:0 0 8px;font-size:1rem}.orbit svg{width:100%;height:auto;display:block;max-height:240px}.orbit p{font-size:.8rem;color:#b6d2e5;line-height:1.55;margin:6px 0 0}.foot{margin-top:15px;color:#8ba9c1;font-size:.78rem}
+.stat{padding:13px 0;border-bottom:1px solid #284159}.stat:last-child{border:0}.stat small{display:block;color:#93b6cf;margin-bottom:5px}.stat strong{font-size:1.05rem}.note{color:#a7c4d9;line-height:1.55;font-size:.85rem;margin-top:18px}.orbit{margin:14px 0 4px;padding:14px;border:1px solid #35506c;border-radius:15px;background:#071323}.orbit h3{margin:0 0 8px;font-size:1rem}.orbit svg{width:100%;height:auto;display:block;max-height:240px}.orbit p{font-size:.8rem;color:#b6d2e5;line-height:1.55;margin:6px 0 0}.time-controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:16px 0;padding:13px;border:1px solid #385674;border-radius:13px;background:#091b30}.time-controls label{color:#b9d9ef;font-size:.83rem}.time-controls input{color:#fff;background:#122b46;border:1px solid #5886a7;border-radius:8px;padding:9px;font:inherit;max-width:100%;color-scheme:dark}.time-controls button{color:#ecf9ff;background:#16436a;border:1px solid #5eaddb;border-radius:9px;padding:9px 12px;cursor:pointer}.time-controls button:focus-visible{outline:3px solid #ffdf79}.foot{margin-top:15px;color:#8ba9c1;font-size:.78rem}
 @media(max-width:690px){.scene{grid-template-columns:1fr}.globe-wrap{min-height:310px}.panel{padding:15px}main{padding:16px 12px}}
 </style>
 </head>
 <body>
 <header><a class="back" href="index.html" aria-label="Επιστροφή στην αρχική">‹</a><h1>APLANUS<small>ΓΗ · ΕΠΟΧΕΣ · ΗΜΕΡΑ & ΝΥΧΤΑ</small></h1></header>
 <main><section class="panel"><h2>Η Γη αυτή τη στιγμή</h2><p class="sub">Η υδρόγειος προβάλλεται από το όριο ημέρας–νύχτας, ώστε να φαίνονται καθαρά και οι δύο πλευρές. Ζωντανή αναπαράσταση του φωτισμού της Γης, της κλίσης του άξονά της και της εποχής στο Βόρειο και στο Νότιο Ημισφαίριο.</p>
-<div class="scene"><div><div class="globe-wrap"><span class="sun-label">☀ Ηλιακός φωτισμός</span><canvas id="earth" width="420" height="420" role="img" aria-label="Αναπαράσταση της Γης με ημέρα, νύχτα και κεκλιμένο άξονα"></canvas></div><div class="legend"><span><i class="dot" style="background:#fbd77a"></i>Ημέρα</span><span><i class="dot" style="background:#203e69"></i>Νύχτα</span><span><i class="dot" style="background:#72d2fc"></i>Άξονας 23,44°</span></div></div>
+<div class="time-controls"><label for="viewTime">Ημερομηνία και ώρα:</label><input id="viewTime" type="datetime-local" step="60"><button id="nowBtn" type="button">Τώρα</button><button id="minusBtn" type="button" aria-label="Μία ώρα πίσω">−1 ώρα</button><button id="plusBtn" type="button" aria-label="Μία ώρα μπροστά">+1 ώρα</button><button id="playBtn" type="button" aria-pressed="false">▶ Κίνηση</button><span id="timeMode" style="color:#a9cde5;font-size:.8rem">Ζωντανά</span></div><div class="scene"><div><div class="globe-wrap"><span class="sun-label">☀ Ηλιακός φωτισμός</span><canvas id="earth" width="420" height="420" role="img" aria-label="Αναπαράσταση της Γης με ημέρα, νύχτα και κεκλιμένο άξονα"></canvas></div><div class="legend"><span><i class="dot" style="background:#fbd77a"></i>Ημέρα</span><span><i class="dot" style="background:#203e69"></i>Νύχτα</span><span><i class="dot" style="background:#72d2fc"></i>Άξονας 23,44°</span></div></div>
 <div aria-live="polite"><div class="stat"><small>Βόρειο Ημισφαίριο · Ελλάδα</small><strong id="northSeason">—</strong></div><div class="stat"><small>Νότιο Ημισφαίριο</small><strong id="southSeason">—</strong></div><div class="stat"><small>Ηλιακή απόκλιση</small><strong id="declination">—</strong></div><div class="stat"><small>Υποηλιακό σημείο</small><strong id="subsolar">—</strong></div><div class="stat"><small>Ημερομηνία και ώρα (UTC)</small><strong id="clock">—</strong></div><p class="note">Ο άξονας παραμένει κεκλιμένος κατά 23,44°. Καθώς η Γη περιφέρεται γύρω από τον Ήλιο, αλλάζει το ημισφαίριο που δέχεται πιο άμεσα το φως του.</p></div></div>
-<div class="orbit"><h3>Πώς γέρνει ο άξονας σε σχέση με τον Ήλιο</h3><svg viewBox="0 0 600 220" role="img" aria-label="Πλάγια όψη Ήλιου και Γης: η κλίση του άξονα και η κατεύθυνση του ηλιακού φωτός"><defs><radialGradient id="sunGlow"><stop stop-color="#fff7be"/><stop offset=".65" stop-color="#ffcf59"/><stop offset="1" stop-color="#e78b24"/></radialGradient><clipPath id="earthClip"><circle cx="425" cy="110" r="62"/></clipPath></defs><circle cx="88" cy="110" r="45" fill="url(#sunGlow)"/><text x="88" y="175" text-anchor="middle" fill="#ffe5a3" font-size="16">Ήλιος</text><g stroke="#ffd27b" stroke-width="2" opacity=".85"><path d="M145 70H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 110H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 150H335m-12 -7 12 7 -12 7" fill="none"/></g><g clip-path="url(#earthClip)"><circle cx="425" cy="110" r="62" fill="#1c659f"/><path d="M385 65l30 -10 20 20 -14 23 -25 -5 -10 24 -19 -14zM442 114l26 3 8 20 -21 28 -16 -9z" fill="#459b77"/><path d="M425 45h65v130h-65z" fill="#020a1c" opacity=".87"/><path d="M425 45h7v130h-7z" fill="#c9dcfa" opacity=".18"/></g><circle cx="425" cy="110" r="62" fill="none" stroke="#93d9ff" stroke-width="2"/><line id="orbitAxis" x1="425" y1="24" x2="425" y2="196" stroke="#7cddff" stroke-width="3" stroke-dasharray="6 4"/><text id="northPole" x="437" y="28" fill="#c9f0ff" font-size="16">Β</text><text id="southPole" x="437" y="201" fill="#c9f0ff" font-size="16">Ν</text><text x="425" y="213" text-anchor="middle" fill="#c1d9e9" font-size="13">Γη · πλάγια όψη</text></svg><p id="tiltExplanation">—</p></div><p class="foot">Η υδρόγειος είναι σχηματική απεικόνιση με ενδεικτικά περιγράμματα ηπείρων. Ο φωτισμός και η θέση του Ήλιου υπολογίζονται από την τρέχουσα ημερομηνία και ώρα· δεν πρόκειται για δορυφορική φωτογραφία.</p></section></main>
+<div class="orbit"><h3>Πώς γέρνει ο άξονας σε σχέση με τον Ήλιο</h3><svg viewBox="0 0 600 220" role="img" aria-label="Πλάγια όψη Ήλιου και Γης: η κλίση του άξονα και η κατεύθυνση του ηλιακού φωτός"><defs><radialGradient id="sunGlow"><stop stop-color="#fff7be"/><stop offset=".65" stop-color="#ffcf59"/><stop offset="1" stop-color="#e78b24"/></radialGradient><clipPath id="earthClip"><circle cx="425" cy="110" r="62"/></clipPath></defs><circle cx="88" cy="110" r="45" fill="url(#sunGlow)"/><text x="88" y="175" text-anchor="middle" fill="#ffe5a3" font-size="16">Ήλιος</text><g stroke="#ffd27b" stroke-width="2" opacity=".85"><path d="M145 70H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 110H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 150H335m-12 -7 12 7 -12 7" fill="none"/></g><g clip-path="url(#earthClip)"><circle cx="425" cy="110" r="62" fill="#1c659f"/><path d="M385 65l30 -10 20 20 -14 23 -25 -5 -10 24 -19 -14zM442 114l26 3 8 20 -21 28 -16 -9z" fill="#459b77"/><path d="M425 45h65v130h-65z" fill="#020a1c" opacity=".87"/><path d="M425 45h7v130h-7z" fill="#c9dcfa" opacity=".18"/></g><circle cx="425" cy="110" r="62" fill="none" stroke="#93d9ff" stroke-width="2"/><line id="orbitAxis" x1="425" y1="24" x2="425" y2="196" stroke="#7cddff" stroke-width="3" stroke-dasharray="6 4"/><text id="northPole" x="437" y="28" fill="#c9f0ff" font-size="16">Β</text><text id="southPole" x="437" y="201" fill="#c9f0ff" font-size="16">Ν</text><text x="425" y="213" text-anchor="middle" fill="#c1d9e9" font-size="13">Γη · πλάγια όψη</text></svg><p id="tiltExplanation">—</p></div><p class="foot">Η υδρόγειος χρησιμοποιεί τον χάρτη Blue Marble της NASA όταν φορτώνεται η υφή (διαφορετικά εμφανίζεται σχηματικός χάρτης). Ο φωτισμός και η θέση του Ήλιου υπολογίζονται από την τρέχουσα ημερομηνία και ώρα· δεν πρόκειται για δορυφορική φωτογραφία.</p></section></main>
 <script>
 'use strict';
 const canvas=document.getElementById('earth'),ctx=canvas.getContext('2d');
 const RAD=Math.PI/180, TILT=23.44*RAD;
+let selectedTime=null,playing=false,texture=null;
+const texImage=new Image();texImage.crossOrigin='anonymous';
+texImage.onload=()=>{try{const off=document.createElement('canvas');off.width=texImage.naturalWidth;off.height=texImage.naturalHeight;const g=off.getContext('2d',{willReadFrequently:true});g.drawImage(texImage,0,0);texture={pixels:g.getImageData(0,0,off.width,off.height).data,w:off.width,h:off.height};render();}catch(err){console.warn('NASA texture unavailable; using schematic fallback',err);}};
+texImage.onerror=()=>console.warn('NASA texture unavailable; using schematic fallback');
+texImage.src='https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57730/land_ocean_ice_2048.jpg';
+const timeInput=document.getElementById('viewTime');
+function localInput(d){const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes());}
+function setTime(d){selectedTime=d;timeInput.value=localInput(d);render();}
+timeInput.addEventListener('change',()=>{const d=new Date(timeInput.value);if(!Number.isNaN(d.getTime()))setTime(d);});
+document.getElementById('nowBtn').addEventListener('click',()=>{selectedTime=null;playing=false;document.getElementById('playBtn').textContent='▶ Κίνηση';document.getElementById('playBtn').setAttribute('aria-pressed','false');render();});
+document.getElementById('minusBtn').addEventListener('click',()=>setTime(new Date((selectedTime||new Date()).getTime()-3600000)));
+document.getElementById('plusBtn').addEventListener('click',()=>setTime(new Date((selectedTime||new Date()).getTime()+3600000)));
+document.getElementById('playBtn').addEventListener('click',()=>{playing=!playing;if(playing&&!selectedTime)selectedTime=new Date();document.getElementById('playBtn').textContent=playing?'⏸ Παύση':'▶ Κίνηση';document.getElementById('playBtn').setAttribute('aria-pressed',String(playing));render();});
 const continents=[
 [[-168,72],[-140,70],[-130,60],[-123,49],[-124,40],[-115,32],[-110,25],[-98,16],[-87,13],[-83,22],[-97,30],[-105,39],[-95,50],[-80,52],[-62,58],[-52,64],[-65,73],[-100,73],[-130,72]],
 [[-82,12],[-75,8],[-70,0],[-80,-10],[-75,-18],[-70,-30],[-72,-40],[-67,-55],[-52,-53],[-45,-35],[-38,-15],[-48,-2],[-60,6]],
@@ -53,30 +66,32 @@ function solar(date){
 }
 function seasons(lambda){const names=['Άνοιξη','Καλοκαίρι','Φθινόπωρο','Χειμώνας'];const index=lambda<90?0:lambda<180?1:lambda<270?2:3;return [names[index],names[(index+2)%4]];}
 function render(){
- const date=new Date(),sun=solar(date),[north,south]=seasons(sun.lambda);
+ const date=selectedTime||new Date(),sun=solar(date),[north,south]=seasons(sun.lambda);
  document.getElementById('northSeason').textContent=north;
  document.getElementById('southSeason').textContent=south;
  document.getElementById('declination').textContent=(sun.decl/RAD).toFixed(1)+'°';
  document.getElementById('subsolar').textContent=Math.abs(sun.decl/RAD).toFixed(1)+'° '+(sun.decl>=0?'Β':'Ν')+' · '+Math.abs(sun.lon).toFixed(1)+'° '+(sun.lon>=0?'Α':'Δ');
+ document.getElementById('timeMode').textContent=selectedTime?(playing?'Προσομοίωση: +1 ώρα/δευτ.':'Επιλεγμένη στιγμή'):'Ζωντανά';if(document.activeElement!==timeInput)timeInput.value=localInput(date);
  document.getElementById('clock').textContent=date.toLocaleString('el-GR',{timeZone:'UTC',dateStyle:'medium',timeStyle:'medium'})+' UTC';
  const w=420,cx=210,cy=210,r=155,scale=2;
  ctx.clearRect(0,0,w,w);
  const img=ctx.createImageData(w,w),data=img.data;
  // View from a fixed equatorial vantage point: the axis leans visibly on screen.
- const viewLon=normalize(sun.lon+90)*RAD,viewLat=12*RAD; // side-on to the terminator: Sun is to the left
+ const viewLon=normalize(sun.lon+90)*RAD,viewLat=0*RAD; // side-on to the terminator: Sun is to the left
  const sl=Math.sin(viewLat),cl=Math.cos(viewLat),sd=Math.sin(sun.decl),cd=Math.cos(sun.decl),sunLon=sun.lon*RAD;
  for(let py=cy-r;py<cy+r;py++)for(let px=cx-r;px<cx+r;px++){
    let sx=(px-cx)/r,sy=(cy-py)/r,rr=sx*sx+sy*sy;if(rr>1)continue;
    let x=sx*Math.cos(TILT)-sy*Math.sin(TILT),y=sx*Math.sin(TILT)+sy*Math.cos(TILT);
    const z=Math.sqrt(1-rr),lat=Math.asin(y*cl+z*sl),lon=viewLon+Math.atan2(x,z*cl-y*sl);
    const latD=lat/RAD,lonD=normalize(lon/RAD);
-   const land=continents.some(poly=>inPolygon(lonD,latD,poly));
+   const land=!texture&&continents.some(poly=>inPolygon(lonD,latD,poly));
+   let tex=null;if(texture){const u=Math.min(texture.w-1,Math.max(0,Math.floor((lonD+180)/360*texture.w)));const v=Math.min(texture.h-1,Math.max(0,Math.floor((90-latD)/180*texture.h)));const ti=(v*texture.w+u)*4;tex=[texture.pixels[ti],texture.pixels[ti+1],texture.pixels[ti+2]];}
    const polar=Math.abs(latD)>68;
    const dot=Math.sin(lat)*sd+Math.cos(lat)*cd*Math.cos(lon-sunLon);
    const twilight=Math.max(0,Math.min(1,(dot+.035)/.07));
    const day=Math.max(0,dot),light=.04+.94*twilight*(.35+.65*day);
-   const base=polar?[195,220,229]:land?[71,153,110]:[22,111,183];
-   const night=polar?[17,26,43]:land?[5,20,22]:[2,9,25];
+   const base=tex|| (polar?[195,220,229]:land?[71,153,110]:[22,111,183]);
+   const night=tex?tex.map(v=>v*.055):polar?[17,26,43]:land?[5,20,22]:[2,9,25];
    const haze=.035*Math.pow(1-z,3),idx=(py*w+px)*4;
    for(let ch=0;ch<3;ch++)data[idx+ch]=Math.min(255,night[ch]*(1-twilight)+base[ch]*light+haze*140);
    data[idx+3]=255;
@@ -96,6 +111,6 @@ function render(){
  const np=document.getElementById('northPole'),sp=document.getElementById('southPole');np.setAttribute('x',432+shift);np.setAttribute('y',110-vertical);sp.setAttribute('x',432-shift);sp.setAttribute('y',114+vertical);
  document.getElementById('tiltExplanation').textContent=Math.abs(sun.decl/RAD)<1?'Κοντά στην ισημερία: κανένα ημισφαίριο δεν γέρνει αισθητά προς τον Ήλιο. Η φυσική κλίση παραμένει 23,44°.':sun.decl>0?'Το Βόρειο Ημισφαίριο γέρνει προς τον Ήλιο: δέχεται πιο άμεσα το φως του και διανύει τη θερμή εποχή.':'Το Βόρειο Ημισφαίριο γέρνει μακριά από τον Ήλιο: το Νότιο δέχεται πιο άμεσα το φως του.';
 }
-render();setInterval(render,60000);
+render();setInterval(()=>{if(playing){selectedTime=new Date(selectedTime.getTime()+3600000);render();}else if(!selectedTime)render();},1000);
 </script>
 </body></html>
