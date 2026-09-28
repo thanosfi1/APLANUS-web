@@ -132,7 +132,8 @@ function render(){
  // Restore the smooth rotating globe while keeping its displayed polar axis
  // fixed and vertical. Seasonal sunlight changes independently of rotation.
  const viewLon=normalize(-((date.getTime()-Date.UTC(2026,8,28,17,40))/86164090)*360)*RAD,viewLat=0*RAD;
- const roll=0;
+ // Seasonal axis orientation is fixed for each date, independent of daily spin.
+ const roll=-Math.sin(TILT)*Math.sin(sun.lambda*RAD);
  const sl=Math.sin(viewLat),cl=Math.cos(viewLat),sd=Math.sin(sun.decl),cd=Math.cos(sun.decl),sunLon=sun.lon*RAD;
  for(let py=cy-r;py<cy+r;py++)for(let px=cx-r;px<cx+r;px++){
    let sx=(px-cx)/r,sy=(cy-py)/r,rr=sx*sx+sy*sy;if(rr>1)continue;
@@ -151,9 +152,12 @@ function render(){
      tex=[0,1,2].map(ch=>(p[i00+ch]*(1-fx)+p[i10+ch]*fx)*(1-fy)+(p[i01+ch]*(1-fx)+p[i11+ch]*fx)*fy);
    }
    const polar=Math.abs(latD)>68;
-   const dot=Math.sin(lat)*sd+Math.cos(lat)*cd*Math.cos(lon-sunLon);
+   // The Sun stays on the left of the large globe: half the disk is always
+   // visibly illuminated. Rotate the satellite texture underneath this fixed
+   // light, while the seasonal declination shifts the terminator north/south.
+   const dot=-sx*cd+sy*sd;
    const twilight=Math.max(0,Math.min(1,(dot+.035)/.07));
-   const day=Math.max(0,dot),light=.04+.94*twilight*(.35+.65*day);
+   const day=Math.max(0,dot),light=.11+.89*twilight*(.46+.54*day);
    // At the Antarctic pole, the equirectangular texture converges to one
    // point; blend its distorted edge into a consistent ice tone.
    const antarcticBlend=Math.max(0,Math.min(1,(-latD-76)/12));
