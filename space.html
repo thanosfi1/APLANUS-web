@@ -132,8 +132,8 @@ function render(){
  // Restore the smooth rotating globe while keeping its displayed polar axis
  // fixed and vertical. Seasonal sunlight changes independently of rotation.
  // Synchronize globe rotation with the calculated subsolar longitude.
- // With sunlight fixed on the left, the subsolar meridian is placed 55°
- // left of the viewing meridian: local afternoon in Greece stays sunlit.
+ // Keep a useful view of both hemispheres while computing the actual
+ // day/night boundary from each pixel's latitude and longitude.
  const viewLon=normalize(sun.lon+55)*RAD,viewLat=0*RAD;
  // Seasonal axis orientation is fixed for each date, independent of daily spin.
  // The large Earth's displayed axis is measured from screen vertical and
@@ -157,11 +157,10 @@ function render(){
      tex=[0,1,2].map(ch=>(p[i00+ch]*(1-fx)+p[i10+ch]*fx)*(1-fy)+(p[i01+ch]*(1-fx)+p[i11+ch]*fx)*fy);
    }
    const polar=Math.abs(latD)>68;
-   // Sunlight comes from a fixed direction on the left. The seasonal axis
-   // tilt already changes the angle between the axis and terminator; adding
-   // solar declination here would double-count the tilt (up to ~46.88°).
-   // Keep the terminator fixed while the textured Earth rotates smoothly.
-   const dot=-sx;
+   // Compute actual solar incidence for each geographic surface point.
+   // The subsolar longitude and declination use the selected UTC instant;
+   // Greece crosses the terminator at its local sunset, not at a fixed screen edge.
+   const dot=Math.cos(lat)*Math.cos(sun.decl)*Math.cos(lon-sun.lon*RAD)+Math.sin(lat)*Math.sin(sun.decl);
    const twilight=Math.max(0,Math.min(1,(dot+.035)/.07));
    const day=Math.max(0,dot),light=.11+.89*twilight*(.46+.54*day);
    // At the Antarctic pole, the equirectangular texture converges to one
