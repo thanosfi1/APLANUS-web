@@ -133,7 +133,9 @@ function render(){
  // fixed and vertical. Seasonal sunlight changes independently of rotation.
  const viewLon=normalize(-((date.getTime()-Date.UTC(2026,8,28,17,40))/86164090)*360)*RAD,viewLat=0*RAD;
  // Seasonal axis orientation is fixed for each date, independent of daily spin.
- const roll=-Math.sin(TILT)*Math.sin(sun.lambda*RAD);
+ // The large Earth's displayed axis is measured from screen vertical and
+ // cannot exceed the physical 23.44° tilt at either solstice.
+ const roll=-Math.max(-TILT,Math.min(TILT,TILT*Math.sin(sun.lambda*RAD)));
  const sl=Math.sin(viewLat),cl=Math.cos(viewLat),sd=Math.sin(sun.decl),cd=Math.cos(sun.decl),sunLon=sun.lon*RAD;
  for(let py=cy-r;py<cy+r;py++)for(let px=cx-r;px<cx+r;px++){
    let sx=(px-cx)/r,sy=(cy-py)/r,rr=sx*sx+sy*sy;if(rr>1)continue;
