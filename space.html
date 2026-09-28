@@ -19,7 +19,7 @@ h2{margin:0 0 8px;font-size:1.55rem}.sub{color:#adc7db;line-height:1.6;margin:0}
 <body>
 <header><a class="back" href="index.html" aria-label="Επιστροφή στην αρχική">‹</a><h1>APLANUS<small>ΓΗ · ΕΠΟΧΕΣ · ΗΜΕΡΑ & ΝΥΧΤΑ</small></h1></header>
 <main><section class="panel"><h2>Η Γη αυτή τη στιγμή</h2><p class="sub">Ζωντανή αναπαράσταση του φωτισμού της Γης, της κλίσης του άξονά της και της εποχής στο Βόρειο και στο Νότιο Ημισφαίριο.</p>
-<div class="scene"><div><div class="globe-wrap"><span class="sun-label">☀ Ηλιακό φως →</span><canvas id="earth" width="420" height="420" role="img" aria-label="Αναπαράσταση της Γης με ημέρα, νύχτα και κεκλιμένο άξονα"></canvas></div><div class="legend"><span><i class="dot" style="background:#fbd77a"></i>Ημέρα</span><span><i class="dot" style="background:#203e69"></i>Νύχτα</span><span><i class="dot" style="background:#72d2fc"></i>Άξονας 23,44°</span></div></div>
+<div class="scene"><div><div class="globe-wrap"><span class="sun-label">☀ Ηλιακός φωτισμός</span><canvas id="earth" width="420" height="420" role="img" aria-label="Αναπαράσταση της Γης με ημέρα, νύχτα και κεκλιμένο άξονα"></canvas></div><div class="legend"><span><i class="dot" style="background:#fbd77a"></i>Ημέρα</span><span><i class="dot" style="background:#203e69"></i>Νύχτα</span><span><i class="dot" style="background:#72d2fc"></i>Άξονας 23,44°</span></div></div>
 <div aria-live="polite"><div class="stat"><small>Βόρειο Ημισφαίριο · Ελλάδα</small><strong id="northSeason">—</strong></div><div class="stat"><small>Νότιο Ημισφαίριο</small><strong id="southSeason">—</strong></div><div class="stat"><small>Ηλιακή απόκλιση</small><strong id="declination">—</strong></div><div class="stat"><small>Υποηλιακό σημείο</small><strong id="subsolar">—</strong></div><div class="stat"><small>Ημερομηνία και ώρα (UTC)</small><strong id="clock">—</strong></div><p class="note">Ο άξονας παραμένει κεκλιμένος κατά 23,44°. Καθώς η Γη περιφέρεται γύρω από τον Ήλιο, αλλάζει το ημισφαίριο που δέχεται πιο άμεσα το φως του.</p></div></div>
 <p class="foot">Η υδρόγειος είναι σχηματική απεικόνιση με ενδεικτικά περιγράμματα ηπείρων. Ο φωτισμός και η θέση του Ήλιου υπολογίζονται από την τρέχουσα ημερομηνία και ώρα· δεν πρόκειται για δορυφορική φωτογραφία.</p></section></main>
 <script>
@@ -66,7 +66,8 @@ function render(){
  const viewLon=normalize(sun.lon-42)*RAD,viewLat=12*RAD;
  const sl=Math.sin(viewLat),cl=Math.cos(viewLat),sd=Math.sin(sun.decl),cd=Math.cos(sun.decl),sunLon=sun.lon*RAD;
  for(let py=cy-r;py<cy+r;py++)for(let px=cx-r;px<cx+r;px++){
-   let x=(px-cx)/r,y=(cy-py)/r,rr=x*x+y*y;if(rr>1)continue;
+   let sx=(px-cx)/r,sy=(cy-py)/r,rr=sx*sx+sy*sy;if(rr>1)continue;
+   let x=sx*Math.cos(TILT)-sy*Math.sin(TILT),y=sx*Math.sin(TILT)+sy*Math.cos(TILT);
    const z=Math.sqrt(1-rr),lat=Math.asin(y*cl+z*sl),lon=viewLon+Math.atan2(x,z*cl-y*sl);
    const latD=lat/RAD,lonD=normalize(lon/RAD);
    const land=continents.some(poly=>inPolygon(lonD,latD,poly));
@@ -85,9 +86,9 @@ function render(){
  ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,r*1.17,0,2*Math.PI);ctx.fill();
  ctx.strokeStyle='#80d9ff';ctx.lineWidth=1.8;ctx.setLineDash([5,5]);
  // Projection of Earth's polar axis, aligned to the actual globe geometry.
- const axX=0,axY=Math.cos(viewLat),axZ=Math.sin(viewLat);
+ const axX=-Math.sin(TILT)*Math.cos(viewLat),axY=Math.cos(TILT)*Math.cos(viewLat);
  ctx.beginPath();ctx.moveTo(cx-axX*r*1.22,cy+axY*r*1.22);ctx.lineTo(cx+axX*r*1.22,cy-axY*r*1.22);ctx.stroke();ctx.setLineDash([]);
- ctx.fillStyle='#d3edff';ctx.font='13px system-ui';ctx.fillText('Β',cx+7,cy-r*1.14);ctx.fillText('Ν',cx+7,cy+r*1.2);
+ ctx.fillStyle='#d3edff';ctx.font='13px system-ui';ctx.fillText('Β',cx+axX*r*1.2+7,cy-axY*r*1.2);ctx.fillText('Ν',cx-axX*r*1.2+7,cy+axY*r*1.2);
  ctx.fillStyle='#9edfff';ctx.font='12px system-ui';ctx.fillText('Κλίση 23,44°',14,392);
 }
 render();setInterval(render,60000);
