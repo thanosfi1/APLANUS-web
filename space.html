@@ -6,47 +6,21 @@
 <meta name="theme-color" content="#02040b">
 <title>APLANUS | Space</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040b;color:#eef6ff;font-family:Inter,system-ui,sans-serif;touch-action:none}#space{position:fixed;inset:0;width:100%;height:100%;display:block}.hud{position:fixed;z-index:5;left:0;right:0;top:0;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;background:linear-gradient(#02040bd9,transparent)}.hud>*{pointer-events:auto}.back,.pill,button{border:1px solid #38bdf855;background:#07101fcc;color:#eaf7ff;border-radius:12px;padding:9px 11px;text-decoration:none}.brand{font-weight:800;letter-spacing:.18em}.brand small{display:block;text-align:center;font-size:.55rem;color:#38bdf8;letter-spacing:.3em}.bottom{position:fixed;z-index:6;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:end;justify-content:space-between;pointer-events:none}.bottom>*{pointer-events:auto}.target{max-width:58vw;background:#07101fe8;border:1px solid #38bdf844;border-radius:15px;padding:10px 12px;backdrop-filter:blur(12px)}.target b,.target span{display:block}.target span{font-size:.7rem;color:#94a3b8;margin-top:3px}.controls{display:flex;gap:6px}.controls button{font-size:.75rem}.hint{position:fixed;z-index:4;top:76px;left:50%;transform:translateX(-50%);font-size:.65rem;color:#94a3b8;background:#02040baa;padding:6px 9px;border-radius:999px;white-space:nowrap;pointer-events:none}.scale{position:fixed;z-index:4;right:10px;top:80px;color:#64748b;font-size:.58rem;text-align:right;pointer-events:none}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040b;font-family:Inter,system-ui,sans-serif;color:#fff}
+header{height:calc(54px + env(safe-area-inset-top));padding:calc(8px + env(safe-area-inset-top)) 10px 7px;display:flex;align-items:center;gap:10px;background:#02040b;border-bottom:1px solid #14283a}
+a{color:#eef6ff;text-decoration:none}.back{width:38px;height:38px;display:grid;place-items:center;border:1px solid #38bdf855;border-radius:11px;font-size:24px}.title{flex:1;text-align:center;font-weight:800;letter-spacing:.15em}.title small{display:block;color:#38bdf8;font-size:.52rem;letter-spacing:.25em;margin-top:2px}.external{font-size:.68rem;border:1px solid #38bdf855;border-radius:10px;padding:9px 8px}
+main{height:calc(100% - 54px - env(safe-area-inset-top));position:relative}.loader{position:absolute;inset:0;display:grid;place-items:center;color:#94a3b8;font-size:.8rem;z-index:0}.sim{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;z-index:1}
 </style>
 </head>
 <body>
-<canvas id="space"></canvas>
-<header class="hud"><a class="back" href="index.html">‹</a><div class="brand">APLANUS<small>SPACE</small></div><button id="reset">Ηλιακό Σύστημα</button></header>
-<div class="hint">1 δάχτυλο: περιστροφή · 2 δάχτυλα: zoom · πάτημα: μετάβαση</div>
-<div class="scale">Οπτικοποιημένη κλίμακα<br>οι αποστάσεις/διάμετροι δεν είναι στην ίδια κλίμακα</div>
-<footer class="bottom"><div class="target"><b id="name">Ήλιος</b><span id="info">Επίλεξε έναν πλανήτη για μετάβαση</span></div><div class="controls"><button id="slower">− χρόνος</button><button id="pause">⏸</button><button id="faster">+ χρόνος</button></div></footer>
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
-import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js';
-
-const canvas=document.querySelector('#space'),renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x02040b);
-const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,4000);camera.position.set(0,95,210);
-const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=4;controls.maxDistance=900;controls.enablePan=true;
-scene.add(new THREE.AmbientLight(0x607090,.35));const sunLight=new THREE.PointLight(0xffffff,4,1800,1.4);scene.add(sunLight);
-
-const starsGeo=new THREE.BufferGeometry(),starCount=1800,arr=new Float32Array(starCount*3);
-for(let i=0;i<starCount;i++){const r=600+Math.random()*1200,th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);arr[i*3]=r*Math.sin(ph)*Math.cos(th);arr[i*3+1]=r*Math.cos(ph);arr[i*3+2]=r*Math.sin(ph)*Math.sin(th)}
-starsGeo.setAttribute('position',new THREE.BufferAttribute(arr,3));scene.add(new THREE.Points(starsGeo,new THREE.PointsMaterial({color:0xffffff,size:1.2,sizeAttenuation:false,transparent:true,opacity:.85})));
-
-const data=[
-['Ερμής',18,0.9,0x9b9185,88],['Αφροδίτη',27,1.7,0xd8b46a,225],['Γη',37,1.8,0x3d8dcc,365.25],['Άρης',48,1.25,0xb75b3b,687],
-['Δίας',70,5.2,0xc79b6b,4333],['Κρόνος',94,4.5,0xd7c58d,10759],['Ουρανός',116,3.1,0x76d8df,30687],['Ποσειδώνας',138,3.0,0x3269d6,60190]
-];
-const sun=new THREE.Mesh(new THREE.SphereGeometry(7,32,20),new THREE.MeshBasicMaterial({color:0xffc83d}));scene.add(sun);
-const sunGlow=new THREE.PointLight(0xffd36a,2.2,260);scene.add(sunGlow);
-const bodies=[],raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();let downX=0,downY=0;
-function orbit(r){const pts=[];for(let i=0;i<128;i++){const a=i/128*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(a)*r,0,Math.sin(a)*r))}const g=new THREE.BufferGeometry().setFromPoints(pts);scene.add(new THREE.LineLoop(g,new THREE.LineBasicMaterial({color:0x35506a,transparent:true,opacity:.42})))}
-data.forEach((d,i)=>{orbit(d[1]);const m=new THREE.Mesh(new THREE.SphereGeometry(d[2],24,16),new THREE.MeshStandardMaterial({color:d[3],roughness:.8,metalness:0}));m.userData={name:d[0],radius:d[1],period:d[4],phase:i*.83};scene.add(m);bodies.push(m)});
-let speed=35,paused=false,t=0,target=null;
-function focus(obj){target=obj;document.querySelector('#name').textContent=obj.userData.name;document.querySelector('#info').textContent='Παρακολούθηση · σύρε για ελεύθερη θέα';const p=obj.position.clone(),dir=camera.position.clone().sub(controls.target).normalize();controls.target.copy(p);camera.position.copy(p.clone().add(dir.multiplyScalar(Math.max(9,obj.geometry.boundingSphere?.radius*5||12))))}
-renderer.domElement.addEventListener('pointerdown',e=>{downX=e.clientX;downY=e.clientY});renderer.domElement.addEventListener('pointerup',e=>{if(Math.hypot(e.clientX-downX,e.clientY-downY)>8)return;pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(pointer,camera);const hit=raycaster.intersectObjects(bodies)[0];if(hit)focus(hit.object)});
-document.querySelector('#reset').onclick=()=>{target=null;controls.target.set(0,0,0);camera.position.set(0,95,210);document.querySelector('#name').textContent='Ήλιος';document.querySelector('#info').textContent='Επίλεξε έναν πλανήτη για μετάβαση'};
-document.querySelector('#pause').onclick=e=>{paused=!paused;e.currentTarget.textContent=paused?'▶':'⏸'};
-document.querySelector('#slower').onclick=()=>speed=Math.max(1,speed/2);document.querySelector('#faster').onclick=()=>speed=Math.min(400,speed*2);
-const clock=new THREE.Clock();
-function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);if(!paused)t+=dt*speed;for(const m of bodies){const a=m.userData.phase+t/m.userData.period*Math.PI*2;m.position.set(Math.cos(a)*m.userData.radius,0,Math.sin(a)*m.userData.radius);m.rotation.y+=dt*.2}if(target)controls.target.lerp(target.position,.12);controls.update();renderer.render(scene,camera)}animate();
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
-</script>
-</body></html>
+<header>
+<a class="back" href="index.html" aria-label="Πίσω">‹</a>
+<div class="title">APLANUS<small>SPACE · CELESTIARY</small></div>
+<a class="external" href="https://celestiary.github.io/" target="_blank" rel="noopener">Πλήρης οθόνη ↗</a>
+</header>
+<main>
+<div class="loader">Φόρτωση 3D σύμπαντος…</div>
+<iframe class="sim" src="https://celestiary.github.io/" title="Celestiary 3D Space Simulator" allow="fullscreen; accelerometer; gyroscope" allowfullscreen></iframe>
+</main>
+</body>
+</html>
