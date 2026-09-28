@@ -133,11 +133,11 @@ function render(){
  // fixed and vertical. Seasonal sunlight changes independently of rotation.
  // Fix the large-Earth camera's daily phase instead of accumulating
  // rotation across calendar months. Real solar illumination stays geographic.
- const utcMinutes=date.getUTCHours()*60+date.getUTCMinutes()+date.getUTCSeconds()/60;
- // Same viewing angle at the same UTC time on every date; daily rotation
- // continues, but changing the month no longer shifts the camera by months.
- // At 10:00 UTC (13:00 Greek summer time), Greece is near the disk centre.
- const viewLon=normalize(25-(utcMinutes-600)*.25)*RAD,viewLat=0*RAD;
+ // Keep the camera 75° east of the subsolar meridian. This shows both
+ // illuminated and dark regions at every date and hour while the true
+ // geographic solar-incidence calculation below preserves local sunset.
+ // The view follows daily rotation, not cumulative month-by-month drift.
+ const viewLon=normalize(sun.lon+75)*RAD,viewLat=0*RAD;
  // Seasonal axis orientation is fixed for each date, independent of daily spin.
  // The large Earth's displayed axis is measured from screen vertical and
  // cannot exceed the physical 23.44° tilt at either solstice.
