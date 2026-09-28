@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#02040b">
+<title>APLANUS | Space</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040b;font-family:Inter,system-ui,sans-serif;color:#fff}
+header{height:calc(54px + env(safe-area-inset-top));padding:calc(8px + env(safe-area-inset-top)) 10px 7px;display:flex;align-items:center;gap:10px;background:#02040b;border-bottom:1px solid #14283a}
+a{color:#eef6ff;text-decoration:none}.back{width:38px;height:38px;display:grid;place-items:center;border:1px solid #38bdf855;border-radius:11px;font-size:24px}.title{flex:1;text-align:center;font-weight:800;letter-spacing:.15em}.title small{display:block;color:#38bdf8;font-size:.52rem;letter-spacing:.25em;margin-top:2px}.external{font-size:.68rem;border:1px solid #38bdf855;border-radius:10px;padding:9px 8px}
+main{height:calc(100% - 54px - env(safe-area-inset-top));position:relative}.loader{position:absolute;inset:0;display:grid;place-items:center;color:#94a3b8;font-size:.8rem;z-index:0}.sim{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;z-index:1}
+</style>
+</head>
+<body>
+<header>
+<a class="back" href="index.html" aria-label="Πίσω">‹</a>
+<div class="title">APLANUS<small>SPACE · WORLDWIDE TELESCOPE</small></div>
+<a class="external" href="https://worldwidetelescope.org/webclient/" target="_blank" rel="noopener">Πλήρης οθόνη ↗</a>
+</header>
+<main>
+<div class="loader">Φόρτωση 3D σύμπαντος…</div>
+<iframe class="sim" src="https://worldwidetelescope.org/webclient/" title="WorldWide Telescope Universe Explorer" allow="fullscreen; accelerometer; gyroscope" allowfullscreen></iframe>
+</main>
+</body>
+</html>
