@@ -131,7 +131,10 @@ function render(){
  const img=ctx.createImageData(w,w),data=img.data;
  // Restore the smooth rotating globe while keeping its displayed polar axis
  // fixed and vertical. Seasonal sunlight changes independently of rotation.
- const viewLon=normalize(-((date.getTime()-Date.UTC(2026,8,28,17,40))/86164090)*360)*RAD,viewLat=0*RAD;
+ // Synchronize globe rotation with the calculated subsolar longitude.
+ // With sunlight fixed on the left, the subsolar meridian is placed 55°
+ // left of the viewing meridian: local afternoon in Greece stays sunlit.
+ const viewLon=normalize(sun.lon+55)*RAD,viewLat=0*RAD;
  // Seasonal axis orientation is fixed for each date, independent of daily spin.
  // The large Earth's displayed axis is measured from screen vertical and
  // cannot exceed the physical 23.44° tilt at either solstice.
