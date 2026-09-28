@@ -36,12 +36,12 @@ const data=[
 ];
 const sun=new THREE.Mesh(new THREE.SphereGeometry(7,32,20),new THREE.MeshBasicMaterial({color:0xffc83d}));scene.add(sun);
 const sunGlow=new THREE.PointLight(0xffd36a,2.2,260);scene.add(sunGlow);
-const bodies=[],raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+const bodies=[],raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();let downX=0,downY=0;
 function orbit(r){const pts=[];for(let i=0;i<128;i++){const a=i/128*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(a)*r,0,Math.sin(a)*r))}const g=new THREE.BufferGeometry().setFromPoints(pts);scene.add(new THREE.LineLoop(g,new THREE.LineBasicMaterial({color:0x35506a,transparent:true,opacity:.42})))}
 data.forEach((d,i)=>{orbit(d[1]);const m=new THREE.Mesh(new THREE.SphereGeometry(d[2],24,16),new THREE.MeshStandardMaterial({color:d[3],roughness:.8,metalness:0}));m.userData={name:d[0],radius:d[1],period:d[4],phase:i*.83};scene.add(m);bodies.push(m)});
 let speed=35,paused=false,t=0,target=null;
 function focus(obj){target=obj;document.querySelector('#name').textContent=obj.userData.name;document.querySelector('#info').textContent='Παρακολούθηση · σύρε για ελεύθερη θέα';const p=obj.position.clone(),dir=camera.position.clone().sub(controls.target).normalize();controls.target.copy(p);camera.position.copy(p.clone().add(dir.multiplyScalar(Math.max(9,obj.geometry.boundingSphere?.radius*5||12))))}
-renderer.domElement.addEventListener('pointerup',e=>{if(Math.abs(e.movementX)>4||Math.abs(e.movementY)>4)return;pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(pointer,camera);const hit=raycaster.intersectObjects(bodies)[0];if(hit)focus(hit.object)});
+renderer.domElement.addEventListener('pointerdown',e=>{downX=e.clientX;downY=e.clientY});renderer.domElement.addEventListener('pointerup',e=>{if(Math.hypot(e.clientX-downX,e.clientY-downY)>8)return;pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(pointer,camera);const hit=raycaster.intersectObjects(bodies)[0];if(hit)focus(hit.object)});
 document.querySelector('#reset').onclick=()=>{target=null;controls.target.set(0,0,0);camera.position.set(0,95,210);document.querySelector('#name').textContent='Ήλιος';document.querySelector('#info').textContent='Επίλεξε έναν πλανήτη για μετάβαση'};
 document.querySelector('#pause').onclick=e=>{paused=!paused;e.currentTarget.textContent=paused?'▶':'⏸'};
 document.querySelector('#slower').onclick=()=>speed=Math.max(1,speed/2);document.querySelector('#faster').onclick=()=>speed=Math.min(400,speed*2);
