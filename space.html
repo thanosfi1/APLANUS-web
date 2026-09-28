@@ -1,26 +1,213 @@
 <!doctype html>
 <html lang="el">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#02040b">
-<title>APLANUS | Space</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050b17"><title>APLANUS | Γη · Εποχές & Ημέρα/Νύχτα</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040b;font-family:Inter,system-ui,sans-serif;color:#fff}
-header{height:calc(54px + env(safe-area-inset-top));padding:calc(8px + env(safe-area-inset-top)) 10px 7px;display:flex;align-items:center;gap:10px;background:#02040b;border-bottom:1px solid #14283a}
-a{color:#eef6ff;text-decoration:none}.back{width:38px;height:38px;display:grid;place-items:center;border:1px solid #38bdf855;border-radius:11px;font-size:24px}.title{flex:1;text-align:center;font-weight:800;letter-spacing:.15em}.title small{display:block;color:#38bdf8;font-size:.52rem;letter-spacing:.25em;margin-top:2px}.external{font-size:.68rem;border:1px solid #38bdf855;border-radius:10px;padding:9px 8px}
-main{height:calc(100% - 54px - env(safe-area-inset-top));position:relative}.loader{position:absolute;inset:0;display:grid;place-items:center;color:#94a3b8;font-size:.8rem;z-index:0}.sim{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;z-index:1}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 24%,#132a49,#050b17 65%);color:#eff7ff;font-family:Inter,system-ui,sans-serif}
+header{display:flex;align-items:center;gap:16px;padding:17px max(18px,calc((100vw - 1000px)/2));border-bottom:1px solid #29435b;background:#050b17c9}
+a{color:#d9f4ff;text-decoration:none}.back{border:1px solid #3a6c89;border-radius:12px;padding:8px 13px;font-size:1.2rem}
+h1{font-size:1.05rem;letter-spacing:.08em;margin:0}h1 small{display:block;font-size:.67rem;color:#8dd9fa;font-weight:400;letter-spacing:.03em;margin-top:4px}
+main{max-width:1000px;margin:auto;padding:24px 18px 48px}.panel{border:1px solid #29435b;background:#0b1829c9;border-radius:22px;padding:20px;box-shadow:0 14px 50px #0005}
+h2{margin:0 0 8px;font-size:1.55rem}.sub{color:#adc7db;line-height:1.6;margin:0}.scene{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(220px,1fr);gap:24px;align-items:center}
+.globe-wrap{position:relative;min-height:370px;display:grid;place-items:center;overflow:hidden}canvas{width:min(100%,420px);height:auto;aspect-ratio:1;display:block;touch-action:pan-y}
+.sun-label{position:absolute;top:12px;left:12px;color:#ffd885;font-size:.8rem}.legend{display:flex;flex-wrap:wrap;gap:12px;color:#c2d6e5;font-size:.8rem}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.stat{padding:13px 0;border-bottom:1px solid #284159}.stat:last-child{border:0}.stat small{display:block;color:#93b6cf;margin-bottom:5px}.stat strong{font-size:1.05rem}.note{color:#a7c4d9;line-height:1.55;font-size:.85rem;margin-top:18px}.orbit{margin:14px 0 4px;padding:14px;border:1px solid #35506c;border-radius:15px;background:#071323}.orbit h3{margin:0 0 8px;font-size:1rem}.orbit svg{width:100%;height:auto;display:block;max-height:240px}.orbit p{font-size:.8rem;color:#b6d2e5;line-height:1.55;margin:6px 0 0}.time-controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:16px 0;padding:13px;border:1px solid #385674;border-radius:13px;background:#091b30}.time-controls label{color:#b9d9ef;font-size:.83rem}.time-controls input{color:#fff;background:#122b46;border:1px solid #5886a7;border-radius:8px;padding:9px;font:inherit;max-width:100%;color-scheme:dark}.time-controls button{color:#ecf9ff;background:#16436a;border:1px solid #5eaddb;border-radius:9px;padding:9px 12px;cursor:pointer}.time-controls button:focus-visible{outline:3px solid #ffdf79}.season-info{margin-top:18px;padding:17px;border:1px solid #35506c;border-radius:15px;background:#071323}.season-info h3{margin:0 0 14px;text-align:center;font-size:1.12rem}.distance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.distance-card{padding:13px;background:#10243c;border:1px solid #365777;border-radius:12px}.distance-card small{display:block;color:#a9cbe1;margin-bottom:7px}.distance-card strong{display:block;color:#f1f9ff;font-size:1.08rem}.distance-card span{display:block;color:#b8d2e5;font-size:.85rem;margin-top:5px}.season-info table{width:100%;border-collapse:collapse;margin-top:13px;font-size:.9rem}.season-info th,.season-info td{text-align:left;padding:9px 6px;border-bottom:1px solid #2c4962}.season-info th{color:#a9cbe1;font-weight:500}.season-info p{color:#a9c4d9;font-size:.81rem;line-height:1.5;margin:12px 0 0}@media(max-width:540px){.distance-grid{grid-template-columns:1fr}}.foot{margin-top:15px;color:#8ba9c1;font-size:.78rem}
+@media(max-width:690px){.scene{grid-template-columns:1fr}.globe-wrap{min-height:310px}.panel{padding:15px}main{padding:16px 12px}}
 </style>
 </head>
 <body>
-<header>
-<a class="back" href="index.html" aria-label="Πίσω">‹</a>
-<div class="title">APLANUS<small>SPACE · WORLDWIDE TELESCOPE</small></div>
-<a class="external" href="https://worldwidetelescope.org/webclient/" target="_blank" rel="noopener">Πλήρης οθόνη ↗</a>
-</header>
-<main>
-<div class="loader">Φόρτωση 3D σύμπαντος…</div>
-<iframe class="sim" src="https://worldwidetelescope.org/webclient/" title="WorldWide Telescope Universe Explorer" allow="fullscreen; accelerometer; gyroscope" allowfullscreen></iframe>
-</main>
-</body>
-</html>
+<header><a class="back" href="index.html" aria-label="Επιστροφή στην αρχική">‹</a><h1>APLANUS<small>ΓΗ · ΕΠΟΧΕΣ · ΗΜΕΡΑ & ΝΥΧΤΑ</small></h1></header>
+<main><section class="panel"><h2 style="text-align:center">Μερόνυχτο και κλίση του άξονα</h2>
+<div class="time-controls"><label for="viewTime">Ημερομηνία και ώρα:</label><input id="viewTime" type="datetime-local" step="60"><button id="nowBtn" type="button">Τώρα</button><button id="minusBtn" type="button" aria-label="Μία ώρα πίσω">−1 ώρα</button><button id="plusBtn" type="button" aria-label="Μία ώρα μπροστά">+1 ώρα</button><button id="playBtn" type="button" aria-pressed="false">▶ Κίνηση</button><span id="timeMode" style="color:#a9cde5;font-size:.8rem">Ζωντανά</span></div><div class="scene"><div><div class="globe-wrap"><canvas id="earth" width="420" height="420" role="img" aria-label="Αναπαράσταση της Γης με ημέρα, νύχτα και κεκλιμένο άξονα"></canvas></div><div class="legend"><span><i class="dot" style="background:#fbd77a"></i>Ημέρα</span><span><i class="dot" style="background:#203e69"></i>Νύχτα</span><span><i class="dot" style="background:#72d2fc"></i>Άξονας 23,44°</span></div></div>
+<div aria-live="polite"><div class="stat"><small>Βόρειο Ημισφαίριο · Ελλάδα</small><strong id="northSeason">—</strong></div><div class="stat"><small>Νότιο Ημισφαίριο</small><strong id="southSeason">—</strong></div><div class="stat"><small>Ηλιακή απόκλιση</small><strong id="declination">—</strong></div><div class="stat"><small>Υποηλιακό σημείο</small><strong id="subsolar">—</strong></div><div class="stat"><small>Ημερομηνία και ώρα (UTC)</small><strong id="clock">—</strong></div><p class="note">Ο άξονας παραμένει κεκλιμένος κατά 23,44°. Καθώς η Γη περιφέρεται γύρω από τον Ήλιο, αλλάζει το ημισφαίριο που δέχεται πιο άμεσα το φως του.</p></div></div>
+<div class="orbit"><h3>Πώς γέρνει ο άξονας σε σχέση με τον Ήλιο</h3><svg viewBox="0 0 600 220" role="img" aria-label="Πλάγια όψη Ήλιου και Γης: η κλίση του άξονα και η κατεύθυνση του ηλιακού φωτός"><defs><radialGradient id="sunGlow"><stop stop-color="#fff7be"/><stop offset=".65" stop-color="#ffcf59"/><stop offset="1" stop-color="#e78b24"/></radialGradient><clipPath id="earthClip"><circle cx="425" cy="110" r="62"/></clipPath></defs><circle cx="88" cy="110" r="45" fill="url(#sunGlow)"/><text x="88" y="175" text-anchor="middle" fill="#ffe5a3" font-size="16">Ήλιος</text><g stroke="#ffd27b" stroke-width="2" opacity=".85"><path d="M145 70H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 110H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 150H335m-12 -7 12 7 -12 7" fill="none"/></g><g clip-path="url(#earthClip)"><circle cx="425" cy="110" r="62" fill="#1c659f"/><path d="M385 65l30 -10 20 20 -14 23 -25 -5 -10 24 -19 -14zM442 114l26 3 8 20 -21 28 -16 -9z" fill="#459b77"/><path d="M425 45h65v130h-65z" fill="#020a1c" opacity=".87"/><path d="M425 45h7v130h-7z" fill="#c9dcfa" opacity=".18"/></g><circle cx="425" cy="110" r="62" fill="none" stroke="#93d9ff" stroke-width="2"/><line id="orbitAxis" x1="425" y1="24" x2="425" y2="196" stroke="#7cddff" stroke-width="3" stroke-dasharray="6 4"/><text id="northPole" x="437" y="28" fill="#c9f0ff" font-size="16">Β</text><text id="southPole" x="437" y="201" fill="#c9f0ff" font-size="16">Ν</text><text x="425" y="213" text-anchor="middle" fill="#c1d9e9" font-size="13">Γη · πλάγια όψη</text></svg><p id="tiltExplanation">—</p></div><section class="season-info" aria-labelledby="orbitFactsTitle"><h3 id="orbitFactsTitle">Απόσταση από τον Ήλιο και διάρκεια εποχών</h3><div class="distance-grid"><div class="distance-card"><small>Πλησιέστερα στον Ήλιο · Περιήλιο</small><strong id="periDate">—</strong><span id="periDistance">—</span></div><div class="distance-card"><small>Μακρύτερα από τον Ήλιο · Αφήλιο</small><strong id="apheDate">—</strong><span id="apheDistance">—</span></div></div><h3 style="margin-top:19px">Διάρκεια εποχών · Βόρειο και Νότιο Ημισφαίριο</h3><table><thead><tr><th>Βόρειο</th><th>Νότιο</th><th>Αρχή (UTC)</th><th>Διάρκεια</th></tr></thead><tbody id="seasonRows"></tbody></table><p>Οι ημερομηνίες και οι διάρκειες υπολογίζονται για το έτος της επιλεγμένης ημερομηνίας. Οι εποχές ορίζονται αστρονομικά από τις ισημερίες και τα ηλιοστάσια. Το περιήλιο και το αφήλιο δεν προκαλούν τις εποχές· αυτές οφείλονται στην κλίση του άξονα.</p></section><p class="foot">Η Γη αποδίδεται με παγκόσμια δορυφορική υφή, φυσικές λεπτομέρειες νεφών της δορυφορικής υφής και δυναμικό φωτισμό. Τα νέφη δεν είναι ζωντανά μετεωρολογικά δεδομένα. Ο φωτισμός και η θέση του Ήλιου υπολογίζονται από την τρέχουσα ημερομηνία και ώρα· δεν πρόκειται για δορυφορική φωτογραφία.</p></section></main>
+<script>
+'use strict';
+const canvas=document.getElementById('earth'),ctx=canvas.getContext('2d');
+const RAD=Math.PI/180, TILT=23.44*RAD;
+let selectedTime=null,playing=false,texture=null;
+// Prefer a full-world, equirectangular satellite texture. Use a second host
+// if the first is unavailable; never replace the planet with flat cartoon colors.
+function loadPixels(url,success,failure){
+ const image=new Image();image.crossOrigin='anonymous';
+ image.onload=()=>{try{const off=document.createElement('canvas');off.width=image.naturalWidth;off.height=image.naturalHeight;const g=off.getContext('2d',{willReadFrequently:true});g.drawImage(image,0,0);success({pixels:g.getImageData(0,0,off.width,off.height).data,w:off.width,h:off.height});}catch(err){failure(err);}};
+ image.onerror=failure;image.src=url;
+}
+const earthTextures=[
+ 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg',
+ 'https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57730/land_ocean_ice_2048.jpg'
+];
+function loadEarth(index=0){if(index>=earthTextures.length){console.warn('All Earth textures unavailable');return;}
+ loadPixels(earthTextures[index],pixels=>{texture=pixels;render();},()=>loadEarth(index+1));}
+loadEarth();
+const timeInput=document.getElementById('viewTime');
+function localInput(d){const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes());}
+function setTime(d){selectedTime=d;timeInput.value=localInput(d);render();}
+timeInput.addEventListener('change',()=>{const d=new Date(timeInput.value);if(!Number.isNaN(d.getTime()))setTime(d);});
+document.getElementById('nowBtn').addEventListener('click',()=>{selectedTime=null;playing=false;document.getElementById('playBtn').textContent='▶ Κίνηση';document.getElementById('playBtn').setAttribute('aria-pressed','false');render();});
+document.getElementById('minusBtn').addEventListener('click',()=>setTime(new Date((selectedTime||new Date()).getTime()-3600000)));
+document.getElementById('plusBtn').addEventListener('click',()=>setTime(new Date((selectedTime||new Date()).getTime()+3600000)));
+document.getElementById('playBtn').addEventListener('click',()=>{playing=!playing;if(playing&&!selectedTime)selectedTime=new Date();document.getElementById('playBtn').textContent=playing?'⏸ Παύση':'▶ Κίνηση';document.getElementById('playBtn').setAttribute('aria-pressed',String(playing));render();});
+const continents=[
+[[-168,72],[-140,70],[-130,60],[-123,49],[-124,40],[-115,32],[-110,25],[-98,16],[-87,13],[-83,22],[-97,30],[-105,39],[-95,50],[-80,52],[-62,58],[-52,64],[-65,73],[-100,73],[-130,72]],
+[[-82,12],[-75,8],[-70,0],[-80,-10],[-75,-18],[-70,-30],[-72,-40],[-67,-55],[-52,-53],[-45,-35],[-38,-15],[-48,-2],[-60,6]],
+[[-17,37],[0,37],[10,33],[33,30],[44,12],[51,0],[43,-12],[32,-25],[20,-35],[12,-35],[10,-18],[-1,-4],[-17,12]],
+[[-11,36],[-9,44],[-2,48],[10,54],[28,57],[30,70],[50,72],[80,73],[105,78],[140,70],[170,62],[180,52],[150,46],[140,35],[125,34],[120,20],[110,12],[104,2],[95,6],[80,8],[72,22],[60,27],[45,38],[32,40],[27,35],[18,42],[8,43]],
+[[112,-11],[132,-12],[153,-25],[146,-40],[132,-43],[115,-33]],
+[[-52,60],[-40,61],[-42,82],[-60,84],[-65,73]],
+[[46,-13],[50,-16],[49,-25],[44,-26]]
+];
+function inPolygon(lon,lat,p){let inside=false;for(let i=0,j=p.length-1;i<p.length;j=i++){let a=p[i],b=p[j];if(((a[1]>lat)!=(b[1]>lat))&&(lon<(b[0]-a[0])*(lat-a[1])/(b[1]-a[1])+a[0]))inside=!inside;}return inside;}
+function normalize(lon){return ((lon+540)%360)-180;}
+function solar(date){
+ const jd=date.getTime()/86400000+2440587.5,T=(jd-2451545)/36525;
+ const L=(280.46646+T*(36000.76983+.0003032*T))%360;
+ const M=(357.52911+T*(35999.05029-.0001537*T))*RAD;
+ const C=(1.914602-T*(.004817+.000014*T))*Math.sin(M)+(.019993-.000101*T)*Math.sin(2*M)+.000289*Math.sin(3*M);
+ const omega=(125.04-1934.136*T)*RAD;
+ const lambda=(L+C-.00569-.00478*Math.sin(omega))*RAD;
+ const eps=(23+(26+(21.448-T*(46.815+T*(.00059-T*.001813)))/60)/60+.00256*Math.cos(omega))*RAD;
+ const decl=Math.asin(Math.sin(eps)*Math.sin(lambda));
+ const y=Math.tan(eps/2)**2;
+ const eq=4/RAD*(y*Math.sin(2*L*RAD)-2*.016708634*Math.sin(M)+4*.016708634*y*Math.sin(M)*Math.cos(2*L*RAD)-.5*y*y*Math.sin(4*L*RAD)-1.25*.016708634**2*Math.sin(2*M));
+ const utc=date.getUTCHours()*60+date.getUTCMinutes()+date.getUTCSeconds()/60;
+ return {decl,lon:normalize((720-utc-eq)/4),lambda:((lambda/RAD)%360+360)%360};
+}
+function seasons(lambda){const names=['Άνοιξη','Καλοκαίρι','Φθινόπωρο','Χειμώνας'];const index=lambda<90?0:lambda<180?1:lambda<270?2:3;return [names[index],names[(index+2)%4]];}
+// Approximate solar orbital distance and equinox/solstice dates, computed in UTC.
+const AU_KM=149597870.7;
+function orbitDistance(date){
+ const jd=date.getTime()/86400000+2440587.5,T=(jd-2451545)/36525;
+ const m=(357.52911+T*(35999.05029-.0001537*T))*RAD;
+ const c=(1.914602-T*(.004817+.000014*T))*Math.sin(m)+(.019993-.000101*T)*Math.sin(2*m)+.000289*Math.sin(3*m);
+ const e=.016708634-T*(.000042037+.0000001267*T);
+ return 1.000001018*(1-e*e)/(1+e*Math.cos(m+c*RAD));
+}
+function refineExtremum(time,mode){
+ let lo=time-2*86400000,hi=time+2*86400000;
+ for(let i=0;i<40;i++){const a=lo+(hi-lo)/3,b=hi-(hi-lo)/3;
+ if((mode==='min'?orbitDistance(new Date(a))<orbitDistance(new Date(b)):orbitDistance(new Date(a))>orbitDistance(new Date(b))))hi=b;else lo=a;}
+ return new Date((lo+hi)/2);
+}
+function solarEvent(year,month,target){
+ let lo=Date.UTC(year,month,15)-20*86400000,hi=lo+40*86400000;
+ // Solar longitude crosses the specified quarter within this bracket.
+ for(let i=0;i<45;i++){const mid=(lo+hi)/2;let angle=(solar(new Date(mid)).lambda-target+360)%360;if(angle>180)angle-=360;
+ if(angle<0)lo=mid;else hi=mid;}
+ return new Date((lo+hi)/2);
+}
+function fmtDate(date){return date.toLocaleDateString('el-GR',{timeZone:'UTC',day:'numeric',month:'long',year:'numeric'});}
+function fmtShort(date){return date.toLocaleDateString('el-GR',{timeZone:'UTC',day:'numeric',month:'short'});}
+let factsYear=null;
+function updateOrbitFacts(year){
+ if(year===factsYear)return;factsYear=year;
+ const near=refineExtremum(Date.UTC(year,0,3),'min'),far=refineExtremum(Date.UTC(year,6,4),'max');
+ document.getElementById('periDate').textContent=fmtDate(near);
+ document.getElementById('apheDate').textContent=fmtDate(far);
+ document.getElementById('periDistance').textContent='Περίπου '+(orbitDistance(near)*AU_KM/1e6).toLocaleString('el-GR',{maximumFractionDigits:2})+' εκατ. χλμ.';
+ document.getElementById('apheDistance').textContent='Περίπου '+(orbitDistance(far)*AU_KM/1e6).toLocaleString('el-GR',{maximumFractionDigits:2})+' εκατ. χλμ.';
+ const events=[solarEvent(year,2,0),solarEvent(year,5,90),solarEvent(year,8,180),solarEvent(year,11,270),solarEvent(year+1,2,0)];
+ const labels=['Άνοιξη','Καλοκαίρι','Φθινόπωρο','Χειμώνας'];
+ const southern=['Φθινόπωρο','Χειμώνας','Άνοιξη','Καλοκαίρι'];
+ document.getElementById('seasonRows').replaceChildren(...labels.map((label,i)=>{
+ const tr=document.createElement('tr');
+ for(const value of [label,southern[i],fmtShort(events[i]),((events[i+1]-events[i])/86400000).toLocaleString('el-GR',{maximumFractionDigits:1})+' ημέρες']){
+ const td=document.createElement('td');td.textContent=value;tr.appendChild(td);
+ }return tr;
+ }));
+}
+function render(){
+ const date=selectedTime||new Date(),sun=solar(date),[north,south]=seasons(sun.lambda);
+ updateOrbitFacts(date.getUTCFullYear());
+ document.getElementById('northSeason').textContent=north;
+ document.getElementById('southSeason').textContent=south;
+ document.getElementById('declination').textContent=(sun.decl/RAD).toFixed(1)+'°';
+ document.getElementById('subsolar').textContent=Math.abs(sun.decl/RAD).toFixed(1)+'° '+(sun.decl>=0?'Β':'Ν')+' · '+Math.abs(sun.lon).toFixed(1)+'° '+(sun.lon>=0?'Α':'Δ');
+ document.getElementById('timeMode').textContent=selectedTime?(playing?'Ομαλή περιστροφή · +1 ώρα/δευτ.':'Επιλεγμένη στιγμή'):'Ζωντανά';if(document.activeElement!==timeInput)timeInput.value=localInput(date);
+ document.getElementById('clock').textContent=date.toLocaleString('el-GR',{timeZone:'UTC',dateStyle:'medium',timeStyle:'medium'})+' UTC';
+ const w=420,cx=210,cy=210,r=155,scale=2;
+ ctx.clearRect(0,0,w,w);
+ const img=ctx.createImageData(w,w),data=img.data;
+ // Restore the smooth rotating globe while keeping its displayed polar axis
+ // fixed and vertical. Seasonal sunlight changes independently of rotation.
+ // Fix the large-Earth camera's daily phase instead of accumulating
+ // rotation across calendar months. Real solar illumination stays geographic.
+ // Keep the camera 75° east of the subsolar meridian. This shows both
+ // illuminated and dark regions at every date and hour while the true
+ // geographic solar-incidence calculation below preserves local sunset.
+ // The view follows daily rotation, not cumulative month-by-month drift.
+ const viewLon=normalize(sun.lon+75)*RAD,viewLat=0*RAD;
+ // Seasonal axis orientation is fixed for each date, independent of daily spin.
+ // The large Earth's displayed axis is measured from screen vertical and
+ // cannot exceed the physical 23.44° tilt at either solstice.
+ const roll=-Math.asin(Math.sin(TILT)*Math.sin(sun.lambda*RAD));
+ const sl=Math.sin(viewLat),cl=Math.cos(viewLat);
+ for(let py=cy-r;py<cy+r;py++)for(let px=cx-r;px<cx+r;px++){
+   let sx=(px-cx)/r,sy=(cy-py)/r,rr=sx*sx+sy*sy;if(rr>1)continue;
+   let x=sx*Math.cos(roll)-sy*Math.sin(roll),y=sx*Math.sin(roll)+sy*Math.cos(roll);
+   const z=Math.sqrt(1-rr),lat=Math.asin(y*cl+z*sl),lon=viewLon+Math.atan2(x,z*cl-y*sl);
+   const latD=lat/RAD,lonD=normalize(lon/RAD);
+   const land=!texture&&continents.some(poly=>inPolygon(lonD,latD,poly));
+   let tex=null;if(texture){
+     // Bilinear sampling avoids blocky pixels and jagged coastlines when zoomed.
+     const u=((lonD+180)/360*texture.w+texture.w)%texture.w;
+     // Sample pixel centres and avoid the distorted last rows at the poles.
+     const v=Math.max(.5,Math.min(texture.h-1.5,(90-latD)/180*texture.h-.5));
+     const x0=Math.floor(u),y0=Math.floor(v),x1=(x0+1)%texture.w,y1=Math.min(texture.h-1,y0+1);
+     const fx=u-x0,fy=v-y0,p=texture.pixels,w=texture.w;
+     const i00=(y0*w+x0)*4,i10=(y0*w+x1)*4,i01=(y1*w+x0)*4,i11=(y1*w+x1)*4;
+     tex=[0,1,2].map(ch=>(p[i00+ch]*(1-fx)+p[i10+ch]*fx)*(1-fy)+(p[i01+ch]*(1-fx)+p[i11+ch]*fx)*fy);
+   }
+   const polar=Math.abs(latD)>68;
+   // Compute actual solar incidence for each geographic surface point.
+   // The subsolar longitude and declination use the selected UTC instant;
+   // Greece crosses the terminator at its local sunset, not at a fixed screen edge.
+   const dot=Math.cos(lat)*Math.cos(sun.decl)*Math.cos(lon-sun.lon*RAD)+Math.sin(lat)*Math.sin(sun.decl);
+   const twilight=Math.max(0,Math.min(1,(dot+.035)/.07));
+   const day=Math.max(0,dot),light=.11+.89*twilight*(.46+.54*day);
+   // At the Antarctic pole, the equirectangular texture converges to one
+   // point; blend its distorted edge into a consistent ice tone.
+   const antarcticBlend=Math.max(0,Math.min(1,(-latD-76)/12));
+   const ice=[203,218,224];
+   const base=tex?tex.map((v,ch)=>v*(1-antarcticBlend)+ice[ch]*antarcticBlend):(polar?[195,220,229]:land?[71,153,110]:[22,111,183]);
+   const night=tex?tex.map(v=>v*.055):polar?[17,26,43]:land?[5,20,22]:[2,9,25];
+   // Use the satellite texture's own natural cloud detail. The separate cloud
+   // mask had an opaque white background that produced bright rendering artifacts.
+   const rim=Math.pow(1-z,3),haze=.035*rim,idx=(py*w+px)*4;
+   for(let ch=0;ch<3;ch++){
+     data[idx+ch]=Math.min(255,night[ch]*(1-twilight)+base[ch]*light+haze*[98,175,235][ch]);
+   }
+   data[idx+3]=255;
+ }
+ ctx.putImageData(img,0,0);
+ const glow=ctx.createRadialGradient(cx,cy,r*.8,cx,cy,r*1.17);glow.addColorStop(0,'#69bff600');glow.addColorStop(.65,'#75cfff25');glow.addColorStop(1,'#75cfff00');
+ ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,r*1.17,0,2*Math.PI);ctx.fill();
+ ctx.strokeStyle='#80d9ff';ctx.lineWidth=1.8;ctx.setLineDash([5,5]);
+ // Projection of Earth's polar axis, aligned to the actual globe geometry.
+ const axX=Math.sin(roll)*Math.cos(viewLat),axY=Math.cos(roll)*Math.cos(viewLat);
+ ctx.beginPath();ctx.moveTo(cx-axX*r*1.22,cy+axY*r*1.22);ctx.lineTo(cx+axX*r*1.22,cy-axY*r*1.22);ctx.stroke();ctx.setLineDash([]);
+ ctx.fillStyle='#d3edff';ctx.font='13px system-ui';ctx.fillText('Β',cx+axX*r*1.2+7,cy-axY*r*1.2);ctx.fillText('Ν',cx-axX*r*1.2+7,cy+axY*r*1.2);
+ ctx.fillStyle='#9edfff';ctx.font='12px system-ui';
+ // Side view: Sun is fixed to the left; northern tilt toward it is positive in northern summer.
+ // The small Sun–Earth diagram keeps its original season-dependent tilt.
+ const towardSun=Math.sin(sun.lambda*RAD);const shift=-Math.sin(TILT)*towardSun*86,vertical=Math.sqrt(86*86-shift*shift);
+ const axis=document.getElementById('orbitAxis');axis.setAttribute('x1',425+shift);axis.setAttribute('y1',110-vertical);axis.setAttribute('x2',425-shift);axis.setAttribute('y2',110+vertical);
+ const np=document.getElementById('northPole'),sp=document.getElementById('southPole');np.setAttribute('x',432+shift);np.setAttribute('y',110-vertical);sp.setAttribute('x',432-shift);sp.setAttribute('y',114+vertical);
+ document.getElementById('tiltExplanation').textContent=Math.abs(sun.decl/RAD)<1?'Κοντά στην ισημερία: κανένα ημισφαίριο δεν γέρνει αισθητά προς τον Ήλιο. Η φυσική κλίση παραμένει 23,44°.':sun.decl>0?'Το Βόρειο Ημισφαίριο γέρνει προς τον Ήλιο: δέχεται πιο άμεσα το φως του και διανύει τη θερμή εποχή.':'Το Βόρειο Ημισφαίριο γέρνει μακριά από τον Ήλιο: το Νότιο δέχεται πιο άμεσα το φως του.';
+}
+// requestAnimationFrame provides continuous simulated time, with capped canvas
+// redraws to avoid overheating phones. All controls and orbit facts remain intact.
+let previousFrame=0,lastPaint=0;
+function animationFrame(timestamp){
+ if(!previousFrame)previousFrame=timestamp;
+ const dt=Math.min(100,timestamp-previousFrame);previousFrame=timestamp;
+ if(playing){
+   selectedTime=new Date(selectedTime.getTime()+dt*3600);
+   if(timestamp-lastPaint>=80){render();lastPaint=timestamp;}
+ }else if(!selectedTime&&timestamp-lastPaint>=1000){render();lastPaint=timestamp;}
+ requestAnimationFrame(animationFrame);
+}
+render();requestAnimationFrame(animationFrame);
+</script>
+</body></html>
