@@ -88,8 +88,8 @@ function render(){
        if(!first)first=p;
        if(prev&&((prev.z>=0)!=(p.z>=0))){
          let lo=0,hi=1;
-         for(let it=0;it<15;it++){const mid=(lo+hi)/2,lon=prev.lon+(p.lon-prev.lon)*mid,lat=prev.lat+(p.lat-prev.lat)*mid;const m=project(lon,lat);if((m.z>=0)===(prev.z>=0))lo=mid;else hi=mid;}
-         const q=project(prev.lon+(p.lon-prev.lon)*(lo+hi)/2,prev.lat+(p.lat-prev.lat)*(lo+hi)/2);
+         for(let it=0;it<15;it++){const mid=(lo+hi)/2,lon=prev.lon+(lon-prev.lon)*mid,lat=prev.lat+(lat-prev.lat)*mid;const m=project(lon,lat);if((m.z>=0)===(prev.z>=0))lo=mid;else hi=mid;}
+         const q=project(prev.lon+(lon-prev.lon)*(lo+hi)/2,prev.lat+(lat-prev.lat)*(lo+hi)/2);
          d+='L'+q.x.toFixed(2)+' '+q.y.toFixed(2)+' ';
          if(p.z<0){d+='Z ';visible=false;}else{d+='M'+q.x.toFixed(2)+' '+q.y.toFixed(2)+' ';visible=true;}
        }
@@ -113,7 +113,7 @@ function render(){
  gs.setAttribute('x',cx-axX*r*1.24+7);gs.setAttribute('y',cy+axY*r*1.24+5);
  // Side view: Sun is fixed to the left; northern tilt toward it is positive in northern summer.
  const towardSun=Math.sin(sun.lambda*RAD);const shift=-Math.sin(TILT)*towardSun*86,vertical=Math.sqrt(86*86-shift*shift);
- const axis=document.getElementById('orbitAxis');axis.setAttribute('x1',425+shift);axis.setAttribute('y1',110-vertical);axis.setAttribute('x2',425-shift);axis.setAttribute('y2',110+vertical);
+ const orbitAxis=document.getElementById('orbitAxis');orbitAxis.setAttribute('x1',425+shift);orbitAxis.setAttribute('y1',110-vertical);orbitAxis.setAttribute('x2',425-shift);orbitAxis.setAttribute('y2',110+vertical);
  const np=document.getElementById('northPole'),sp=document.getElementById('southPole');np.setAttribute('x',432+shift);np.setAttribute('y',110-vertical);sp.setAttribute('x',432-shift);sp.setAttribute('y',114+vertical);
  document.getElementById('tiltExplanation').textContent=Math.abs(sun.decl/RAD)<1?'Κοντά στην ισημερία: κανένα ημισφαίριο δεν γέρνει αισθητά προς τον Ήλιο. Η φυσική κλίση παραμένει 23,44°.':sun.decl>0?'Το Βόρειο Ημισφαίριο γέρνει προς τον Ήλιο: δέχεται πιο άμεσα το φως του και διανύει τη θερμή εποχή.':'Το Βόρειο Ημισφαίριο γέρνει μακριά από τον Ήλιο: το Νότιο δέχεται πιο άμεσα το φως του.';
 }
