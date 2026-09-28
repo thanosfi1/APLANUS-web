@@ -21,7 +21,7 @@ h2{margin:0 0 8px;font-size:1.55rem}.sub{color:#adc7db;line-height:1.6;margin:0}
 <main><section class="panel"><h2>Η Γη αυτή τη στιγμή</h2><p class="sub">Η υδρόγειος προβάλλεται από το όριο ημέρας–νύχτας, ώστε να φαίνονται καθαρά και οι δύο πλευρές. Ζωντανή αναπαράσταση του φωτισμού της Γης, της κλίσης του άξονά της και της εποχής στο Βόρειο και στο Νότιο Ημισφαίριο.</p>
 <div class="time-controls"><label for="viewTime">Ημερομηνία και ώρα:</label><input id="viewTime" type="datetime-local" step="60"><button id="nowBtn" type="button">Τώρα</button><button id="minusBtn" type="button" aria-label="Μία ώρα πίσω">−1 ώρα</button><button id="plusBtn" type="button" aria-label="Μία ώρα μπροστά">+1 ώρα</button><button id="playBtn" type="button" aria-pressed="false">▶ Κίνηση</button><span id="timeMode" style="color:#a9cde5;font-size:.8rem">Ζωντανά</span></div><div class="scene"><div><div class="globe-wrap"><canvas id="earth" width="420" height="420" role="img" aria-label="Αναπαράσταση της Γης με ημέρα, νύχτα και κεκλιμένο άξονα"></canvas></div><div class="legend"><span><i class="dot" style="background:#fbd77a"></i>Ημέρα</span><span><i class="dot" style="background:#203e69"></i>Νύχτα</span><span><i class="dot" style="background:#72d2fc"></i>Άξονας 23,44°</span></div></div>
 <div aria-live="polite"><div class="stat"><small>Βόρειο Ημισφαίριο · Ελλάδα</small><strong id="northSeason">—</strong></div><div class="stat"><small>Νότιο Ημισφαίριο</small><strong id="southSeason">—</strong></div><div class="stat"><small>Ηλιακή απόκλιση</small><strong id="declination">—</strong></div><div class="stat"><small>Υποηλιακό σημείο</small><strong id="subsolar">—</strong></div><div class="stat"><small>Ημερομηνία και ώρα (UTC)</small><strong id="clock">—</strong></div><p class="note">Ο άξονας παραμένει κεκλιμένος κατά 23,44°. Καθώς η Γη περιφέρεται γύρω από τον Ήλιο, αλλάζει το ημισφαίριο που δέχεται πιο άμεσα το φως του.</p></div></div>
-<div class="orbit"><h3>Πώς γέρνει ο άξονας σε σχέση με τον Ήλιο</h3><svg viewBox="0 0 600 220" role="img" aria-label="Πλάγια όψη Ήλιου και Γης: η κλίση του άξονα και η κατεύθυνση του ηλιακού φωτός"><defs><radialGradient id="sunGlow"><stop stop-color="#fff7be"/><stop offset=".65" stop-color="#ffcf59"/><stop offset="1" stop-color="#e78b24"/></radialGradient><clipPath id="earthClip"><circle cx="425" cy="110" r="62"/></clipPath></defs><circle cx="88" cy="110" r="45" fill="url(#sunGlow)"/><text x="88" y="175" text-anchor="middle" fill="#ffe5a3" font-size="16">Ήλιος</text><g stroke="#ffd27b" stroke-width="2" opacity=".85"><path d="M145 70H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 110H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 150H335m-12 -7 12 7 -12 7" fill="none"/></g><g clip-path="url(#earthClip)"><circle cx="425" cy="110" r="62" fill="#1c659f"/><path d="M385 65l30 -10 20 20 -14 23 -25 -5 -10 24 -19 -14zM442 114l26 3 8 20 -21 28 -16 -9z" fill="#459b77"/><path d="M425 45h65v130h-65z" fill="#020a1c" opacity=".87"/><path d="M425 45h7v130h-7z" fill="#c9dcfa" opacity=".18"/></g><circle cx="425" cy="110" r="62" fill="none" stroke="#93d9ff" stroke-width="2"/><line id="orbitAxis" x1="425" y1="24" x2="425" y2="196" stroke="#7cddff" stroke-width="3" stroke-dasharray="6 4"/><text id="northPole" x="437" y="28" fill="#c9f0ff" font-size="16">Β</text><text id="southPole" x="437" y="201" fill="#c9f0ff" font-size="16">Ν</text><text x="425" y="213" text-anchor="middle" fill="#c1d9e9" font-size="13">Γη · πλάγια όψη</text></svg><p id="tiltExplanation">—</p></div><p class="foot">Η υδρόγειος χρησιμοποιεί τον χάρτη Blue Marble της NASA όταν φορτώνεται η υφή (διαφορετικά εμφανίζεται σχηματικός χάρτης). Ο φωτισμός και η θέση του Ήλιου υπολογίζονται από την τρέχουσα ημερομηνία και ώρα· δεν πρόκειται για δορυφορική φωτογραφία.</p></section></main>
+<div class="orbit"><h3>Πώς γέρνει ο άξονας σε σχέση με τον Ήλιο</h3><svg viewBox="0 0 600 220" role="img" aria-label="Πλάγια όψη Ήλιου και Γης: η κλίση του άξονα και η κατεύθυνση του ηλιακού φωτός"><defs><radialGradient id="sunGlow"><stop stop-color="#fff7be"/><stop offset=".65" stop-color="#ffcf59"/><stop offset="1" stop-color="#e78b24"/></radialGradient><clipPath id="earthClip"><circle cx="425" cy="110" r="62"/></clipPath></defs><circle cx="88" cy="110" r="45" fill="url(#sunGlow)"/><text x="88" y="175" text-anchor="middle" fill="#ffe5a3" font-size="16">Ήλιος</text><g stroke="#ffd27b" stroke-width="2" opacity=".85"><path d="M145 70H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 110H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 150H335m-12 -7 12 7 -12 7" fill="none"/></g><g clip-path="url(#earthClip)"><circle cx="425" cy="110" r="62" fill="#1c659f"/><path d="M385 65l30 -10 20 20 -14 23 -25 -5 -10 24 -19 -14zM442 114l26 3 8 20 -21 28 -16 -9z" fill="#459b77"/><path d="M425 45h65v130h-65z" fill="#020a1c" opacity=".87"/><path d="M425 45h7v130h-7z" fill="#c9dcfa" opacity=".18"/></g><circle cx="425" cy="110" r="62" fill="none" stroke="#93d9ff" stroke-width="2"/><line id="orbitAxis" x1="425" y1="24" x2="425" y2="196" stroke="#7cddff" stroke-width="3" stroke-dasharray="6 4"/><text id="northPole" x="437" y="28" fill="#c9f0ff" font-size="16">Β</text><text id="southPole" x="437" y="201" fill="#c9f0ff" font-size="16">Ν</text><text x="425" y="213" text-anchor="middle" fill="#c1d9e9" font-size="13">Γη · πλάγια όψη</text></svg><p id="tiltExplanation">—</p></div><p class="foot">Η υδρόγειος χρησιμοποιεί την υφή Blue Marble της NASA και ενδεικτικά υπολογισμένα νέφη. Η απεικόνιση των νεφών δεν είναι ζωντανή δορυφορική εικόνα. Ο φωτισμός και η θέση του Ήλιου υπολογίζονται από την τρέχουσα ημερομηνία και ώρα· δεν πρόκειται για δορυφορική φωτογραφία.</p></section></main>
 <script>
 'use strict';
 const canvas=document.getElementById('earth'),ctx=canvas.getContext('2d');
@@ -86,15 +86,34 @@ function render(){
    const z=Math.sqrt(1-rr),lat=Math.asin(y*cl+z*sl),lon=viewLon+Math.atan2(x,z*cl-y*sl);
    const latD=lat/RAD,lonD=normalize(lon/RAD);
    const land=!texture&&continents.some(poly=>inPolygon(lonD,latD,poly));
-   let tex=null;if(texture){const u=Math.min(texture.w-1,Math.max(0,Math.floor((lonD+180)/360*texture.w)));const v=Math.min(texture.h-1,Math.max(0,Math.floor((90-latD)/180*texture.h)));const ti=(v*texture.w+u)*4;tex=[texture.pixels[ti],texture.pixels[ti+1],texture.pixels[ti+2]];}
+   let tex=null;if(texture){
+     // Bilinear sampling avoids blocky pixels and jagged coastlines when zoomed.
+     const u=((lonD+180)/360*texture.w+texture.w)%texture.w;
+     const v=Math.max(0,Math.min(texture.h-1.001,(90-latD)/180*texture.h));
+     const x0=Math.floor(u),y0=Math.floor(v),x1=(x0+1)%texture.w,y1=Math.min(texture.h-1,y0+1);
+     const fx=u-x0,fy=v-y0,p=texture.pixels,w=texture.w;
+     const i00=(y0*w+x0)*4,i10=(y0*w+x1)*4,i01=(y1*w+x0)*4,i11=(y1*w+x1)*4;
+     tex=[0,1,2].map(ch=>(p[i00+ch]*(1-fx)+p[i10+ch]*fx)*(1-fy)+(p[i01+ch]*(1-fx)+p[i11+ch]*fx)*fy);
+   }
    const polar=Math.abs(latD)>68;
    const dot=Math.sin(lat)*sd+Math.cos(lat)*cd*Math.cos(lon-sunLon);
    const twilight=Math.max(0,Math.min(1,(dot+.035)/.07));
    const day=Math.max(0,dot),light=.04+.94*twilight*(.35+.65*day);
    const base=tex|| (polar?[195,220,229]:land?[71,153,110]:[22,111,183]);
    const night=tex?tex.map(v=>v*.055):polar?[17,26,43]:land?[5,20,22]:[2,9,25];
-   const haze=.035*Math.pow(1-z,3),idx=(py*w+px)*4;
-   for(let ch=0;ch<3;ch++)data[idx+ch]=Math.min(255,night[ch]*(1-twilight)+base[ch]*light+haze*140);
+   // Thin procedural cloud systems add the white weather patterns of a satellite view.
+   // The geographic coordinates, terminator, axis and solar calculations are unchanged.
+   const cloudNoise=(a,b)=>Math.sin(a*2.13+b*1.73)*.34+Math.sin(a*4.71-b*3.29)*.22+Math.sin(a*9.33+b*7.11)*.15+Math.sin(a*18.7-b*14.2)*.09;
+   const cloudLat=latD*RAD,cloudLon=lonD*RAD;
+   const belts=Math.pow(Math.abs(Math.sin(cloudLat*2.8+Math.sin(cloudLon*2.2)*.48)),3);
+   const swirls=cloudNoise(cloudLon+Math.sin(cloudLat*3)*.32,cloudLat);
+   const cloud=Math.min(.78,Math.max(0,(swirls+belts*.42-.22)*1.35));
+   const rim=Math.pow(1-z,3),haze=.045*rim,idx=(py*w+px)*4;
+   for(let ch=0;ch<3;ch++){
+     const cloudColor=[241,246,250][ch];
+     const surface=base[ch]*(1-cloud)+cloudColor*cloud;
+     data[idx+ch]=Math.min(255,night[ch]*(1-twilight)+surface*light+haze*[98,175,235][ch]);
+   }
    data[idx+3]=255;
  }
  ctx.putImageData(img,0,0);
