@@ -21,12 +21,22 @@ h2{margin:0 0 8px;font-size:1.55rem}.sub{color:#adc7db;line-height:1.6;margin:0}
 <main><section class="panel"><h2>Η Γη αυτή τη στιγμή</h2><p class="sub">Η υδρόγειος προβάλλεται από το όριο ημέρας–νύχτας, ώστε να φαίνονται καθαρά και οι δύο πλευρές. Ζωντανή αναπαράσταση του φωτισμού της Γης, της κλίσης του άξονά της και της εποχής στο Βόρειο και στο Νότιο Ημισφαίριο.</p>
 <div class="time-controls"><label for="viewTime">Ημερομηνία και ώρα:</label><input id="viewTime" type="datetime-local" step="60"><button id="nowBtn" type="button">Τώρα</button><button id="minusBtn" type="button" aria-label="Μία ώρα πίσω">−1 ώρα</button><button id="plusBtn" type="button" aria-label="Μία ώρα μπροστά">+1 ώρα</button><button id="playBtn" type="button" aria-pressed="false">▶ Κίνηση</button><span id="timeMode" style="color:#a9cde5;font-size:.8rem">Ζωντανά</span></div><div class="scene"><div><div class="globe-wrap"><canvas id="earth" width="420" height="420" role="img" aria-label="Αναπαράσταση της Γης με ημέρα, νύχτα και κεκλιμένο άξονα"></canvas></div><div class="legend"><span><i class="dot" style="background:#fbd77a"></i>Ημέρα</span><span><i class="dot" style="background:#203e69"></i>Νύχτα</span><span><i class="dot" style="background:#72d2fc"></i>Άξονας 23,44°</span></div></div>
 <div aria-live="polite"><div class="stat"><small>Βόρειο Ημισφαίριο · Ελλάδα</small><strong id="northSeason">—</strong></div><div class="stat"><small>Νότιο Ημισφαίριο</small><strong id="southSeason">—</strong></div><div class="stat"><small>Ηλιακή απόκλιση</small><strong id="declination">—</strong></div><div class="stat"><small>Υποηλιακό σημείο</small><strong id="subsolar">—</strong></div><div class="stat"><small>Ημερομηνία και ώρα (UTC)</small><strong id="clock">—</strong></div><p class="note">Ο άξονας παραμένει κεκλιμένος κατά 23,44°. Καθώς η Γη περιφέρεται γύρω από τον Ήλιο, αλλάζει το ημισφαίριο που δέχεται πιο άμεσα το φως του.</p></div></div>
-<div class="orbit"><h3>Πώς γέρνει ο άξονας σε σχέση με τον Ήλιο</h3><svg viewBox="0 0 600 220" role="img" aria-label="Πλάγια όψη Ήλιου και Γης: η κλίση του άξονα και η κατεύθυνση του ηλιακού φωτός"><defs><radialGradient id="sunGlow"><stop stop-color="#fff7be"/><stop offset=".65" stop-color="#ffcf59"/><stop offset="1" stop-color="#e78b24"/></radialGradient><clipPath id="earthClip"><circle cx="425" cy="110" r="62"/></clipPath></defs><circle cx="88" cy="110" r="45" fill="url(#sunGlow)"/><text x="88" y="175" text-anchor="middle" fill="#ffe5a3" font-size="16">Ήλιος</text><g stroke="#ffd27b" stroke-width="2" opacity=".85"><path d="M145 70H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 110H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 150H335m-12 -7 12 7 -12 7" fill="none"/></g><g clip-path="url(#earthClip)"><circle cx="425" cy="110" r="62" fill="#1c659f"/><path d="M385 65l30 -10 20 20 -14 23 -25 -5 -10 24 -19 -14zM442 114l26 3 8 20 -21 28 -16 -9z" fill="#459b77"/><path d="M425 45h65v130h-65z" fill="#020a1c" opacity=".87"/><path d="M425 45h7v130h-7z" fill="#c9dcfa" opacity=".18"/></g><circle cx="425" cy="110" r="62" fill="none" stroke="#93d9ff" stroke-width="2"/><line id="orbitAxis" x1="425" y1="24" x2="425" y2="196" stroke="#7cddff" stroke-width="3" stroke-dasharray="6 4"/><text id="northPole" x="437" y="28" fill="#c9f0ff" font-size="16">Β</text><text id="southPole" x="437" y="201" fill="#c9f0ff" font-size="16">Ν</text><text x="425" y="213" text-anchor="middle" fill="#c1d9e9" font-size="13">Γη · πλάγια όψη</text></svg><p id="tiltExplanation">—</p></div><p class="foot">Η υδρόγειος χρησιμοποιεί την υφή Blue Marble της NASA και ενδεικτικά υπολογισμένα νέφη. Η απεικόνιση των νεφών δεν είναι ζωντανή δορυφορική εικόνα. Ο φωτισμός και η θέση του Ήλιου υπολογίζονται από την τρέχουσα ημερομηνία και ώρα· δεν πρόκειται για δορυφορική φωτογραφία.</p></section></main>
+<div class="orbit"><h3>Πώς γέρνει ο άξονας σε σχέση με τον Ήλιο</h3><svg viewBox="0 0 600 220" role="img" aria-label="Πλάγια όψη Ήλιου και Γης: η κλίση του άξονα και η κατεύθυνση του ηλιακού φωτός"><defs><radialGradient id="sunGlow"><stop stop-color="#fff7be"/><stop offset=".65" stop-color="#ffcf59"/><stop offset="1" stop-color="#e78b24"/></radialGradient><clipPath id="earthClip"><circle cx="425" cy="110" r="62"/></clipPath></defs><circle cx="88" cy="110" r="45" fill="url(#sunGlow)"/><text x="88" y="175" text-anchor="middle" fill="#ffe5a3" font-size="16">Ήλιος</text><g stroke="#ffd27b" stroke-width="2" opacity=".85"><path d="M145 70H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 110H335m-12 -7 12 7 -12 7" fill="none"/><path d="M145 150H335m-12 -7 12 7 -12 7" fill="none"/></g><g clip-path="url(#earthClip)"><circle cx="425" cy="110" r="62" fill="#1c659f"/><path d="M385 65l30 -10 20 20 -14 23 -25 -5 -10 24 -19 -14zM442 114l26 3 8 20 -21 28 -16 -9z" fill="#459b77"/><path d="M425 45h65v130h-65z" fill="#020a1c" opacity=".87"/><path d="M425 45h7v130h-7z" fill="#c9dcfa" opacity=".18"/></g><circle cx="425" cy="110" r="62" fill="none" stroke="#93d9ff" stroke-width="2"/><line id="orbitAxis" x1="425" y1="24" x2="425" y2="196" stroke="#7cddff" stroke-width="3" stroke-dasharray="6 4"/><text id="northPole" x="437" y="28" fill="#c9f0ff" font-size="16">Β</text><text id="southPole" x="437" y="201" fill="#c9f0ff" font-size="16">Ν</text><text x="425" y="213" text-anchor="middle" fill="#c1d9e9" font-size="13">Γη · πλάγια όψη</text></svg><p id="tiltExplanation">—</p></div><p class="foot">Η υδρόγειος εμφανίζει τη φωτογραφία Meteosat-12 της 20ής Μαρτίου 2025 (EUMETSAT), χωρίς το μαύρο φόντο, με υπολογισμένο φωτισμό ημέρας–νύχτας. Η φωτογραφία δείχνει σταθερά την Αφρική και δεν αποτελεί ζωντανή εικόνα ή πλήρη περιστρεφόμενη υφή. Ο φωτισμός και η θέση του Ήλιου υπολογίζονται από την τρέχουσα ημερομηνία και ώρα· δεν πρόκειται για δορυφορική φωτογραφία.</p></section></main>
 <script>
 'use strict';
 const canvas=document.getElementById('earth'),ctx=canvas.getContext('2d');
 const RAD=Math.PI/180, TILT=23.44*RAD;
-let selectedTime=null,playing=false,texture=null;
+let selectedTime=null,playing=false,texture=null,photo=null;
+// The supplied Meteosat-12 full-disk photo is shown with its black background
+// excluded by sampling only the Earth disk. It is a fixed view over Africa.
+const earthPhoto=new Image();earthPhoto.crossOrigin='anonymous';
+earthPhoto.onload=()=>{try{
+ const off=document.createElement('canvas');off.width=earthPhoto.naturalWidth;off.height=earthPhoto.naturalHeight;
+ const g=off.getContext('2d',{willReadFrequently:true});g.drawImage(earthPhoto,0,0);
+ photo={pixels:g.getImageData(0,0,off.width,off.height).data,w:off.width,h:off.height};render();
+}catch(err){console.warn('Meteosat image unavailable; retaining NASA globe',err);}};
+earthPhoto.onerror=()=>console.warn('Meteosat image unavailable; retaining NASA globe');
+earthPhoto.src='https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Meteosat-12-fci-march-equinox-2025-noon.jpg/960px-Meteosat-12-fci-march-equinox-2025-noon.jpg';
 const texImage=new Image();texImage.crossOrigin='anonymous';
 texImage.onload=()=>{try{const off=document.createElement('canvas');off.width=texImage.naturalWidth;off.height=texImage.naturalHeight;const g=off.getContext('2d',{willReadFrequently:true});g.drawImage(texImage,0,0);texture={pixels:g.getImageData(0,0,off.width,off.height).data,w:off.width,h:off.height};render();}catch(err){console.warn('NASA texture unavailable; using schematic fallback',err);}};
 texImage.onerror=()=>console.warn('NASA texture unavailable; using schematic fallback');
@@ -77,7 +87,7 @@ function render(){
  ctx.clearRect(0,0,w,w);
  const img=ctx.createImageData(w,w),data=img.data;
  // View from a fixed equatorial vantage point: the axis leans visibly on screen.
- const viewLon=normalize(sun.lon+90)*RAD,viewLat=0*RAD;
+ const viewLon=(photo?0:normalize(sun.lon+90))*RAD,viewLat=0*RAD;
  const roll=-Math.asin(Math.sin(TILT)*Math.sin(sun.lambda*RAD)); // northern pole points toward the Sun (left) in northern summer // side-on to the terminator: Sun is to the left
  const sl=Math.sin(viewLat),cl=Math.cos(viewLat),sd=Math.sin(sun.decl),cd=Math.cos(sun.decl),sunLon=sun.lon*RAD;
  for(let py=cy-r;py<cy+r;py++)for(let px=cx-r;px<cx+r;px++){
@@ -95,6 +105,15 @@ function render(){
      const i00=(y0*w+x0)*4,i10=(y0*w+x1)*4,i01=(y1*w+x0)*4,i11=(y1*w+x1)*4;
      tex=[0,1,2].map(ch=>(p[i00+ch]*(1-fx)+p[i10+ch]*fx)*(1-fy)+(p[i01+ch]*(1-fx)+p[i11+ch]*fx)*fy);
    }
+   if(photo){
+     // Rotate the photo with the existing axial projection; the geographic
+     // viewpoint stays fixed over Africa so the illuminated area moves with UTC.
+     const u=(.5+x*.432)*photo.w,v=(.5-y*.432)*photo.h;
+     const ix=Math.max(0,Math.min(photo.w-1,Math.floor(u)));
+     const iy=Math.max(0,Math.min(photo.h-1,Math.floor(v)));
+     const pi=(iy*photo.w+ix)*4;
+     tex=[photo.pixels[pi],photo.pixels[pi+1],photo.pixels[pi+2]];
+   }
    const polar=Math.abs(latD)>68;
    const dot=Math.sin(lat)*sd+Math.cos(lat)*cd*Math.cos(lon-sunLon);
    const twilight=Math.max(0,Math.min(1,(dot+.035)/.07));
@@ -107,7 +126,7 @@ function render(){
    const cloudLat=latD*RAD,cloudLon=lonD*RAD;
    const belts=Math.pow(Math.abs(Math.sin(cloudLat*2.8+Math.sin(cloudLon*2.2)*.48)),3);
    const swirls=cloudNoise(cloudLon+Math.sin(cloudLat*3)*.32,cloudLat);
-   const cloud=Math.min(.78,Math.max(0,(swirls+belts*.42-.22)*1.35));
+   const cloud=photo?0:Math.min(.78,Math.max(0,(swirls+belts*.42-.22)*1.35));
    const rim=Math.pow(1-z,3),haze=.045*rim,idx=(py*w+px)*4;
    for(let ch=0;ch<3;ch++){
      const cloudColor=[241,246,250][ch];
