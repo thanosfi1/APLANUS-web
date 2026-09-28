@@ -178,8 +178,8 @@ function render(){
  ctx.fillStyle='#d3edff';ctx.font='13px system-ui';ctx.fillText('Β',cx+axX*r*1.2+7,cy-axY*r*1.2);ctx.fillText('Ν',cx-axX*r*1.2+7,cy+axY*r*1.2);
  ctx.fillStyle='#9edfff';ctx.font='12px system-ui';
  // Side view: Sun is fixed to the left; northern tilt toward it is positive in northern summer.
- // Keep the diagram axis vertical too; the changing sunlight illustrates seasons.
- const shift=0,vertical=86;
+ // The small Sun–Earth diagram keeps its original season-dependent tilt.
+ const towardSun=Math.sin(sun.lambda*RAD);const shift=-Math.sin(TILT)*towardSun*86,vertical=Math.sqrt(86*86-shift*shift);
  const axis=document.getElementById('orbitAxis');axis.setAttribute('x1',425+shift);axis.setAttribute('y1',110-vertical);axis.setAttribute('x2',425-shift);axis.setAttribute('y2',110+vertical);
  const np=document.getElementById('northPole'),sp=document.getElementById('southPole');np.setAttribute('x',432+shift);np.setAttribute('y',110-vertical);sp.setAttribute('x',432-shift);sp.setAttribute('y',114+vertical);
  document.getElementById('tiltExplanation').textContent=Math.abs(sun.decl/RAD)<1?'Κοντά στην ισημερία: κανένα ημισφαίριο δεν γέρνει αισθητά προς τον Ήλιο. Η φυσική κλίση παραμένει 23,44°.':sun.decl>0?'Το Βόρειο Ημισφαίριο γέρνει προς τον Ήλιο: δέχεται πιο άμεσα το φως του και διανύει τη θερμή εποχή.':'Το Βόρειο Ημισφαίριο γέρνει μακριά από τον Ήλιο: το Νότιο δέχεται πιο άμεσα το φως του.';
