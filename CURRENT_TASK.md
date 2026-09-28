@@ -1,28 +1,27 @@
 # APLANUS — Current Development State
 
 ## Status
-APPROVED — hero Sun/Moon frame-glow fix ready to merge.
+IN REVIEW — Earth seasons and day/night replacement.
 
 ## Active task
-- Remove the faint rectangular frame/glow around the Sun and Moon in the homepage swap.
-- Preserve imagery, sizing, positions, Moon phase calculation, and swap behavior.
+- Replace the old APLANUS Space / WorldWide Telescope page with a code-rendered Earth.
+- Show the Earth's 23.44° axial tilt, computed solar illumination, UTC time, and current astronomical seasons in both hemispheres.
+- Rename the homepage menu entry. Preserve other pages and astronomy calculations.
 
 ## Working branch
-`fix/hero-swap-image-frame`
+`feature/earth-seasons-day-night`
 
 ## Preview / approval state
-Vercel Preview: https://aplanus-sky-dev-git-fix-hero-swap-image-frame-thanosfotis3-1320.vercel.app
-Preview status: READY
-Owner approval: APPROVED
-Merge status: PENDING MERGE
+Vercel Preview: PENDING verification
+Preview status: PENDING
+Owner approval: NOT YET GIVEN
+Merge status: DO NOT MERGE
 
 ## Checks
-- Vercel deployment for the approved code head reported success.
-- Change is scoped to removing the hero node drop-shadow filters.
-- No astronomy calculations or swap behavior changed.
-
-## Last known handoff
-2026-09-22
+- Source review: removed the third-party telescope iframe; page uses local HTML/CSS/canvas/JS.
+- Solar position uses approximate apparent solar longitude, declination and equation of time.
+- Land outlines are schematic; no satellite imagery.
+- Vercel build and browser appearance require preview verification.
 
 ## Next action
-Merge PR #22 after this handoff update.
+Verify Vercel preview, send URL to owner, wait for explicit merge approval.
