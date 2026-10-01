@@ -5,7 +5,7 @@
 :root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#151b35,#050711 55%);color:#e5e7eb;font-family:Arial,sans-serif;min-height:100vh}
 .wrap{max-width:1000px;margin:auto;padding:28px 18px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:28px}.brand{font-size:1.6rem;font-weight:800;letter-spacing:3px}.back{color:#67e8f9;text-decoration:none;border:1px solid #334155;border-radius:10px;padding:9px 12px}
 h1{font-size:clamp(1.7rem,5vw,2.7rem);margin:10px 0 8px}.lead{color:#94a3b8;line-height:1.6;margin-bottom:26px}
-.year{margin:30px 0 12px;color:#c4b5fd}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.card{background:rgba(15,23,42,.78);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px}.kind{font-size:.75rem;text-transform:uppercase;letter-spacing:1.4px;color:#67e8f9}.date{font-size:1.15rem;font-weight:800;margin:8px 0}.type{color:#f8fafc;font-weight:700}.where{color:#94a3b8;font-size:.9rem;line-height:1.45;margin-top:8px}.note{margin-top:30px;color:#64748b;font-size:.82rem;line-height:1.5}
+.year{margin:30px 0 12px;color:#c4b5fd}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.card{background:rgba(15,23,42,.78);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px;display:grid;grid-template-columns:92px 1fr;gap:15px;align-items:center}.eclipse-svg{width:92px;height:92px}.card-copy{min-width:0}@media(max-width:420px){.card{grid-template-columns:78px 1fr}.eclipse-svg{width:78px;height:78px}}.kind{font-size:.75rem;text-transform:uppercase;letter-spacing:1.4px;color:#67e8f9}.date{font-size:1.15rem;font-weight:800;margin:8px 0}.type{color:#f8fafc;font-weight:700}.where{color:#94a3b8;font-size:.9rem;line-height:1.45;margin-top:8px}.note{margin-top:30px;color:#64748b;font-size:.82rem;line-height:1.5}
 </style></head><body><main class="wrap"><div class="top"><div class="brand">APLANUS</div><a class="back" href="index.html">← Αρχική</a></div>
 <h1>Επερχόμενες Εκλείψεις</h1><p class="lead">Ηλιακές και σεληνιακές εκλείψεις για τα επόμενα τρία ημερολογιακά έτη: 2027–2029. Η ορατότητα που αναφέρεται είναι παγκόσμια.</p>
 <section><h2 class="year">2027</h2><div class="grid">
@@ -29,4 +29,20 @@ h1{font-size:clamp(1.7rem,5vw,2.7rem);margin:10px 0 8px}.lead{color:#94a3b8;line
 <div class="card"><div class="kind">Ηλιακή</div><div class="date">5 Δεκεμβρίου 2029</div><div class="type">Μερική</div><div class="where">Ορατή σε τμήματα νότιας Νότιας Αμερικής και ωκεάνιες περιοχές.</div></div>
 <div class="card"><div class="kind">Σεληνιακή</div><div class="date">20–21 Δεκεμβρίου 2029</div><div class="type">Ολική</div><div class="where">Ορατή σε Ευρώπη, Ασία, Αφρική, Αμερική και άλλες περιοχές.</div></div>
 </div></section>
-<p class="note">Οι ημερομηνίες και οι παγκόσμιες ζώνες ορατότητας βασίζονται σε δημοσιευμένους καταλόγους εκλείψεων. Η τοπική ορατότητα εξαρτάται από την ακριβή τοποθεσία.</p></main></body></html>
+<p class="note">Οι ημερομηνίες και οι παγκόσμιες ζώνες ορατότητας βασίζονται σε δημοσιευμένους καταλόγους εκλείψεων. Η τοπική ορατότητα εξαρτάται από την ακριβή τοποθεσία.</p></main><script>
+function eclipseSVG(kind,type){
+ const solar=kind==="Ηλιακή", total=type==="Ολική", ann=type==="Δακτυλιοειδής", pen=type==="Παρασκιάς";
+ if(solar){
+   const moonR=total?27:ann?23:25, moonX=total||ann?50:61;
+   return '<svg class="eclipse-svg" viewBox="0 0 100 100" aria-label="'+type+' ηλιακή έκλειψη"><defs><radialGradient id="sun"><stop offset="0" stop-color="#fff7ae"/><stop offset=".7" stop-color="#ffd34e"/><stop offset="1" stop-color="#ff9d21"/></radialGradient><radialGradient id="sg"><stop offset=".35" stop-color="#ffd34e" stop-opacity=".45"/><stop offset="1" stop-color="#ffd34e" stop-opacity="0"/></radialGradient></defs><circle cx="50" cy="50" r="43" fill="url(#sg)"/><circle cx="50" cy="50" r="27" fill="url(#sun)"/><circle cx="'+moonX+'" cy="50" r="'+moonR+'" fill="#080b15"/>'+(ann?'<circle cx="50" cy="50" r="27" fill="none" stroke="#ffd34e" stroke-width="4"/>':'')+'</svg>';
+ }
+ const shadowX=total?50:pen?64:60, shadowR=total?28:pen?34:29;
+ return '<svg class="eclipse-svg" viewBox="0 0 100 100" aria-label="'+type+' σεληνιακή έκλειψη"><defs><radialGradient id="moon"><stop offset="0" stop-color="#f8fafc"/><stop offset=".75" stop-color="#d8dee9"/><stop offset="1" stop-color="#9ca3af"/></radialGradient></defs><circle cx="50" cy="50" r="27" fill="url(#moon)"/><circle cx="'+shadowX+'" cy="50" r="'+shadowR+'" fill="'+(total?'#7f1d1d':pen?'#334155':'#172033')+'" opacity="'+(pen?'.48':'.9')+'"/>'+(total?'<circle cx="50" cy="50" r="25" fill="#b23a2b" opacity=".72"/>':'')+'</svg>';
+}
+document.querySelectorAll(".card").forEach(card=>{
+ const kind=card.querySelector(".kind")?.textContent.trim()||"", type=card.querySelector(".type")?.textContent.trim()||"";
+ const copy=document.createElement("div"); copy.className="card-copy";
+ while(card.firstChild) copy.appendChild(card.firstChild);
+ card.innerHTML=eclipseSVG(kind,type); card.appendChild(copy);
+});
+</script></body></html>
