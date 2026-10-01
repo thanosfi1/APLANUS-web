@@ -2265,7 +2265,7 @@
           starEl.className = 'star-card';
           const altText = star.altitude > 0 ? ` • Ύψος: ${Math.round(star.altitude)}°` : '';
           starEl.innerHTML = `
-            <div class="star-orb" style="background: ${star.grad}; box-shadow: 0 0 16px rgba(255,255,255,0.2);"></div>
+            <div class="star-orb" style="--star-color:${(star.grad.match(/#[0-9a-fA-F]{6}/g)||['#ffffff','#ffffff'])[1]}; background: radial-gradient(circle, var(--star-color) 0 72%, color-mix(in srgb, var(--star-color) 88%, transparent) 100%); box-shadow: 0 0 18px color-mix(in srgb, var(--star-color) 34%, transparent);"></div>
             <div class="star-info">
               <span class="star-name">${star.name}</span>
               <span class="star-const">${star.const}</span>
