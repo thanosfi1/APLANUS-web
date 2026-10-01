@@ -1159,6 +1159,7 @@
           <a href="observation.html" class="dropdown-item">Παρατήρηση</a>
           <a href="stars.html" class="dropdown-item">Αστέρια & Αστερισμοί</a>
           <a href="comets.html" class="dropdown-item">Φασματικοί Τύποι Άστρων</a>
+          <a href="eclipses.html" class="dropdown-item">Επερχόμενες Εκλείψεις</a>
         </div>
       </div>
 
@@ -1327,33 +1328,6 @@
 
     <h3 class="section-title">Πλανήτες, Πλανήτες Νάνοι και Αστεροειδείς — Ορατοί Απόψε</h3>
     <div class="planets-grid" id="planetsContainer"></div>
-
-    <section class="eclipses-section">
-      <div class="eclipses-title">
-        <span>Επερχόμενες Εκλείψεις (Σεληνιακή & Ηλιακή)</span>
-      </div>
-      <div class="eclipses-grid">
-        <div class="eclipse-card">
-          <div class="eclipse-card-title">
-            <span>Σεληνιακή Έκλειψη</span>
-            <span class="eclipse-type" id="lunarEclipseType">--</span>
-          </div>
-          <div class="eclipse-date" id="lunarEclipseDate">--</div>
-          <div class="eclipse-details" id="lunarEclipseDetails">Υπολογισμός...</div>
-          <div class="visibility-pill" id="lunarEclipseVis">Έλεγχος...</div>
-        </div>
-
-        <div class="eclipse-card">
-          <div class="eclipse-card-title">
-            <span>Ηλιακή Έκλειψη</span>
-            <span class="eclipse-type" id="solarEclipseType">--</span>
-          </div>
-          <div class="eclipse-date" id="solarEclipseDate">--</div>
-          <div class="eclipse-details" id="solarEclipseDetails">Υπολογισμός...</div>
-          <div class="visibility-pill" id="solarEclipseVis">Έλεγχος...</div>
-        </div>
-      </div>
-    </section>
 
     <footer>
       Υπολογισμοί σε πραγματικό χρόνο μέσω VSOP87 & IAU Ephemeris Algorithms.
@@ -2524,7 +2498,7 @@
 
       drawSkyDome(visibleBodiesForMap);
 
-      try {
+      if (document.getElementById("lunarEclipseType")) try {
         const lunarEcl = Astronomy.SearchLunarEclipse(evaluationTime);
         if (lunarEcl && lunarEcl.peak) {
           const lDate = lunarEcl.peak.date;
