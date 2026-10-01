@@ -21,7 +21,7 @@ const VERIFIED={
 };
 function csvLine(line){const a=[];let x="",q=false;for(let i=0;i<line.length;i++){const c=line[i];if(c=='"'){if(q&&line[i+1]=='"'){x+='"';i++}else q=!q}else if(c==","&&!q){a.push(x);x=""}else x+=c}a.push(x);return a}
 function systemOf(r){return "Μη επαληθευμένο"}
-function specInfo(s){const match=String(s||"G").toUpperCase().match(/[OBAFGKM]/),c=match?match[0]:"G",m={O:["#5b8cff","Μπλε"],B:["#86b7ff","Μπλε-λευκό"],A:["#dbeafe","Λευκό"],F:["#fff1bd","Κίτρινο-λευκό"],G:["#ffd34e","Κίτρινο"],K:["#ff8a2b","Πορτοκαλί"],M:["#ef4937","Κόκκινο"]};return m[c]}
+function specInfo(s){const c=(s||"G")[0].toUpperCase(),m={O:["#5b8cff","Μπλε"],B:["#86b7ff","Μπλε-λευκό"],A:["#dbeafe","Λευκό"],F:["#fff1bd","Κίτρινο-λευκό"],G:["#ffd34e","Κίτρινο"],K:["#ff8a2b","Πορτοκαλί"],M:["#ef4937","Κόκκινο"]};return m[c]||["#dbeafe","Λευκό"]}
 function spectralTypes(s){return (s||"").match(/[OBAFGKM][0-9](?:\.?[0-9])?[^+\/;,]*/gi)||[(s||"G")]}
 function componentTypes(x){return x.components?.length?x.components:spectralTypes(x.spect)}
 function systemCount(x){const types=componentTypes(x);if(x.system==="Μονό"||x.system==="Μη επαληθευμένο")return 1;const n={"Διπλό":2,"Τριπλό":3,"Τετραπλό":4,"Πενταπλό":5,"Εξαπλό":6,"Επταπλό":7}[x.system];return n||Math.max(2,Math.min(7,types.length))}
