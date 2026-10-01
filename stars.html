@@ -34,4 +34,5 @@ async function load(){try{const r=await fetch("https://raw.githubusercontent.com
 q.oninput=render;load();
 
 async function enrichWDS(){const queue=DATA.filter(x=>Number.isFinite(x.ra)&&Number.isFinite(x.dec));let i=0;async function worker(){while(i<queue.length){const x=queue[i++];if(VERIFIED[x.name])continue;try{const rr=await fetch("/api/msc?ra="+x.ra+"&dec="+x.dec);if(!rr.ok)continue;const d=await rr.json();if(d.found&&d.members>=3){x.source="MSC / NOIRLab";x.system=d.members===3?"Τριπλό":d.members===4?"Τετραπλό":d.members===5?"Πενταπλό":d.members===6?"Εξαπλό":d.members===7?"Επταπλό":"Πολλαπλό";x.components=d.spectral?.length?d.spectral:null}else{x.system="Μη επαληθευμένο";x.components=null;x.source="HYG • multiplicity μη επαληθευμένο"}}catch{}}}await Promise.all([worker(),worker(),worker()]);render()}
-</script></body></html>
+</script><!-- fresh preview deploy -->
+</body></html>
