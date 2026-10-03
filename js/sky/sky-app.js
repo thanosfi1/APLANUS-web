@@ -4,14 +4,24 @@ import {startSensors,stopSensors,sensorState,applyMatrix} from "./sensors.js";
 import {startAR,stopAR} from "../ar/ar.js";
 import {CONSTELLATIONS} from "./catalog.js";
 const canvas=document.getElementById("skyCanvas"),ctx=canvas.getContext("2d"),statusEl=document.getElementById("status"),locationEl=document.getElementById("locationLabel"),timeEl=document.getElementById("timeLabel");
-let observer={lat:40.6401,lon:22.9444,source:"fallback"},date=new Date(),viewAz=180,viewAlt=35,fov=65,drag=null,lastObjects=[],pinch=null,arActive=false,showConst=true,showDeep=true,rawAz=180,rawAlt=35,calAz=Number(localStorage.getItem("aplanusCalAz")||0),calAlt=Number(localStorage.getItem("aplanusCalAlt")||0),calTarget=null;
+let observer={lat:40.6401,lon:22.9444,source:"fallback"},date=new Date(),viewAz=180,viewAlt=35,fov=65,drag=null,lastObjects=[],pinch=null,arActive=false,showConst=true,showDeep=true,rawAz=180,rawAlt=35,calTarget=null,calMatrix=null;
+try{const saved=JSON.parse(localStorage.getItem("aplanusCalMatrix")||"null");if(Array.isArray(saved)&&saved.length===9)calMatrix=saved}catch{}
 
 const wrap=a=>((a+540)%360)-180;
+function mulM(a,b){const r=Array(9).fill(0);for(let i=0;i<3;i++)for(let j=0;j<3;j++)for(let k=0;k<3;k++)r[i*3+j]+=a[i*3+k]*b[k*3+j];return r}
+function transposeM(m){return[m[0],m[3],m[6],m[1],m[4],m[7],m[2],m[5],m[8]]}
+function rotBetween(a,b){
+ const an=Math.hypot(a.x,a.y,a.z)||1,bn=Math.hypot(b.x,b.y,b.z)||1;
+ a={x:a.x/an,y:a.y/an,z:a.z/an};b={x:b.x/bn,y:b.y/bn,z:b.z/bn};
+ const v={x:a.y*b.z-a.z*b.y,y:a.z*b.x-a.x*b.z,z:a.x*b.y-a.y*b.x},d=Math.max(-1,Math.min(1,a.x*b.x+a.y*b.y+a.z*b.z)),s=Math.hypot(v.x,v.y,v.z);
+ if(s<1e-7)return d>0?[1,0,0,0,1,0,0,0,1]:[-1,0,0,0,1,0,0,0,-1];
+ const x=v.x/s,y=v.y/s,z=v.z/s,C=1-d;return[d+x*x*C,x*y*C-z*s,x*z*C+y*s,y*x*C+z*s,d+y*y*C,y*z*C-x*s,z*x*C-y*s,z*y*C+x*s,d+z*z*C]
+}
+function worldVector(o){const az=o.azimuth*Math.PI/180,alt=o.altitude*Math.PI/180;return{x:Math.cos(alt)*Math.sin(az),y:Math.cos(alt)*Math.cos(az),z:Math.sin(alt)}}
 function project(o,w,h){
  if(sensorState.active&&sensorState.matrix){
-  const az=o.azimuth*Math.PI/180,alt=o.altitude*Math.PI/180;
-  const world={x:Math.cos(alt)*Math.sin(az),y:Math.cos(alt)*Math.cos(az),z:Math.sin(alt)};
-  const v=applyMatrix(sensorState.matrix,world);
+  const world=worldVector(o),matrix=calMatrix?mulM(sensorState.matrix,calMatrix):sensorState.matrix;
+  const v=applyMatrix(matrix,world);
   if(v.z>=-.02)return null;
   const vfov=fov*Math.PI/180,hfov=2*Math.atan(Math.tan(vfov/2)*(w/h));
   const x=w/2+(v.x/-v.z)*(w/(2*Math.tan(hfov/2)));
@@ -119,9 +129,16 @@ function openCalibration(){
 }
 document.getElementById("calBtn").addEventListener("click",openCalibration);
 document.getElementById("calCancel").addEventListener("click",()=>{document.getElementById("calibration").hidden=true;document.getElementById("calGuide").hidden=true;calTarget=null});
-document.getElementById("calConfirm").addEventListener("click",()=>{if(!calTarget)return;calAz=wrap(calTarget.azimuth-rawAz);calAlt=calTarget.altitude-rawAlt;localStorage.setItem("aplanusCalAz",calAz);localStorage.setItem("aplanusCalAlt",calAlt);viewAz=(rawAz+calAz+360)%360;viewAlt=Math.max(-90,Math.min(90,rawAlt+calAlt));document.getElementById("calGuide").hidden=true;statusEl.textContent="Βαθμονόμηση ολοκληρώθηκε ✓";calTarget=null;render()});
+document.getElementById("calConfirm").addEventListener("click",()=>{if(!calTarget||!sensorState.matrix)return;
+ const target=worldVector(calTarget),cameraForward={x:0,y:0,z:-1};
+ // Find the world direction currently at the screen centre, then rotate the
+ // astronomical world so the selected target coincides with that sight line.
+ const cameraToWorld=transposeM(sensorState.matrix),sight=applyMatrix(cameraToWorld,cameraForward);
+ calMatrix=rotBetween(target,sight);localStorage.setItem("aplanusCalMatrix",JSON.stringify(calMatrix));
+ localStorage.removeItem("aplanusCalAz");localStorage.removeItem("aplanusCalAlt");
+ document.getElementById("calGuide").hidden=true;statusEl.textContent="3D βαθμονόμηση ολοκληρώθηκε ✓";calTarget=null;render()});
 document.getElementById("arBtn").addEventListener("click",async()=>{const btn=document.getElementById("arBtn"),video=document.getElementById("arVideo"),vp=document.querySelector(".viewport");try{if(arActive){stopAR(video);arActive=false;vp.classList.remove("ar-active");btn.textContent="📷 AR";render();return}await startAR(video);arActive=true;fov=65;vp.classList.add("ar-active");btn.textContent="■ AR";if(!sensorState.active)document.getElementById("sensorBtn").click();render()}catch(e){statusEl.textContent=e.message}});
-document.getElementById("sensorBtn").addEventListener("click",async()=>{const btn=document.getElementById("sensorBtn"),dbg=document.getElementById("sensorDebug");dbg.hidden=false;dbg.textContent="Sensor diagnostic…\nDeviceOrientationEvent: "+("DeviceOrientationEvent" in window)+"\nrequestPermission: "+(typeof window.DeviceOrientationEvent?.requestPermission)+"\nsecureContext: "+window.isSecureContext+"\norientation: "+(screen.orientation?.type||"n/a")+"\nUA: "+navigator.userAgent;let rawSeen=0;const probe=e=>{rawSeen++;dbg.textContent="EVENT OK ("+e.type+")\nalpha: "+e.alpha+"\nbeta: "+e.beta+"\ngamma: "+e.gamma+"\nabsolute: "+e.absolute+"\nwebkitCompassHeading: "+e.webkitCompassHeading};window.addEventListener("deviceorientation",probe,{once:true});window.addEventListener("deviceorientationabsolute",probe,{once:true});if(sensorState.active){stopSensors();btn.textContent="🧭";return}try{let got=false;await startSensors(s=>{got=true;rawAz=s.heading;rawAlt=s.pitch;viewAz=(rawAz+calAz+360)%360;viewAlt=Math.max(-90,Math.min(90,rawAlt+calAlt));updateCalGuide();render()});btn.textContent="🧭 …";setTimeout(()=>{if(got){btn.textContent="🧭 ON"}else{btn.textContent="🧭";statusEl.textContent="Δεν λαμβάνονται δεδομένα αισθητήρων";if(!dbg.textContent.startsWith("EVENT OK"))dbg.textContent+="\n\nRESULT: no orientation event received"}},1200)}catch(e){statusEl.textContent=e.message}});
+document.getElementById("sensorBtn").addEventListener("click",async()=>{const btn=document.getElementById("sensorBtn"),dbg=document.getElementById("sensorDebug");dbg.hidden=false;dbg.textContent="Sensor diagnostic…\nDeviceOrientationEvent: "+("DeviceOrientationEvent" in window)+"\nrequestPermission: "+(typeof window.DeviceOrientationEvent?.requestPermission)+"\nsecureContext: "+window.isSecureContext+"\norientation: "+(screen.orientation?.type||"n/a")+"\nUA: "+navigator.userAgent;let rawSeen=0;const probe=e=>{rawSeen++;dbg.textContent="EVENT OK ("+e.type+")\nalpha: "+e.alpha+"\nbeta: "+e.beta+"\ngamma: "+e.gamma+"\nabsolute: "+e.absolute+"\nwebkitCompassHeading: "+e.webkitCompassHeading};window.addEventListener("deviceorientation",probe,{once:true});window.addEventListener("deviceorientationabsolute",probe,{once:true});if(sensorState.active){stopSensors();btn.textContent="🧭";return}try{let got=false;await startSensors(s=>{got=true;rawAz=s.heading;rawAlt=s.pitch;viewAz=rawAz;viewAlt=rawAlt;updateCalGuide();render()});btn.textContent="🧭 …";setTimeout(()=>{if(got){btn.textContent="🧭 ON"}else{btn.textContent="🧭";statusEl.textContent="Δεν λαμβάνονται δεδομένα αισθητήρων";if(!dbg.textContent.startsWith("EVENT OK"))dbg.textContent+="\n\nRESULT: no orientation event received"}},1200)}catch(e){statusEl.textContent=e.message}});
 
 function focusObject(o){viewAz=o.azimuth;viewAlt=o.altitude;fov=35;document.getElementById("searchPanel").hidden=true;document.getElementById("tonightPanel").hidden=true;showObject(o);render()}
 document.getElementById("searchBtn").onclick=()=>{const p=document.getElementById("searchPanel");p.hidden=!p.hidden;document.getElementById("searchInput").focus()};
