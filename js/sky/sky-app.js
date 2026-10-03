@@ -111,13 +111,13 @@ document.getElementById("closePanel").addEventListener("click",()=>document.getE
 canvas.addEventListener("wheel",e=>{e.preventDefault();fov=Math.max(25,Math.min(150,fov+Math.sign(e.deltaY)*10));render()},{passive:false});
 async function locate(){statusEl.textContent="Εντοπισμός θέσης…";observer=await getObserver();locationEl.textContent=observer.source==="gps"?`GPS • ${observer.lat.toFixed(3)}, ${observer.lon.toFixed(3)}`:"Θέση: προεπιλογή";render()}
 function updateCalGuide(){
- if(!calTarget)return;
- const da=wrap(calTarget.azimuth-rawAz),de=calTarget.altitude-rawAlt,arrow=document.getElementById("calArrow"),txt=document.getElementById("calGuideText");
- const angle=Math.atan2(da,-de)*180/Math.PI;
- arrow.style.transform=`rotate(${angle}deg)`;
- const horiz=Math.abs(da)<3?"":(da>0?"δεξιά":"αριστερά"),vert=Math.abs(de)<3?"":(de>0?"πάνω":"κάτω"),dirs=[horiz,vert].filter(Boolean).join(" και ");
- txt.textContent=Math.abs(da)<3&&Math.abs(de)<3?"Κράτησέ το στο κέντρο και επιβεβαίωσε.":`Στρέψε τη συσκευή ${dirs} • ΔAZ ${Math.abs(da).toFixed(0)}° • ΔALT ${Math.abs(de).toFixed(0)}°`;
- document.getElementById("calConfirm").disabled=Math.abs(da)>8||Math.abs(de)>8;
+ if(!calTarget||!sensorState.matrix)return;
+ const world=worldVector(calTarget),matrix=calMatrix?mulM(sensorState.matrix,calMatrix):sensorState.matrix,v=applyMatrix(matrix,world);
+ const arrow=document.getElementById("calArrow"),txt=document.getElementById("calGuideText"),confirm=document.getElementById("calConfirm");
+ const angle=Math.atan2(v.x,-v.y)*180/Math.PI;arrow.style.transform=`rotate(${angle}deg)`;
+ const separation=Math.acos(Math.max(-1,Math.min(1,-v.z/Math.hypot(v.x,v.y,v.z))))*180/Math.PI;
+ if(separation<3){txt.textContent="Κράτησέ το στο κέντρο και επιβεβαίωσε.";confirm.disabled=false}
+ else{const horiz=Math.abs(v.x)<.08?"":(v.x>0?"δεξιά":"αριστερά"),vert=Math.abs(v.y)<.08?"":(v.y>0?"πάνω":"κάτω"),dirs=[horiz,vert].filter(Boolean).join(" και ");txt.textContent=`Στρέψε τη συσκευή ${dirs||"προς το βέλος"} • ${separation.toFixed(0)}° από τον στόχο`;confirm.disabled=separation>8}
 }
 function beginCalibrationTarget(o){
  calTarget=o;document.getElementById("calibration").hidden=true;document.getElementById("calGuide").hidden=false;document.getElementById("calGuideName").textContent=o.name;updateCalGuide();
