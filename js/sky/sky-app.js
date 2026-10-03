@@ -20,30 +20,54 @@ function project(o,w,h){
  }
  const dx=wrap(o.azimuth-viewAz),dy=o.altitude-viewAlt,scale=w/fov;if(Math.abs(dx)>fov*.65)return null;return{x:w/2+dx*scale,y:h/2-dy*scale};
 }
+function landscapeHeight(az,layer=0){
+ const r=az*Math.PI/180;
+ return layer===0?1.1+1.15*Math.sin(r*2.1+.7)+.65*Math.sin(r*5.3+1.8)+.35*Math.sin(r*11.7):
+ 2.2+1.7*Math.sin(r*1.35+2.4)+.9*Math.sin(r*3.8+.2)+.45*Math.sin(r*8.6+1.1);
+}
+function drawTerrainLayer(w,h,layer,color){
+ const pts=[];
+ for(let az=0;az<360;az+=1){
+  const p=project({azimuth:az,altitude:Math.max(.15,landscapeHeight(az,layer))},w,h);
+  if(p&&p.x>=-w*.25&&p.x<=w*1.25)pts.push(p);
+ }
+ if(pts.length<2)return;
+ pts.sort((a,b)=>a.x-b.x);
+ ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(const p of pts)ctx.lineTo(p.x,p.y);
+ ctx.lineTo(pts[pts.length-1].x,h);ctx.lineTo(pts[0].x,h);ctx.closePath();ctx.fillStyle=color;ctx.fill();
+}
+function drawTreeSilhouette(az,baseAlt,w,h,twilight){
+ const base=project({azimuth:az,altitude:baseAlt},w,h),top=project({azimuth:az,altitude:baseAlt+1.8},w,h);
+ if(!base||!top||base.x<0||base.x>w)return;
+ const height=Math.max(7,base.y-top.y),width=Math.max(3,height*.42);
+ ctx.fillStyle=twilight?"rgba(5,14,17,.88)":"rgba(1,7,9,.96)";
+ ctx.fillRect(base.x-1,base.y-height*.34,2,height*.36);
+ ctx.beginPath();ctx.moveTo(base.x,base.y-height);ctx.lineTo(base.x-width,base.y-height*.18);ctx.lineTo(base.x+width,base.y-height*.18);ctx.closePath();ctx.fill();
+}
 function drawHorizonGround(w,h){
  if(arActive)return;
- const samples=[];
- for(let az=0;az<=360;az+=2){
-  const p=project({azimuth:az%360,altitude:0},w,h);
-  if(p&&p.x>=-w*.2&&p.x<=w*1.2)samples.push(p);
- }
- if(samples.length<2)return;
- samples.sort((a,b)=>a.x-b.x);
- const left=samples[0],right=samples[samples.length-1];
- const ground=ctx.createLinearGradient(0,Math.min(left.y,right.y),0,h);
- ground.addColorStop(0,"rgba(17,35,42,.96)");
- ground.addColorStop(.22,"rgba(8,24,27,.98)");
- ground.addColorStop(1,"#020707");
- ctx.beginPath();ctx.moveTo(left.x,left.y);
- for(const p of samples)ctx.lineTo(p.x,p.y);
- ctx.lineTo(right.x,h);ctx.lineTo(left.x,h);ctx.closePath();
- ctx.fillStyle=ground;ctx.fill();
- ctx.beginPath();ctx.moveTo(left.x,left.y);
- for(const p of samples)ctx.lineTo(p.x,p.y);
- ctx.strokeStyle="rgba(125,211,252,.38)";ctx.lineWidth=1;ctx.shadowColor="rgba(56,189,248,.22)";ctx.shadowBlur=8;ctx.stroke();ctx.shadowBlur=0;
- const haze=ctx.createLinearGradient(0,Math.min(left.y,right.y)-26,0,Math.max(left.y,right.y)+22);
- haze.addColorStop(0,"rgba(56,189,248,0)");haze.addColorStop(.55,"rgba(56,189,248,.055)");haze.addColorStop(1,"rgba(56,189,248,0)");
- ctx.fillStyle=haze;ctx.fillRect(0,Math.min(left.y,right.y)-28,w,54);
+ let sunAlt=-18;
+ try{sunAlt=calculateSky(date,observer).find(o=>o.id==="Sun")?.altitude??-18}catch{}
+ const twilight=sunAlt>-18&&sunAlt<2, twilightMix=Math.max(0,Math.min(1,(sunAlt+18)/20));
+ const horizon=[];
+ for(let az=0;az<360;az+=1){const p=project({azimuth:az,altitude:0},w,h);if(p&&p.x>=-w*.25&&p.x<=w*1.25)horizon.push(p)}
+ if(horizon.length<2)return;
+ horizon.sort((a,b)=>a.x-b.x);
+ const hy=horizon.reduce((s,p)=>s+p.y,0)/horizon.length;
+ const haze=ctx.createLinearGradient(0,hy-48,0,hy+30);
+ haze.addColorStop(0,"rgba(90,130,170,0)");
+ haze.addColorStop(.48,`rgba(125,160,175,${.025+twilightMix*.11})`);
+ haze.addColorStop(.7,`rgba(245,158,90,${twilightMix*.055})`);
+ haze.addColorStop(1,"rgba(20,45,48,0)");
+ ctx.fillStyle=haze;ctx.fillRect(0,hy-52,w,86);
+ drawTerrainLayer(w,h,0,twilight?"rgba(17,31,36,.76)":"rgba(8,21,25,.88)");
+ drawTerrainLayer(w,h,1,twilight?"rgba(7,19,22,.94)":"rgba(2,11,13,.98)");
+ for(const az of [14,31,58,104,127,166,211,239,286,318,344])drawTreeSilhouette(az,Math.max(.3,landscapeHeight(az,1)),w,h,twilight);
+ const ground=ctx.createLinearGradient(0,hy,0,h);
+ ground.addColorStop(0,twilight?"rgba(8,21,23,.18)":"rgba(2,10,12,.25)");ground.addColorStop(.28,twilight?"rgba(5,15,17,.94)":"rgba(1,8,10,.98)");ground.addColorStop(1,"#010506");
+ ctx.beginPath();ctx.moveTo(horizon[0].x,horizon[0].y);for(const p of horizon)ctx.lineTo(p.x,p.y);ctx.lineTo(horizon[horizon.length-1].x,h);ctx.lineTo(horizon[0].x,h);ctx.closePath();ctx.fillStyle=ground;ctx.fill();
+ ctx.beginPath();ctx.moveTo(horizon[0].x,horizon[0].y);for(const p of horizon)ctx.lineTo(p.x,p.y);
+ ctx.strokeStyle=twilight?"rgba(186,210,214,.24)":"rgba(125,211,252,.25)";ctx.lineWidth=1;ctx.stroke();
 }
 function render(){
  const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;
