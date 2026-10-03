@@ -19,10 +19,12 @@ export async function startSensors(onUpdate){
   const screenAngle=(window.screen?.orientation?.angle ?? window.orientation ?? 0);
   // W3C intrinsic Z-X'-Y'' device orientation, corrected to portrait screen coordinates.
   const alpha=(typeof e.alpha==="number")?e.alpha:0;
-  let device=mul(mul(rotZ(alpha),rotX(e.beta)),rotY(e.gamma));
-  device=mul(device,rotZ(-screenAngle));
-  // Camera looks through the back of the phone: camera basis in world coordinates.
-  const cameraToWorld=mul(device,rotX(-90));
+  // W3C intrinsic Z-X'-Y'' orientation in the Earth ENU frame.
+  // The back camera looks along device -Z; do not add an extra -90° pitch:
+  // beta already contains the phone's front/back elevation.
+  let cameraToWorld=mul(mul(rotZ(alpha),rotX(e.beta)),rotY(e.gamma));
+  // Rotate device coordinates into the current screen orientation last.
+  cameraToWorld=mul(cameraToWorld,rotZ(-screenAngle));
   const worldToCamera=transpose(cameraToWorld);
   const forward=applyMatrix(cameraToWorld,{x:0,y:0,z:-1});
   let heading=norm(Math.atan2(forward.x,forward.y)/R),pitch=Math.asin(Math.max(-1,Math.min(1,forward.z)))/R;
