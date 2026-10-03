@@ -59,6 +59,31 @@ function drawHorizonGround(w,h){
  let sunAlt=-18;
  try{sunAlt=calculateSky(date,observer).find(o=>o.id==="Sun")?.altitude??-18}catch{}
  const twilight=sunAlt>-18&&sunAlt<2, twilightMix=Math.max(0,Math.min(1,(sunAlt+18)/20));
+ // Fill only rays whose intersection with the viewing sphere is below the
+ // astronomical horizon (ALT < 0). This keeps ground attached to the same
+ // 3D sphere at every camera pitch, including zenith/nadir.
+ if(sensorState.active&&sensorState.matrix){
+  const matrix=calMatrix?mulM(sensorState.matrix,calMatrix):sensorState.matrix;
+  const inv=transposeM(matrix),vfov=fov*Math.PI/180,hfov=2*Math.atan(Math.tan(vfov/2)*(w/h));
+  const sx=2*Math.tan(hfov/2)/w,sy=2*Math.tan(vfov/2)/h;
+  const ground=ctx.createLinearGradient(0,0,0,h);
+  ground.addColorStop(0,twilight?"rgba(8,21,23,.18)":"rgba(2,10,12,.25)");
+  ground.addColorStop(.55,twilight?"rgba(5,15,17,.94)":"rgba(1,8,10,.98)");
+  ground.addColorStop(1,"#010506");
+  ctx.save();ctx.fillStyle=ground;
+  const step=4;
+  for(let y=0;y<h;y+=step){
+   let run=-1;
+   for(let x=0;x<=w;x+=step){
+    const cam={x:(x-w/2)*sx,y:-(y-h/2)*sy,z:-1};
+    const world=applyMatrix(inv,cam),below=world.z<0;
+    if(below&&run<0)run=x;
+    if((!below||x>=w)&&run>=0){ctx.fillRect(run,y,Math.min(w,x)-run,Math.min(step,h-y));run=-1}
+   }
+  }
+  ctx.restore();
+ }
+
  const horizon=[];
  for(let az=0;az<360;az+=1){const p=project({azimuth:az,altitude:0},w,h);if(p&&p.x>=-w*.25&&p.x<=w*1.25)horizon.push(p)}
  if(horizon.length<2)return;
@@ -70,12 +95,16 @@ function drawHorizonGround(w,h){
  haze.addColorStop(.7,`rgba(245,158,90,${twilightMix*.055})`);
  haze.addColorStop(1,"rgba(20,45,48,0)");
  ctx.fillStyle=haze;ctx.fillRect(0,hy-52,w,86);
- drawTerrainLayer(w,h,0,twilight?"rgba(17,31,36,.76)":"rgba(8,21,25,.88)");
- drawTerrainLayer(w,h,1,twilight?"rgba(7,19,22,.94)":"rgba(2,11,13,.98)");
+ if(!(sensorState.active&&sensorState.matrix)){
+  drawTerrainLayer(w,h,0,twilight?"rgba(17,31,36,.76)":"rgba(8,21,25,.88)");
+  drawTerrainLayer(w,h,1,twilight?"rgba(7,19,22,.94)":"rgba(2,11,13,.98)");
+ }
  for(const az of [14,31,58,104,127,166,211,239,286,318,344])drawTreeSilhouette(az,Math.max(.3,landscapeHeight(az,1)),w,h,twilight);
- const ground=ctx.createLinearGradient(0,hy,0,h);
+ if(!(sensorState.active&&sensorState.matrix)){
+  const ground=ctx.createLinearGradient(0,hy,0,h);
  ground.addColorStop(0,twilight?"rgba(8,21,23,.18)":"rgba(2,10,12,.25)");ground.addColorStop(.28,twilight?"rgba(5,15,17,.94)":"rgba(1,8,10,.98)");ground.addColorStop(1,"#010506");
- ctx.beginPath();ctx.moveTo(horizon[0].x,horizon[0].y);for(const p of horizon)ctx.lineTo(p.x,p.y);ctx.lineTo(horizon[horizon.length-1].x,h);ctx.lineTo(horizon[0].x,h);ctx.closePath();ctx.fillStyle=ground;ctx.fill();
+  ctx.beginPath();ctx.moveTo(horizon[0].x,horizon[0].y);for(const p of horizon)ctx.lineTo(p.x,p.y);ctx.lineTo(horizon[horizon.length-1].x,h);ctx.lineTo(horizon[0].x,h);ctx.closePath();ctx.fillStyle=ground;ctx.fill();
+ }
  ctx.beginPath();ctx.moveTo(horizon[0].x,horizon[0].y);for(const p of horizon)ctx.lineTo(p.x,p.y);
  ctx.strokeStyle=twilight?"rgba(186,210,214,.24)":"rgba(125,211,252,.25)";ctx.lineWidth=1;ctx.stroke();
 }
