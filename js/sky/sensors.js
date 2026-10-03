@@ -1,4 +1,4 @@
-export const sensorState={supported:false,active:false,matrix:null,heading:null,pitch:null,roll:null};
+export const sensorState={supported:false,active:false,matrix:null,heading:null,pitch:null,roll:null,forward:null};
 let listener=null,eventName=null,absoluteListener=null;
 const R=Math.PI/180,norm=n=>(n%360+360)%360;
 function mul(a,b){const r=Array(9).fill(0);for(let i=0;i<3;i++)for(let j=0;j<3;j++)for(let k=0;k<3;k++)r[i*3+j]+=a[i*3+k]*b[k*3+j];return r}
@@ -19,22 +19,26 @@ export async function startSensors(onUpdate){
   const screenAngle=(window.screen?.orientation?.angle ?? window.orientation ?? 0);
   // W3C intrinsic Z-X'-Y'' device orientation, corrected to portrait screen coordinates.
   const alpha=(typeof e.alpha==="number")?e.alpha:0;
-  // W3C intrinsic Z-X'-Y'' orientation in the Earth ENU frame.
-  // The back camera looks along device -Z; do not add an extra -90° pitch:
-  // beta already contains the phone's front/back elevation.
+  // Build one complete camera attitude from the W3C Z-X'-Y'' orientation.
+  // The fixed -90° X rotation maps the device frame to a back-camera frame;
+  // screen rotation is applied last. Keeping this as one rotation matrix avoids
+  // treating beta/gamma as independent pitch/roll near the zenith.
   let cameraToWorld=mul(mul(rotZ(alpha),rotX(e.beta)),rotY(e.gamma));
-  // Rotate device coordinates into the current screen orientation last.
+  cameraToWorld=mul(cameraToWorld,rotX(-90));
   cameraToWorld=mul(cameraToWorld,rotZ(-screenAngle));
-  const worldToCamera=transpose(cameraToWorld);
-  const forward=applyMatrix(cameraToWorld,{x:0,y:0,z:-1});
+  let forward=applyMatrix(cameraToWorld,{x:0,y:0,z:-1});
   let heading=norm(Math.atan2(forward.x,forward.y)/R),pitch=Math.asin(Math.max(-1,Math.min(1,forward.z)))/R;
-  if(typeof e.webkitCompassHeading==="number"){
-    // iOS Safari gives the compass heading explicitly; use it as north reference.
+  if(typeof e.webkitCompassHeading==="number"&&Math.cos(pitch*R)>.12){
+    // Magnetometer heading is useful away from the zenith/nadir. Near vertical,
+    // azimuth is physically ill-conditioned, so preserve the fused attitude.
     const delta=((e.webkitCompassHeading-heading+540)%360)-180;
-    heading=norm(e.webkitCompassHeading);
-    const corr=rotZ(-delta);sensorState.matrix=mul(worldToCamera,corr);
-  }else sensorState.matrix=worldToCamera;
-  sensorState.supported=true;sensorState.active=true;sensorState.heading=heading;sensorState.pitch=pitch;sensorState.roll=e.gamma;
+    cameraToWorld=mul(rotZ(delta),cameraToWorld);
+    forward=applyMatrix(cameraToWorld,{x:0,y:0,z:-1});
+    heading=norm(Math.atan2(forward.x,forward.y)/R);
+    pitch=Math.asin(Math.max(-1,Math.min(1,forward.z)))/R;
+  }
+  sensorState.matrix=transpose(cameraToWorld);
+  sensorState.supported=true;sensorState.active=true;sensorState.heading=heading;sensorState.pitch=pitch;sensorState.roll=e.gamma;sensorState.forward=forward;
   onUpdate?.({...sensorState});
  };
  // "deviceorientationabsolute" exists inconsistently on mobile browsers and may never emit.
