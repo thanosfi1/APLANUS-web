@@ -101,8 +101,12 @@ function drawHorizonGround(w,h){
  // normal screen-spanning curve; never let it close over the zenith.
  const ys=horizon.map(p=>p.y),span=Math.max(...ys)-Math.min(...ys);
  if(span<h*.7){
-  drawTerrainLayer(w,h,0,twilight?"rgba(17,31,36,.76)":"rgba(8,21,25,.88)");
-  drawTerrainLayer(w,h,1,twilight?"rgba(7,19,22,.94)":"rgba(2,11,13,.98)");
+  // In sensor mode the spherical ALT<0 mask is already the terrain.
+  // Do not add the legacy screen-bottom terrain polygons: they can cover the zenith.
+  if(!(sensorState.active&&sensorState.matrix)){
+   drawTerrainLayer(w,h,0,twilight?"rgba(17,31,36,.76)":"rgba(8,21,25,.88)");
+   drawTerrainLayer(w,h,1,twilight?"rgba(7,19,22,.94)":"rgba(2,11,13,.98)");
+  }
   for(const az of [14,31,58,104,127,166,211,239,286,318,344])drawTreeSilhouette(az,Math.max(.3,landscapeHeight(az,1)),w,h,twilight);
  }
  if(!(sensorState.active&&sensorState.matrix)){
