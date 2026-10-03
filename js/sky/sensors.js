@@ -24,30 +24,24 @@ export async function startSensors(onUpdate){
   let r;try{r=await DeviceOrientationEvent.requestPermission()}catch{throw new Error("iPhone: ενεργοποίησε Πρόσβαση σε κίνηση και προσανατολισμό για το Safari και ξαναπάτησε 🧭.")}
   if(r!=="granted")throw new Error("iPhone: δεν δόθηκε άδεια Κίνησης & Προσανατολισμού.");
  }
- stopSensors();listener=e=>{
+ stopSensors();let northOffset=null;
+ listener=e=>{
   if(e.beta==null||e.gamma==null)return;
-  const alpha=typeof e.alpha==="number"?e.alpha:0;
-  const screenAngle=window.screen?.orientation?.angle ?? window.orientation ?? 0;
-  // W3C intrinsic Z-X'-Y'': q = qZ(alpha) qX(beta) qY(gamma).
+  const alpha=typeof e.alpha==="number"?e.alpha:0,screenAngle=window.screen?.orientation?.angle ?? window.orientation ?? 0;
+  // Validated Sensor Lab transform. Keep this sequence unchanged.
   let q=qMul(qMul(qAxis(0,0,1,alpha),qAxis(1,0,0,e.beta)),qAxis(0,1,0,e.gamma));
-  // Device -> back-camera frame and current screen orientation, kept as quaternion.
-  q=qMul(q,qAxis(1,0,0,-90));
-  q=qMul(q,qAxis(0,0,1,-screenAngle));
-  q=qNorm(q);
+  q=qNorm(qMul(q,qAxis(0,0,1,-screenAngle)));
   let forward=qRotate(q,{x:0,y:0,z:-1});
-  let heading=norm(Math.atan2(forward.x,forward.y)/R);
-  let pitch=Math.asin(clamp(forward.z))/R;
-  // iOS compass supplies a stable north reference when the sight line is not vertical.
-  if(typeof e.webkitCompassHeading==="number"&&Math.abs(forward.z)<.96){
-   const delta=((e.webkitCompassHeading-heading+540)%360)-180;
-   q=qNorm(qMul(qAxis(0,0,1,delta),q));
-   forward=qRotate(q,{x:0,y:0,z:-1});
-   heading=norm(Math.atan2(forward.x,forward.y)/R);
-   pitch=Math.asin(clamp(forward.z))/R;
-  }
-  // q maps camera -> world; conjugate maps fixed world vectors -> camera.
+  const horizontal=Math.hypot(forward.x,forward.y);
+  const relativeHeading=norm(Math.atan2(forward.x,forward.y)/R);
+  const pitch=Math.atan2(forward.z,horizontal)/R;
+  if(northOffset==null&&typeof e.webkitCompassHeading==="number"&&Math.abs(pitch)<20)
+   northOffset=((e.webkitCompassHeading-relativeHeading+540)%360)-180;
+  if(northOffset!=null)q=qNorm(qMul(qAxis(0,0,1,northOffset),q));
+  forward=qRotate(q,{x:0,y:0,z:-1});
+  const heading=norm(Math.atan2(forward.x,forward.y)/R);
   sensorState.matrix=qToMatrix(qConj(q));
-  sensorState.supported=true;sensorState.active=true;sensorState.heading=heading;sensorState.pitch=pitch;sensorState.roll=e.gamma;sensorState.forward=forward;
+  sensorState.supported=true;sensorState.active=true;sensorState.heading=heading;sensorState.pitch=Math.asin(clamp(forward.z))/R;sensorState.roll=e.gamma;sensorState.forward=forward;
   onUpdate?.({...sensorState});
  };
  eventName="deviceorientation";window.addEventListener(eventName,listener,true);return sensorState;
