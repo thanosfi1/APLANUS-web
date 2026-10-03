@@ -2112,7 +2112,7 @@
       const src = PLANET_IMAGES[planet.id];
       if (!src) return '';
       const minorClass = planet.isMinor ? ' minor-body-photo' : '';
-      return `<img class="${className}${minorClass}" src="${src}" alt="${planet.name}" loading="lazy" decoding="async">`;
+      return `<img class="${className}${minorClass}" src="${src}" alt="${planet.name}" loading="eager" fetchpriority="high" decoding="async">`;
     }
 
     function updateBrightestPlanet(time) {
