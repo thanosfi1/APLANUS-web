@@ -8,7 +8,7 @@ let observer={lat:40.6401,lon:22.9444,source:"fallback"},date=new Date(),viewAz=
 
 const wrap=a=>((a+540)%360)-180;
 function project(o,w,h){
- if(arActive&&sensorState.matrix){
+ if(sensorState.active&&sensorState.matrix){
   const az=o.azimuth*Math.PI/180,alt=o.altitude*Math.PI/180;
   const world={x:Math.cos(alt)*Math.sin(az),y:Math.cos(alt)*Math.cos(az),z:Math.sin(alt)};
   const v=applyMatrix(sensorState.matrix,world);
