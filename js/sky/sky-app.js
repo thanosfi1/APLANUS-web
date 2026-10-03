@@ -73,9 +73,16 @@ function drawHorizonGround(w,h){
  drawTerrainLayer(w,h,0,twilight?"rgba(17,31,36,.76)":"rgba(8,21,25,.88)");
  drawTerrainLayer(w,h,1,twilight?"rgba(7,19,22,.94)":"rgba(2,11,13,.98)");
  for(const az of [14,31,58,104,127,166,211,239,286,318,344])drawTreeSilhouette(az,Math.max(.3,landscapeHeight(az,1)),w,h,twilight);
- const ground=ctx.createLinearGradient(0,hy,0,h);
- ground.addColorStop(0,twilight?"rgba(8,21,23,.18)":"rgba(2,10,12,.25)");ground.addColorStop(.28,twilight?"rgba(5,15,17,.94)":"rgba(1,8,10,.98)");ground.addColorStop(1,"#010506");
- ctx.beginPath();ctx.moveTo(horizon[0].x,horizon[0].y);for(const p of horizon)ctx.lineTo(p.x,p.y);ctx.lineTo(horizon[horizon.length-1].x,h);ctx.lineTo(horizon[0].x,h);ctx.closePath();ctx.fillStyle=ground;ctx.fill();
+ // The legacy ground polygon assumes the ground is always toward screen-bottom.
+ // Past the zenith that assumption flips and paints the sky black. In sensor mode,
+ // draw it only when the camera forward direction is above the astronomical horizon.
+ let drawGround=true;
+ if(sensorState.active&&sensorState.forward)drawGround=sensorState.forward.z>=0;
+ if(drawGround){
+  const ground=ctx.createLinearGradient(0,hy,0,h);
+  ground.addColorStop(0,twilight?"rgba(8,21,23,.18)":"rgba(2,10,12,.25)");ground.addColorStop(.28,twilight?"rgba(5,15,17,.94)":"rgba(1,8,10,.98)");ground.addColorStop(1,"#010506");
+  ctx.beginPath();ctx.moveTo(horizon[0].x,horizon[0].y);for(const p of horizon)ctx.lineTo(p.x,p.y);ctx.lineTo(horizon[horizon.length-1].x,h);ctx.lineTo(horizon[0].x,h);ctx.closePath();ctx.fillStyle=ground;ctx.fill();
+ }
  ctx.beginPath();ctx.moveTo(horizon[0].x,horizon[0].y);for(const p of horizon)ctx.lineTo(p.x,p.y);
  ctx.strokeStyle=twilight?"rgba(186,210,214,.24)":"rgba(125,211,252,.25)";ctx.lineWidth=1;ctx.stroke();
 }
