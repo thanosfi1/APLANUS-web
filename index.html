@@ -17,6 +17,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://commons.wikimedia.org" crossorigin>
+  <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
   <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
@@ -2100,19 +2102,33 @@
       Vesta: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Vesta_full_mosaic.jpg'
     };
 
-    // Warm the browser cache early so the brightest-planet card does not wait for
-    // a remote Wikimedia redirect after the astronomy calculation completes.
-    Object.values(PLANET_IMAGES).forEach(src => {
+    // Warm the cache without making every remote image compete with critical
+    // homepage resources. Major planets load first; minor bodies follow when idle.
+    const MAJOR_PLANET_IMAGE_IDS = ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'];
+    MAJOR_PLANET_IMAGE_IDS.forEach(id => {
       const img = new Image();
       img.decoding = 'async';
-      img.src = src;
+      img.fetchPriority = 'high';
+      img.src = PLANET_IMAGES[id];
     });
+
+    const warmMinorPlanetImages = () => ['Pluto', 'Ceres', 'Vesta'].forEach(id => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.fetchPriority = 'low';
+      img.src = PLANET_IMAGES[id];
+    });
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(warmMinorPlanetImages, { timeout: 2500 });
+    } else {
+      setTimeout(warmMinorPlanetImages, 1500);
+    }
 
     function planetImageMarkup(planet, className = '') {
       const src = PLANET_IMAGES[planet.id];
       if (!src) return '';
       const minorClass = planet.isMinor ? ' minor-body-photo' : '';
-      return `<img class="${className}${minorClass}" src="${src}" alt="${planet.name}" loading="lazy" decoding="async">`;
+      return `<img class="${className}${minorClass}" src="${src}" alt="${planet.name}" loading="eager" fetchpriority="${planet.isMinor ? 'low' : 'high'}" decoding="async">`;
     }
 
     function updateBrightestPlanet(time) {
