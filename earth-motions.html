@@ -45,7 +45,7 @@ worlds.forEach(w=>{let s=w.scene,d=w.d;
  if(d===0){w.e=body(s,2.15,earthMat);w.e.rotation.z=-.409;line(s,[new THREE.Vector3(-.82,-3,0),new THREE.Vector3(.82,3,0)],0xf5f0cf)}
  if(d===1){w.sun=body(s,.65,new THREE.MeshBasicMaterial({color:0xffcf48}));w.orb=ring(s,3.05,.35,0);w.e=body(s,.55,earthMat);w.e.userData.orbit=true}
  if(d===2){w.e=body(s,1.7,earthMat);w.axis=new THREE.Group();s.add(w.axis);line(w.axis,[new THREE.Vector3(0,-2.8,0),new THREE.Vector3(0,2.8,0)],0xf5f0cf);w.axis.rotation.z=-.409;let pts=[];for(let i=0;i<=120;i++){let a=i/120*TAU;pts.push(new THREE.Vector3(1.15*Math.cos(a),2.6,1.15*Math.sin(a)))}line(s,pts,0xc4b5fd)}
- if(d===3){w.e=body(s,1.7,earthMat);w.axis=new THREE.Group();s.add(w.axis);line(w.axis,[new THREE.Vector3(0,-2.8,0),new THREE.Vector3(0,2.8,0)],0xf5f0cf)}
+ if(d===3){w.e=body(s,1.7,earthMat);w.axis=new THREE.Group();s.add(w.axis);line(w.axis,[new THREE.Vector3(0,-2.8,0),new THREE.Vector3(0,2.8,0)],0xf5f0cf);let pts=[];for(let i=0;i<=120;i++){let a=i/120*TAU;pts.push(new THREE.Vector3(.34*Math.cos(a),2.62,.34*Math.sin(a)))}line(s,pts,0xf472b6,.95)}
  if(d===4){w.sun=body(s,.65,new THREE.MeshBasicMaterial({color:0xffcf48}));w.orb=ring(s,3.05,.35,0);w.e=body(s,.55,earthMat);w.e.userData.orbit=true}
  if(d===5){w.e=body(s,.85,earthMat);ring(s,3.25,0,0,0x526075);w.nodeGroup=new THREE.Group();s.add(w.nodeGroup);ring(w.nodeGroup,3.1,.42,0,0xc4b5fd);line(w.nodeGroup,[new THREE.Vector3(-3.1,0,0),new THREE.Vector3(3.1,0,0)],0xf472b6);w.m=body(w.nodeGroup,.34,moonMat)}
  if(d===6){w.e=body(s,.85,earthMat);w.apse=new THREE.Group();s.add(w.apse);ring(w.apse,3.1,.22,0,0xc4b5fd,.82);line(w.apse,[new THREE.Vector3(-2.55,0,0),new THREE.Vector3(2.55,0,0)],0xf472b6);w.m=body(w.apse,.34,moonMat)}
