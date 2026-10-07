@@ -22,7 +22,15 @@ function sphereMat(kind){
  } else {x.fillStyle='#8b8b86';x.fillRect(0,0,512,256);for(let i=0;i<45;i++){let a=i*2.399,r=5+(i%6)*2;x.fillStyle='rgba(45,45,45,.25)';x.beginPath();x.arc((Math.sin(a)*.48+.5)*512,(Math.cos(a*1.31)*.43+.5)*256,r,0,TAU);x.fill()}}
  return new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(cv),roughness:kind==='earth'?.82:1,metalness:0});
 }
-const earthMat=sphereMat('earth'),moonMat=sphereMat('moon');
+const moonMat=sphereMat('moon');
+const earthTexture=new THREE.TextureLoader().load(
+ 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg',
+ t=>{t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;},
+ undefined,
+ ()=>new THREE.TextureLoader().load('https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57730/land_ocean_ice_2048.jpg',t=>{t.colorSpace=THREE.SRGBColorSpace;earthMat.map=t;earthMat.needsUpdate=true;})
+);
+earthTexture.colorSpace=THREE.SRGBColorSpace;
+const earthMat=new THREE.MeshStandardMaterial({map:earthTexture,roughness:.88,metalness:0});
 function body(scene,r,mat){const m=new THREE.Mesh(new THREE.SphereGeometry(r,48,32),mat);scene.add(m);return m}
 function line(scene,pts,color,opacity=1){const m=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color,transparent:opacity<1,opacity}));scene.add(m);return m}
 function ring(scene,r,tilt,node,color=0x94a3b8,ecc=1){let pts=[];for(let i=0;i<=180;i++){let a=i/180*TAU,v=new THREE.Vector3(r*Math.cos(a)*ecc,0,r*Math.sin(a));v.applyAxisAngle(new THREE.Vector3(1,0,0),tilt);v.applyAxisAngle(new THREE.Vector3(0,1,0),node);pts.push(v)}return line(scene,pts,color,.9)}
