@@ -35,8 +35,23 @@ export async function startSensors(onUpdate){
   const horizontal=Math.hypot(forward.x,forward.y);
   const relativeHeading=norm(Math.atan2(forward.x,forward.y)/R);
   const pitch=Math.atan2(forward.z,horizontal)/R;
-  if(northOffset==null&&typeof e.webkitCompassHeading==="number"&&Math.abs(pitch)<20)
-   northOffset=((e.webkitCompassHeading-relativeHeading+540)%360)-180;
+  // iOS compass is the absolute north reference for the TOP of the screen.
+  // Convert that axis to camera-forward azimuth using the existing quaternion.
+  // Avoid calibrating when the phone is too flat or compass accuracy is poor.
+  const compass=e.webkitCompassHeading,accuracy=e.webkitCompassAccuracy;
+  const screenTop=qRotate(q,{x:0,y:1,z:0});
+  const topAz=norm(Math.atan2(screenTop.x,screenTop.y)/R);
+  const validCompass=Number.isFinite(compass)&&compass>=0&&compass<360&&
+   (!Number.isFinite(accuracy)||(accuracy>=0&&accuracy<=25));
+  if(validCompass&&horizontal>.5){
+   const target=((compass-topAz+540)%360)-180;
+   if(northOffset==null)northOffset=target;
+   else{
+    const diff=((target-northOffset+540)%360)-180;
+    // Gyroscope keeps fast motion smooth; compass corrects gradual yaw drift.
+    northOffset=((northOffset+Math.max(-1,Math.min(1,diff*.025))+540)%360)-180;
+   }
+  }
   if(northOffset!=null)q=qNorm(qMul(qAxis(0,0,1,northOffset),q));
   forward=qRotate(q,{x:0,y:0,z:-1});
   const heading=norm(Math.atan2(forward.x,forward.y)/R);
