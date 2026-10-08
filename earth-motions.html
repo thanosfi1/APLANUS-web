@@ -50,11 +50,11 @@ worlds.forEach(w=>{let s=w.scene,d=w.d;
  if(d===5){w.e=body(s,.85,earthMat);ring(s,3.25,0,0,0x526075);w.nodeGroup=new THREE.Group();s.add(w.nodeGroup);ring(w.nodeGroup,3.1,.42,0,0xc4b5fd);line(w.nodeGroup,[new THREE.Vector3(-3.1,0,0),new THREE.Vector3(3.1,0,0)],0xf472b6);w.m=body(w.nodeGroup,.34,moonMat)}
  if(d===6){w.e=body(s,.85,earthMat);w.apse=new THREE.Group();s.add(w.apse);ring(w.apse,3.1,.22,0,0xc4b5fd,.82);line(w.apse,[new THREE.Vector3(-2.55,0,0),new THREE.Vector3(2.55,0,0)],0xf472b6);w.m=body(w.apse,.34,moonMat)}
 });
-function animate(ms){let t=ms*.001;worlds.forEach(w=>{let d=w.d;if(w.e)w.e.rotation.y=t*.16;
- if(d===1&&w.e){let a=t*.08;w.axis.position.set(3.05*Math.cos(a),0,3.05*Math.sin(a));w.axis.position.applyAxisAngle(new THREE.Vector3(1,0,0),.35)}
- if(d===2)w.axis.rotation.y=t*.08;
- if(d===3)w.axis.rotation.z=-.409+.06*Math.sin(t*.7);
- if(d===5){w.nodeGroup.rotation.y=-t*.08;let a=t*.18;w.m.position.set(3.1*Math.cos(a),0,3.1*Math.sin(a));w.m.position.applyAxisAngle(new THREE.Vector3(1,0,0),.42)}
- if(d===6){w.apse.rotation.y=t*.08;let a=t*.18;w.m.position.set(2.55*Math.cos(a),0,3.1*Math.sin(a));w.m.position.applyAxisAngle(new THREE.Vector3(1,0,0),.22)}
+function animate(ms){let t=ms*.001;worlds.forEach(w=>{let d=w.d;if(w.e)w.e.rotation.y=t*.24;
+ if(d===1&&w.e){let a=t*.12;w.axis.position.set(3.05*Math.cos(a),0,3.05*Math.sin(a));w.axis.position.applyAxisAngle(new THREE.Vector3(1,0,0),.35)}
+ if(d===2)w.axis.rotation.y=t*.38;
+ if(d===3)w.axis.rotation.z=-.409+.10*Math.sin(t*2.1);
+ if(d===5){w.nodeGroup.rotation.y=-t*.12;let a=t*.18;w.m.position.set(3.1*Math.cos(a),0,3.1*Math.sin(a));w.m.position.applyAxisAngle(new THREE.Vector3(1,0,0),.42)}
+ if(d===6){w.apse.rotation.y=t*.12;let a=t*.18;w.m.position.set(2.55*Math.cos(a),0,3.1*Math.sin(a));w.m.position.applyAxisAngle(new THREE.Vector3(1,0,0),.22)}
  w.ren.render(w.scene,w.cam)});requestAnimationFrame(animate)}requestAnimationFrame(animate);
 </script></body></html>
