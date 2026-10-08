@@ -35,8 +35,18 @@ export async function startSensors(onUpdate){
   const horizontal=Math.hypot(forward.x,forward.y);
   const relativeHeading=norm(Math.atan2(forward.x,forward.y)/R);
   const pitch=Math.atan2(forward.z,horizontal)/R;
-  if(northOffset==null&&typeof e.webkitCompassHeading==="number"&&Math.abs(pitch)<20)
-   northOffset=((e.webkitCompassHeading-relativeHeading+540)%360)-180;
+  // Wait for a usable compass reading; smooth subsequent heading corrections.
+  const compass=e.webkitCompassHeading,accuracy=e.webkitCompassAccuracy;
+  const validCompass=Number.isFinite(compass)&&compass>=0&&compass<360&&
+   (!Number.isFinite(accuracy)||(accuracy>=0&&accuracy<=35));
+  if(validCompass&&horizontal>.35){
+   const target=((compass-relativeHeading+540)%360)-180;
+   if(northOffset==null)northOffset=target;
+   else{
+    const delta=((target-northOffset+540)%360)-180;
+    northOffset=((northOffset+Math.max(-3,Math.min(3,delta*.08))+540)%360)-180;
+   }
+  }
   if(northOffset!=null)q=qNorm(qMul(qAxis(0,0,1,northOffset),q));
   forward=qRotate(q,{x:0,y:0,z:-1});
   const heading=norm(Math.atan2(forward.x,forward.y)/R);
