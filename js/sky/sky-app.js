@@ -167,7 +167,33 @@ document.getElementById("calConfirm").addEventListener("click",()=>{if(!calTarge
  localStorage.removeItem("aplanusCalAz");localStorage.removeItem("aplanusCalAlt");
  document.getElementById("calGuide").hidden=true;statusEl.textContent="3D βαθμονόμηση ολοκληρώθηκε ✓";calTarget=null;render()});
 document.getElementById("arBtn").addEventListener("click",async()=>{const btn=document.getElementById("arBtn"),video=document.getElementById("arVideo"),vp=document.querySelector(".viewport");try{if(arActive){stopAR(video);arActive=false;vp.classList.remove("ar-active");btn.textContent="📷 AR";render();return}await startAR(video);arActive=true;fov=65;vp.classList.add("ar-active");btn.textContent="■ AR";if(!sensorState.active)document.getElementById("sensorBtn").click();render()}catch(e){statusEl.textContent=e.message}});
-document.getElementById("sensorBtn").addEventListener("click",async()=>{const btn=document.getElementById("sensorBtn"),dbg=document.getElementById("sensorDebug");dbg.hidden=false;dbg.textContent="Sensor diagnostic…\nDeviceOrientationEvent: "+("DeviceOrientationEvent" in window)+"\nrequestPermission: "+(typeof window.DeviceOrientationEvent?.requestPermission)+"\nsecureContext: "+window.isSecureContext+"\norientation: "+(screen.orientation?.type||"n/a")+"\nUA: "+navigator.userAgent;let rawSeen=0;const probe=e=>{rawSeen++;dbg.textContent="EVENT OK ("+e.type+")\nalpha: "+e.alpha+"\nbeta: "+e.beta+"\ngamma: "+e.gamma+"\nabsolute: "+e.absolute+"\nwebkitCompassHeading: "+e.webkitCompassHeading};window.addEventListener("deviceorientation",probe,{once:true});window.addEventListener("deviceorientationabsolute",probe,{once:true});if(sensorState.active){stopSensors();btn.textContent="🧭";return}try{let got=false;await startSensors(s=>{got=true;rawAz=s.heading;rawAlt=s.pitch;viewAz=rawAz;viewAlt=rawAlt;updateCalGuide();render()});btn.textContent="🧭 …";setTimeout(()=>{if(got){btn.textContent="🧭 ON"}else{btn.textContent="🧭";statusEl.textContent="Δεν λαμβάνονται δεδομένα αισθητήρων";if(!dbg.textContent.startsWith("EVENT OK"))dbg.textContent+="\n\nRESULT: no orientation event received"}},1200)}catch(e){statusEl.textContent=e.message}});
+// Preview-only sensor diagnostics: observational, never changes sky orientation.
+const diag=document.getElementById("sensorDebug");
+let latestOrientation=null;
+const fmt=n=>Number.isFinite(n)?n.toFixed(1)+"°":"—";
+const direction=a=>!Number.isFinite(a)?"—":["Β","ΒΑ","Α","ΝΑ","Ν","ΝΔ","Δ","ΒΔ"][Math.round(((a%360)+360)%360/45)%8];
+const deltaHeading=(a,b)=>((a-b+540)%360)-180;
+function showCompassDiagnostics(){
+ if(diag.hidden||!sensorState.active)return;
+ const e=latestOrientation||{},compass=e.webkitCompassHeading;
+ const valid=Number.isFinite(compass)&&compass>=0&&compass<360;
+ const app=sensorState.heading,screenAngle=window.screen?.orientation?.angle??window.orientation??0;
+ const difference=valid&&Number.isFinite(app)?fmt(deltaHeading(app,compass)):"—";
+ diag.textContent="APLANUS — ΕΛΕΓΧΟΣ ΠΥΞΙΔΑΣ (μόνο ανάγνωση)"+
+ "\\nAPLANUS AZ: "+fmt(app)+" "+direction(app)+
+ "\\niPhone compass: "+(valid?fmt(compass)+" "+direction(compass):"Μη διαθέσιμο")+
+ "\\nΔιαφορά AZ - compass: "+difference+
+ "\\nΣημείωση: η πυξίδα αφορά τον άξονα συσκευής, όχι πάντα την κάμερα."+
+ "\\nalpha: "+fmt(e.alpha)+" | beta: "+fmt(e.beta)+" | gamma: "+fmt(e.gamma)+
+ "\\nabsolute: "+String(e.absolute??"—")+
+ "\\ncompass accuracy: "+fmt(e.webkitCompassAccuracy)+
+ "\\nscreen rotation: "+fmt(screenAngle)+
+ "\\npitch: "+fmt(sensorState.pitch)+" | roll: "+fmt(sensorState.roll)+
+ "\\nCamera forward: "+(sensorState.forward?["x","y","z"].map(k=>k+"="+sensorState.forward[k].toFixed(3)).join(" "):"—")+
+ "\\nΑν η διαφορά αλλάζει, στείλε screenshot σε Β / Α / Ν / Δ.";
+}
+window.addEventListener("deviceorientation",e=>{latestOrientation={alpha:e.alpha,beta:e.beta,gamma:e.gamma,absolute:e.absolute,webkitCompassHeading:e.webkitCompassHeading,webkitCompassAccuracy:e.webkitCompassAccuracy};showCompassDiagnostics()},{passive:true});
+document.getElementById("sensorBtn").addEventListener("click",async()=>{const btn=document.getElementById("sensorBtn"),dbg=document.getElementById("sensorDebug");dbg.hidden=false;dbg.textContent="Sensor diagnostic…\nDeviceOrientationEvent: "+("DeviceOrientationEvent" in window)+"\nrequestPermission: "+(typeof window.DeviceOrientationEvent?.requestPermission)+"\nsecureContext: "+window.isSecureContext+"\norientation: "+(screen.orientation?.type||"n/a")+"\nUA: "+navigator.userAgent;let rawSeen=0;const probe=e=>{rawSeen++;dbg.textContent="EVENT OK ("+e.type+")\nalpha: "+e.alpha+"\nbeta: "+e.beta+"\ngamma: "+e.gamma+"\nabsolute: "+e.absolute+"\nwebkitCompassHeading: "+e.webkitCompassHeading};window.addEventListener("deviceorientation",probe,{once:true});window.addEventListener("deviceorientationabsolute",probe,{once:true});if(sensorState.active){stopSensors();btn.textContent="🧭";return}try{let got=false;await startSensors(s=>{got=true;rawAz=s.heading;rawAlt=s.pitch;viewAz=rawAz;viewAlt=rawAlt;updateCalGuide();render();showCompassDiagnostics()});btn.textContent="🧭 …";setTimeout(()=>{if(got){btn.textContent="🧭 ON"}else{btn.textContent="🧭";statusEl.textContent="Δεν λαμβάνονται δεδομένα αισθητήρων";if(!dbg.textContent.startsWith("EVENT OK"))dbg.textContent+="\n\nRESULT: no orientation event received"}},1200)}catch(e){statusEl.textContent=e.message}});
 
 function focusObject(o){viewAz=o.azimuth;viewAlt=o.altitude;fov=35;document.getElementById("searchPanel").hidden=true;document.getElementById("tonightPanel").hidden=true;showObject(o);render()}
 document.getElementById("searchBtn").onclick=()=>{const p=document.getElementById("searchPanel");p.hidden=!p.hidden;document.getElementById("searchInput").focus()};
