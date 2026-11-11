@@ -20,7 +20,7 @@ Branch: `fix/live-sky-orientation`
 - Sensor diagnostics are hidden by default; open `sky.html?debug=1` to see them.
 
 ## Preview / approval state
-Vercel Preview: see PR for branch preview URL
+Vercel Preview: READY — https://aplanus-sky-dev-git-fix-live-sky-orientation-thanosfotis3-1320.vercel.app/sky.html (PR #53)
 Owner device test: PENDING (iPhone + Android if available)
 Owner approval: NOT YET GIVEN
 Merge status: DO NOT MERGE
