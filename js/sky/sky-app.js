@@ -1,11 +1,18 @@
 import {getObserver} from "./location.js";
 import {calculateSky} from "./astronomy.js";
-import {startSensors,stopSensors,sensorState,applyMatrix} from "./sensors.js";
+import {startSensors,stopSensors,sensorState,applyMatrix,setDeclination} from "./sensors.js";
+import {magneticDeclination} from "./wmm.js";
 import {startAR,stopAR} from "../ar/ar.js";
 import {CONSTELLATIONS} from "./catalog.js";
 const canvas=document.getElementById("skyCanvas"),ctx=canvas.getContext("2d"),statusEl=document.getElementById("status"),locationEl=document.getElementById("locationLabel"),timeEl=document.getElementById("timeLabel");
 let observer={lat:40.6401,lon:22.9444,source:"fallback"},date=new Date(),viewAz=180,viewAlt=35,fov=65,drag=null,lastObjects=[],pinch=null,arActive=false,showConst=true,showDeep=true,rawAz=180,rawAlt=35,calTarget=null,calMatrix=null;
-try{const saved=JSON.parse(localStorage.getItem("aplanusCalMatrix")||"null");if(Array.isArray(saved)&&saved.length===9)calMatrix=saved}catch{}
+// v2: calibrations saved before the true-north sensor fix compensated a different error; discard them.
+const CAL_KEY="aplanusCalMatrixV2";
+try{localStorage.removeItem("aplanusCalMatrix");const saved=JSON.parse(localStorage.getItem(CAL_KEY)||"null");if(Array.isArray(saved)&&saved.length===9)calMatrix=saved}catch{}
+const DEBUG=new URLSearchParams(location.search).has("debug");if(DEBUG)document.body.classList.add("sky-debug");
+function updateDeclination(){setDeclination(magneticDeclination(observer.lat,observer.lon,0,new Date()))}
+updateDeclination();
+let renderQueued=false;function scheduleRender(){if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;render()})}
 
 const wrap=a=>((a+540)%360)-180;
 function mulM(a,b){const r=Array(9).fill(0);for(let i=0;i<3;i++)for(let j=0;j<3;j++)for(let k=0;k<3;k++)r[i*3+j]+=a[i*3+k]*b[k*3+j];return r}
@@ -123,7 +130,7 @@ function render(){
   drawHorizonGround(w,h);
   ctx.fillStyle="rgba(203,213,225,.8)";ctx.font="600 11px system-ui";ctx.textAlign="center";
   for(const [az,label] of [[0,"Β"],[90,"Α"],[180,"Ν"],[270,"Δ"]]){const p=project({azimuth:az,altitude:1.5},w,h);if(p&&p.x>-20&&p.x<w+20&&p.y>-20&&p.y<h+20)ctx.fillText(label,p.x,p.y);}
-  statusEl.textContent=`AZ ${Math.round(viewAz)}° • ALT ${Math.round(viewAlt)}° • FOV ${Math.round(fov)}°`;
+  statusEl.textContent=`AZ ${Math.round(viewAz)}° • ALT ${Math.round(viewAlt)}° • FOV ${Math.round(fov)}°`+northHint();
  }catch(e){statusEl.textContent=e.message}
  timeEl.textContent=date.toLocaleTimeString("el-GR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
 }
@@ -138,7 +145,7 @@ canvas.addEventListener("click",e=>{const r=canvas.getBoundingClientRect(),x=e.c
 function showObject(o){const labels={star:"ΑΣΤΕΡΑΣ",planet:"ΠΛΑΝΗΤΗΣ",dwarf:"ΠΛΑΝΗΤΗΣ ΝΑΝΟΣ",asteroid:"ΑΣΤΕΡΟΕΙΔΗΣ",moon:"ΔΟΡΥΦΟΡΟΣ",sun:"ΑΣΤΕΡΑΣ",deep:"DEEP SKY"};document.getElementById("objectPanel").hidden=false;document.getElementById("objectName").textContent=o.name;document.getElementById("objectType").textContent=labels[o.type]||"ΟΥΡΑΝΙΟ ΣΩΜΑ";document.getElementById("objectAlt").textContent=o.altitude.toFixed(1)+"°";document.getElementById("objectAz").textContent=o.azimuth.toFixed(1)+"°"}
 document.getElementById("closePanel").addEventListener("click",()=>document.getElementById("objectPanel").hidden=true);
 canvas.addEventListener("wheel",e=>{e.preventDefault();fov=Math.max(25,Math.min(65,fov+Math.sign(e.deltaY)*10));render()},{passive:false});
-async function locate(){statusEl.textContent="Εντοπισμός θέσης…";observer=await getObserver();locationEl.textContent=observer.source==="gps"?`GPS • ${observer.lat.toFixed(3)}, ${observer.lon.toFixed(3)}`:"Θέση: προεπιλογή";render()}
+async function locate(){statusEl.textContent="Εντοπισμός θέσης…";observer=await getObserver();updateDeclination();locationEl.textContent=observer.source==="gps"?`GPS • ${observer.lat.toFixed(3)}, ${observer.lon.toFixed(3)}`:"Θέση: προεπιλογή";render()}
 function updateCalGuide(){
  if(!calTarget||!sensorState.matrix)return;
  const world=worldVector(calTarget),matrix=calMatrix?mulM(sensorState.matrix,calMatrix):sensorState.matrix,v=applyMatrix(matrix,world);
@@ -163,11 +170,25 @@ document.getElementById("calConfirm").addEventListener("click",()=>{if(!calTarge
  // Find the world direction currently at the screen centre, then rotate the
  // astronomical world so the selected target coincides with that sight line.
  const cameraToWorld=transposeM(sensorState.matrix),sight=applyMatrix(cameraToWorld,cameraForward);
- calMatrix=rotBetween(target,sight);localStorage.setItem("aplanusCalMatrix",JSON.stringify(calMatrix));
+ calMatrix=rotBetween(target,sight);try{localStorage.setItem(CAL_KEY,JSON.stringify(calMatrix))}catch{}
  localStorage.removeItem("aplanusCalAz");localStorage.removeItem("aplanusCalAlt");
  document.getElementById("calGuide").hidden=true;statusEl.textContent="3D βαθμονόμηση ολοκληρώθηκε ✓";calTarget=null;render()});
 document.getElementById("arBtn").addEventListener("click",async()=>{const btn=document.getElementById("arBtn"),video=document.getElementById("arVideo"),vp=document.querySelector(".viewport");try{if(arActive){stopAR(video);arActive=false;vp.classList.remove("ar-active");btn.textContent="📷 AR";render();return}await startAR(video);arActive=true;fov=65;vp.classList.add("ar-active");btn.textContent="■ AR";if(!sensorState.active)document.getElementById("sensorBtn").click();render()}catch(e){statusEl.textContent=e.message}});
-document.getElementById("sensorBtn").addEventListener("click",async()=>{const btn=document.getElementById("sensorBtn"),dbg=document.getElementById("sensorDebug");dbg.hidden=false;dbg.textContent="Sensor diagnostic…\nDeviceOrientationEvent: "+("DeviceOrientationEvent" in window)+"\nrequestPermission: "+(typeof window.DeviceOrientationEvent?.requestPermission)+"\nsecureContext: "+window.isSecureContext+"\norientation: "+(screen.orientation?.type||"n/a")+"\nUA: "+navigator.userAgent;let rawSeen=0;const probe=e=>{rawSeen++;dbg.textContent="EVENT OK ("+e.type+")\nalpha: "+e.alpha+"\nbeta: "+e.beta+"\ngamma: "+e.gamma+"\nabsolute: "+e.absolute+"\nwebkitCompassHeading: "+e.webkitCompassHeading};window.addEventListener("deviceorientation",probe,{once:true});window.addEventListener("deviceorientationabsolute",probe,{once:true});if(sensorState.active){stopSensors();btn.textContent="🧭";return}try{let got=false;await startSensors(s=>{got=true;rawAz=s.heading;rawAlt=s.pitch;viewAz=rawAz;viewAlt=rawAlt;updateCalGuide();render()});btn.textContent="🧭 …";setTimeout(()=>{if(got){btn.textContent="🧭 ON"}else{btn.textContent="🧭";statusEl.textContent="Δεν λαμβάνονται δεδομένα αισθητήρων";if(!dbg.textContent.startsWith("EVENT OK"))dbg.textContent+="\n\nRESULT: no orientation event received"}},1200)}catch(e){statusEl.textContent=e.message}});
+function northHint(){
+ if(!sensorState.active)return"";
+ if(sensorState.mode==="relative")return" • Χωρίς πυξίδα: πάτα CAL";
+ if(!sensorState.northReady)return" • Κράτα το κινητό όρθιο προς τον ορίζοντα";
+ if(Number.isFinite(sensorState.compassAccuracy)&&sensorState.compassAccuracy>25)return" • Πυξίδα: κάνε κίνηση σε σχήμα 8";
+ return"";
+}
+function showSensorDebug(){
+ if(!DEBUG)return;const dbg=document.getElementById("sensorDebug"),f=n=>Number.isFinite(n)?n.toFixed(1)+"°":"—";dbg.hidden=false;
+ dbg.textContent="APLANUS sensors (debug)\nmode: "+(sensorState.mode||"—")+" | north ready: "+sensorState.northReady+
+  "\nheading: "+f(sensorState.heading)+" | pitch: "+f(sensorState.pitch)+
+  "\ndeclination (WMM2025): "+f(sensorState.declination)+" | yaw offset: "+f(sensorState.yawOffset)+
+  "\ncompass accuracy: "+f(sensorState.compassAccuracy)+" | screen: "+(screen.orientation?.angle??window.orientation??0)+"°";
+}
+document.getElementById("sensorBtn").addEventListener("click",async()=>{const btn=document.getElementById("sensorBtn");if(sensorState.active){stopSensors();btn.textContent="🧭";document.getElementById("sensorDebug").hidden=true;render();return}try{let got=false;await startSensors(s=>{got=true;rawAz=s.heading;rawAlt=s.pitch;viewAz=rawAz;viewAlt=rawAlt;updateCalGuide();scheduleRender();showSensorDebug()});btn.textContent="🧭 …";setTimeout(()=>{if(got){btn.textContent="🧭 ON"}else{btn.textContent="🧭";statusEl.textContent="Δεν λαμβάνονται δεδομένα αισθητήρων"}},1200)}catch(e){statusEl.textContent=e.message}});
 
 function focusObject(o){viewAz=o.azimuth;viewAlt=o.altitude;fov=35;document.getElementById("searchPanel").hidden=true;document.getElementById("tonightPanel").hidden=true;showObject(o);render()}
 document.getElementById("searchBtn").onclick=()=>{const p=document.getElementById("searchPanel");p.hidden=!p.hidden;document.getElementById("searchInput").focus()};
