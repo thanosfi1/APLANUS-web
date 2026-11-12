@@ -177,7 +177,7 @@ document.getElementById("arBtn").addEventListener("click",async()=>{const btn=do
 function northHint(){
  if(!sensorState.active)return"";
  if(sensorState.mode==="relative")return" • Χωρίς πυξίδα: πάτα CAL";
- if(!sensorState.northReady)return" • Κράτα το κινητό όρθιο προς τον ορίζοντα";
+ if(!sensorState.northReady)return" • Πυξίδα: κράτα το κινητό ίσια, σαν να διαβάζεις";
  if(Number.isFinite(sensorState.compassAccuracy)&&sensorState.compassAccuracy>25)return" • Πυξίδα: κάνε κίνηση σε σχήμα 8";
  return"";
 }
@@ -190,6 +190,14 @@ function showSensorDebug(){
 }
 document.getElementById("sensorBtn").addEventListener("click",async()=>{const btn=document.getElementById("sensorBtn");if(sensorState.active){stopSensors();btn.textContent="🧭";document.getElementById("sensorDebug").hidden=true;render();return}try{let got=false;await startSensors(s=>{got=true;rawAz=s.heading;rawAlt=s.pitch;viewAz=rawAz;viewAlt=rawAlt;updateCalGuide();scheduleRender();showSensorDebug()});btn.textContent="🧭 …";setTimeout(()=>{if(got){btn.textContent="🧭 ON"}else{btn.textContent="🧭";statusEl.textContent="Δεν λαμβάνονται δεδομένα αισθητήρων"}},1200)}catch(e){statusEl.textContent=e.message}});
 
+// Start live mode like a planetarium app: iOS needs a tap for sensor permission; Android starts automatically.
+function startLive(){document.getElementById("startOverlay").hidden=true;if(!sensorState.active)document.getElementById("sensorBtn").click();if(observer.source!=="gps")locate()}
+document.getElementById("startLive").addEventListener("click",startLive);
+document.getElementById("startSkip").addEventListener("click",()=>{document.getElementById("startOverlay").hidden=true});
+if("DeviceOrientationEvent" in window&&matchMedia("(pointer:coarse)").matches){
+ if(typeof DeviceOrientationEvent.requestPermission==="function")document.getElementById("startOverlay").hidden=false;
+ else startLive();
+}
 function focusObject(o){viewAz=o.azimuth;viewAlt=o.altitude;fov=35;document.getElementById("searchPanel").hidden=true;document.getElementById("tonightPanel").hidden=true;showObject(o);render()}
 document.getElementById("searchBtn").onclick=()=>{const p=document.getElementById("searchPanel");p.hidden=!p.hidden;document.getElementById("searchInput").focus()};
 document.getElementById("searchInput").oninput=e=>{const q=e.target.value.toLocaleLowerCase("el");const box=document.getElementById("searchResults");box.innerHTML="";if(q.length<1)return;lastObjects.filter(o=>(o.name+" "+o.id).toLocaleLowerCase("el").includes(q)).slice(0,12).forEach(o=>{const b=document.createElement("button");b.textContent=o.name+" · "+o.id;b.onclick=()=>focusObject(o);box.appendChild(b)})};

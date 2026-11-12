@@ -63,18 +63,25 @@ export function createFusion(){
   if(f.mode==="absolute"){yaw=-f.declination;f.yawOffset=yaw}
   else if(f.mode==="ios-compass"){
    f.compassAccuracy=Number.isFinite(acc)?acc:null;
-   const fwd=qRotate(q,{x:0,y:0,z:-1}),pitch=Math.asin(clamp(fwd.z))/R,rel=headingOf(fwd);
+   const fwd=qRotate(q,{x:0,y:0,z:-1}),rel=headingOf(fwd);
+   // Device top edge (portrait +y), without the screen-rotation correction.
+   const top=qRotate(deviceQuat(alpha,e.beta,e.gamma,0),{x:0,y:1,z:0});
    const turning=f.lastRelHeading==null?0:Math.abs(wrap(rel-f.lastRelHeading));f.lastRelHeading=rel;
    const accOk=!(Number.isFinite(acc)&&(acc<0||acc>40));
-   // webkitCompassHeading follows the back-camera direction while the phone is held up
-   // (camera near the horizon). Use only that zone, and not during fast turns where the
-   // compass lags behind the gyroscope.
-   if(hasCompass&&accOk&&Math.abs(pitch)<50&&turning<4){
-    const target=wrap(rel-(compass+f.declination));
+   // Which device axis webkitCompassHeading refers to is not documented (back camera vs.
+   // top edge; they differ by 180° when the camera points above the horizon). Only use the
+   // compass when both axes point the same horizontal way — phone held like reading,
+   // camera tilted down — so the result is correct under either interpretation.
+   // Skip fast turns, where the compass lags behind the gyroscope.
+   const axisGap=wrap(headingOf(top)-rel);
+   const gap=Math.abs(axisGap),agree=Math.hypot(fwd.x,fwd.y)>.35&&Math.hypot(top.x,top.y)>.35&&gap<(f.yawOffset==null?4:6);
+   if(hasCompass&&accOk&&agree&&turning<4){
+    // Reference = midpoint of the two axes: worst-case error is half the (small) gap.
+    const ref=rel+axisGap/2,target=wrap(ref-(compass+f.declination));
     if(f.yawOffset==null){f.yawOffset=target}
     else{
      const early=now-f.startedAt<2500||f.compassSamples<20;
-     let k=early?.15:.025;if(Number.isFinite(acc)&&acc>0)k*=Math.min(1,12/acc);
+     let k=(early?.15:.025)*(1-gap/6);if(Number.isFinite(acc)&&acc>0)k*=Math.min(1,12/acc);
      f.yawOffset=wrap(f.yawOffset+wrap(target-f.yawOffset)*k);
     }
     f.compassSamples++;
