@@ -38,7 +38,7 @@ export function applyMatrix(m,v){return{x:m[0]*v.x+m[1]*v.y+m[2]*v.z,y:m[3]*v.x+
 
 /** Pure orientation fusion (no DOM access) so it can be tested outside the browser. */
 export function createFusion(){
- const f={mode:null,declination:0,yawOffset:null,compassSamples:0,lastRelHeading:null,smooth:null,compassAccuracy:null,startedAt:null};
+ const f={hyp:{est:{},msr:{},n:{},diverse:0,chosen:null},raw:null,mode:null,declination:0,yawOffset:null,compassSamples:0,lastRelHeading:null,smooth:null,compassAccuracy:null,startedAt:null};
  // Device -> world quaternion from W3C Euler angles, corrected for screen rotation.
  // Validated Sensor Lab transform. Keep this sequence unchanged.
  function deviceQuat(alpha,beta,gamma,screenAngle){
@@ -63,28 +63,47 @@ export function createFusion(){
   if(f.mode==="absolute"){yaw=-f.declination;f.yawOffset=yaw}
   else if(f.mode==="ios-compass"){
    f.compassAccuracy=Number.isFinite(acc)?acc:null;
-   const fwd=qRotate(q,{x:0,y:0,z:-1}),rel=headingOf(fwd);
+   if(typeof e.alpha!=="number")return null;
+   const fwd=qRotate(q,{x:0,y:0,z:-1}),camH=headingOf(fwd);
    // Device top edge (portrait +y), without the screen-rotation correction.
-   const top=qRotate(deviceQuat(alpha,e.beta,e.gamma,0),{x:0,y:1,z:0});
-   const turning=f.lastRelHeading==null?0:Math.abs(wrap(rel-f.lastRelHeading));f.lastRelHeading=rel;
-   const accOk=!(Number.isFinite(acc)&&(acc<0||acc>40));
-   // Which device axis webkitCompassHeading refers to is not documented (back camera vs.
-   // top edge; they differ by 180° when the camera points above the horizon). Only use the
-   // compass when both axes point the same horizontal way — phone held like reading,
-   // camera tilted down — so the result is correct under either interpretation.
-   // Skip fast turns, where the compass lags behind the gyroscope.
-   const axisGap=wrap(headingOf(top)-rel);
-   const gap=Math.abs(axisGap),agree=Math.hypot(fwd.x,fwd.y)>.35&&Math.hypot(top.x,top.y)>.35&&gap<(f.yawOffset==null?4:6);
-   if(hasCompass&&accOk&&agree&&turning<4){
-    // Reference = midpoint of the two axes: worst-case error is half the (small) gap.
-    const ref=rel+axisGap/2,target=wrap(ref-(compass+f.declination));
-    if(f.yawOffset==null){f.yawOffset=target}
-    else{
-     const early=now-f.startedAt<2500||f.compassSamples<20;
-     let k=(early?.15:.025)*(1-gap/6);if(Number.isFinite(acc)&&acc>0)k*=Math.min(1,12/acc);
-     f.yawOffset=wrap(f.yawOffset+wrap(target-f.yawOffset)*k);
+   const top=qRotate(deviceQuat(alpha,e.beta,e.gamma,0),{x:0,y:1,z:0}),topH=headingOf(top);
+   const turning=f.lastRelHeading==null?0:Math.abs(wrap(camH-f.lastRelHeading));f.lastRelHeading=camH;
+   const accOk=!(Number.isFinite(acc)&&(acc<0||acc>45));
+   f.raw={alpha,beta:e.beta,gamma:e.gamma,compass:hasCompass?compass:null,camH,topH};
+   // Which direction webkitCompassHeading describes is not documented. Candidates, each
+   // giving the yaw rotation that maps this session's gyro frame onto true north:
+   //  cam   = back-camera direction;  top = device top edge;  euler = 360 - alpha(absolute).
+   // Each hypothesis is tracked separately; the true one stays self-consistent while the
+   // phone moves, the others do not. Until one is proven, only poses where all candidates
+   // agree (phone held like reading) are used, so the result is right whichever is true.
+   if(hasCompass&&accOk&&turning<4){
+    const C=compass+f.declination,tg={};
+    if(Math.hypot(fwd.x,fwd.y)>.35)tg.cam=wrap(camH-C);
+    if(Math.hypot(top.x,top.y)>.35)tg.top=wrap(topH-C);
+    tg.euler=wrap(-C-alpha);
+    const H=f.hyp;
+    for(const h in tg){
+     if(H.est[h]==null){H.est[h]=tg[h];H.msr[h]=0;H.n[h]=0}
+     const r=wrap(tg[h]-H.est[h]);H.est[h]=wrap(H.est[h]+r*.05);H.msr[h]=H.msr[h]*.985+.015*r*r;H.n[h]++;
     }
-    f.compassSamples++;
+    const vals=Object.values(tg),spread=Math.max(...vals.map(a=>Math.max(...vals.map(b=>Math.abs(wrap(a-b))))));
+    if(spread>25)H.diverse++;
+    // Decide once the hypotheses have been tested in poses where they disagree.
+    if(!H.chosen&&H.diverse>=45){
+     const ranked=Object.keys(H.msr).filter(h=>H.n[h]>60).sort((a,b)=>H.msr[a]-H.msr[b]);
+     if(ranked.length>1&&Math.sqrt(H.msr[ranked[0]])<12&&H.msr[ranked[1]]>3*H.msr[ranked[0]]+3)H.chosen=ranked[0];
+    }
+    let target=null,k=0;
+    if(H.chosen&&tg[H.chosen]!=null){target=tg[H.chosen];k=.03}
+    else if(!H.chosen&&tg.cam!=null&&tg.top!=null&&spread<8){
+     // Circular mean of agreeing candidates.
+     let sx=0,sy=0;for(const v of vals){sx+=Math.cos(v*R);sy+=Math.sin(v*R)}target=Math.atan2(sy,sx)/R;k=.04;
+    }
+    if(target!=null){
+     if(f.yawOffset==null)f.yawOffset=target;
+     else{if(now-f.startedAt<2500||f.compassSamples<20)k=Math.max(k,.15);if(Number.isFinite(acc)&&acc>0)k*=Math.min(1,12/acc);f.yawOffset=wrap(f.yawOffset+wrap(target-f.yawOffset)*k)}
+     f.compassSamples++;
+    }
    }
    yaw=f.yawOffset??0;
   }
@@ -96,7 +115,8 @@ export function createFusion(){
   return{
    matrix:qToMatrix(qConj(f.smooth)),forward:fwd,heading:headingOf(fwd),pitch:Math.asin(clamp(fwd.z))/R,roll:e.gamma,
    mode:f.mode,northReady:f.mode==="absolute"||(f.mode==="ios-compass"&&f.yawOffset!=null),
-   declination:f.declination,compassAccuracy:f.compassAccuracy,yawOffset:f.yawOffset
+   declination:f.declination,compassAccuracy:f.compassAccuracy,yawOffset:f.yawOffset,
+   raw:f.raw,compassModel:f.hyp.chosen,hypErr:Object.fromEntries(Object.entries(f.hyp.msr).map(([h,v])=>[h,Math.sqrt(v)]))
   };
  };
  return f;

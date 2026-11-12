@@ -35,8 +35,15 @@ Merge status: DO NOT MERGE
 - Fix: compass used only when both interpretations agree (camera and top edge within 6°, i.e. phone tilted like reading); simulated under BOTH interpretations, heading error ≤ ~2.5° with compass noise, no drift.
 - Start overlay "▶ Ξεκίνα" on mobile (sensor permission needs a tap) also starts GPS.
 
+## Owner device test #2 (2026-11-12): N/E/S/W still appear in random places
+- Likely: north never locked (agreement gate too strict) while the sky was still drawn with arbitrary yaw.
+- Fix: the app now learns on the device which direction webkitCompassHeading refers to (cam / top / euler = 360-alpha), tracking each hypothesis' consistency while the phone moves; until then only poses where all agree are used. Simulated all three: correct model learned in every run, error ≤5° before / ≤3° after learning.
+- Until north is locked a centre guide (yellow) tells the user what to do; the sky is not presented as correct.
+- Saved CAL keys V1/V2 discarded (V3), since test-time calibrations were made against wrong north.
+- `?debug=1` now shows raw α/β/γ, compass, camH/topH, learned model and per-model rms — ask the owner for a screenshot if still wrong.
+
 ## Unresolved / to verify on device
-- Owner re-test needed: hold phone like reading ~2 s until hint disappears, then aim at Moon/bright star.
+- Owner re-test #3 needed.
 
 ## Next action
 Owner tests the preview on the phone; on approval merge, then start phase 2.

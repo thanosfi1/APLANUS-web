@@ -7,8 +7,8 @@ import {CONSTELLATIONS} from "./catalog.js";
 const canvas=document.getElementById("skyCanvas"),ctx=canvas.getContext("2d"),statusEl=document.getElementById("status"),locationEl=document.getElementById("locationLabel"),timeEl=document.getElementById("timeLabel");
 let observer={lat:40.6401,lon:22.9444,source:"fallback"},date=new Date(),viewAz=180,viewAlt=35,fov=65,drag=null,lastObjects=[],pinch=null,arActive=false,showConst=true,showDeep=true,rawAz=180,rawAlt=35,calTarget=null,calMatrix=null;
 // v2: calibrations saved before the true-north sensor fix compensated a different error; discard them.
-const CAL_KEY="aplanusCalMatrixV2";
-try{localStorage.removeItem("aplanusCalMatrix");const saved=JSON.parse(localStorage.getItem(CAL_KEY)||"null");if(Array.isArray(saved)&&saved.length===9)calMatrix=saved}catch{}
+const CAL_KEY="aplanusCalMatrixV3";
+try{localStorage.removeItem("aplanusCalMatrix");localStorage.removeItem("aplanusCalMatrixV2");const saved=JSON.parse(localStorage.getItem(CAL_KEY)||"null");if(Array.isArray(saved)&&saved.length===9)calMatrix=saved}catch{}
 const DEBUG=new URLSearchParams(location.search).has("debug");if(DEBUG)document.body.classList.add("sky-debug");
 function updateDeclination(){setDeclination(magneticDeclination(observer.lat,observer.lon,0,new Date()))}
 updateDeclination();
@@ -175,10 +175,16 @@ document.getElementById("calConfirm").addEventListener("click",()=>{if(!calTarge
  document.getElementById("calGuide").hidden=true;statusEl.textContent="3D βαθμονόμηση ολοκληρώθηκε ✓";calTarget=null;render()});
 document.getElementById("arBtn").addEventListener("click",async()=>{const btn=document.getElementById("arBtn"),video=document.getElementById("arVideo"),vp=document.querySelector(".viewport");try{if(arActive){stopAR(video);arActive=false;vp.classList.remove("ar-active");btn.textContent="📷 AR";render();return}await startAR(video);arActive=true;fov=65;vp.classList.add("ar-active");btn.textContent="■ AR";if(!sensorState.active)document.getElementById("sensorBtn").click();render()}catch(e){statusEl.textContent=e.message}});
 function northHint(){
+ const guide=document.getElementById("northGuide"),txt=document.getElementById("northGuideText");
+ const poorAcc=Number.isFinite(sensorState.compassAccuracy)&&(sensorState.compassAccuracy<0||sensorState.compassAccuracy>25);
+ let msg="";
+ if(sensorState.active&&!calMatrix){
+  if(sensorState.mode==="relative")msg="Η συσκευή δεν δίνει πυξίδα. Πάτα CAL για βαθμονόμηση με ένα αστέρι.";
+  else if(!sensorState.northReady)msg=poorAcc?"Η πυξίδα χρειάζεται βαθμονόμηση: κούνησε το κινητό σε σχήμα 8.":"Κράτα το κινητό ίσια, σαν να διαβάζεις, για 2–3 δευτερόλεπτα.";
+ }
+ guide.hidden=!msg;if(msg)txt.textContent=msg;
  if(!sensorState.active)return"";
- if(sensorState.mode==="relative")return" • Χωρίς πυξίδα: πάτα CAL";
- if(!sensorState.northReady)return" • Πυξίδα: κράτα το κινητό ίσια, σαν να διαβάζεις";
- if(Number.isFinite(sensorState.compassAccuracy)&&sensorState.compassAccuracy>25)return" • Πυξίδα: κάνε κίνηση σε σχήμα 8";
+ if(sensorState.northReady&&poorAcc)return" • Πυξίδα: κάνε κίνηση σε σχήμα 8";
  return"";
 }
 function showSensorDebug(){
@@ -186,7 +192,10 @@ function showSensorDebug(){
  dbg.textContent="APLANUS sensors (debug)\nmode: "+(sensorState.mode||"—")+" | north ready: "+sensorState.northReady+
   "\nheading: "+f(sensorState.heading)+" | pitch: "+f(sensorState.pitch)+
   "\ndeclination (WMM2025): "+f(sensorState.declination)+" | yaw offset: "+f(sensorState.yawOffset)+
-  "\ncompass accuracy: "+f(sensorState.compassAccuracy)+" | screen: "+(screen.orientation?.angle??window.orientation??0)+"°";
+  "\ncompass accuracy: "+f(sensorState.compassAccuracy)+" | screen: "+(screen.orientation?.angle??window.orientation??0)+"°"+
+  "\ncompass model: "+(sensorState.compassModel||"μαθαίνει…")+" | rms "+Object.entries(sensorState.hypErr||{}).map(([h,v])=>h+"="+v.toFixed(0)).join(" ")+
+  (sensorState.raw?"\nraw α "+f(sensorState.raw.alpha)+" β "+f(sensorState.raw.beta)+" γ "+f(sensorState.raw.gamma)+" compass "+f(sensorState.raw.compass)+
+  "\ncamH "+f(sensorState.raw.camH)+" topH "+f(sensorState.raw.topH):"")+(calMatrix?"\nCAL: ενεργή":"");
 }
 document.getElementById("sensorBtn").addEventListener("click",async()=>{const btn=document.getElementById("sensorBtn");if(sensorState.active){stopSensors();btn.textContent="🧭";document.getElementById("sensorDebug").hidden=true;render();return}try{let got=false;await startSensors(s=>{got=true;rawAz=s.heading;rawAlt=s.pitch;viewAz=rawAz;viewAlt=rawAlt;updateCalGuide();scheduleRender();showSensorDebug()});btn.textContent="🧭 …";setTimeout(()=>{if(got){btn.textContent="🧭 ON"}else{btn.textContent="🧭";statusEl.textContent="Δεν λαμβάνονται δεδομένα αισθητήρων"}},1200)}catch(e){statusEl.textContent=e.message}});
 
